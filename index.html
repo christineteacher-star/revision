@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Enseignant - Résultats</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-50 p-6">
+
+    <div class="max-w-5xl mx-auto">
+        <header class="flex justify-between items-center mb-8 bg-white p-6 rounded-2xl shadow-sm">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800">Résultats des élèves</h1>
+                <p class="text-slate-500 text-sm">Suivi en temps réel via Google Sheets</p>
+            </div>
+            <button onclick="fetchResults()" class="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 flex items-center shadow-lg transition">
+                <i class="fas fa-sync-alt mr-2" id="loader"></i> Actualiser les données
+            </button>
+        </header>
+
+        <!-- Statistiques rapides -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <p class="text-xs text-slate-400 uppercase font-black mb-1">Moyenne de la classe</p>
+                <p class="text-3xl font-black text-indigo-600" id="avgDisp">--%</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <p class="text-xs text-slate-400 uppercase font-black mb-1">Nombre de participations</p>
+                <p class="text-3xl font-black text-slate-800" id="countDisp">0</p>
+            </div>
+        </div>
+
+        <!-- Tableau des scores -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-slate-50 border-b border-slate-200">
+                    <tr>
+                        <th class="p-4 font-bold text-slate-600">Nom de l'élève</th>
+                        <th class="p-4 font-bold text-slate-600">Date</th>
+                        <th class="p-4 font-bold text-slate-600 text-right">Score</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr><td colspan="3" class="p-8 text-center text-slate-400 italic">Veuillez cliquer sur "Actualiser" pour charger les notes.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * CONFIGURATION : REMPLACER PAR VOTRE ID SHEETDB
+         */
+        const API_ID = "VOTRE_ID_ICI";
+
+        async function fetchResults() {
+            if(API_ID === "fy656vkhiikd5") { 
+                alert("Attention : Vous devez copier votre ID SheetDB dans le code (ligne 59) !"); 
+                return; 
+            }
+            
+            const loader = document.getElementById('loader');
+            loader.classList.add('fa-spin');
+
+            try {
+                const res = await fetch(`https://sheetdb.io/api/v1/${API_ID}`);
+                const data = await res.json();
+                
+                const tbody = document.getElementById('tableBody');
+                tbody.innerHTML = "";
+                
+                if(data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" class="p-8 text-center text-slate-400 italic">Aucune note enregistrée pour le moment.</td></tr>';
+                    return;
+                }
+
+                let total = 0;
+                // On affiche les derniers résultats en premier
+                data.reverse().forEach(row => {
+                    total += parseInt(row.score);
+                    const tr = document.createElement('tr');
+                    tr.className = "border-b border-slate-50 hover:bg-slate-50 transition";
+                    tr.innerHTML = `
+                        <td class="p-4 font-bold text-slate-700">${row.nom}</td>
+                        <td class="p-4 text-slate-400 text-sm">${row.date}</td>
+                        <td class="p-4 text-right">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold ${row.score >= 50 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}">
+                                ${row.score}%
+                            </span>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('countDisp').innerText = data.length;
+                document.getElementById('avgDisp').innerText = Math.round(total / data.length) + "%";
+
+            } catch (e) {
+                alert("Erreur : Impossible de se connecter à SheetDB. Vérifiez votre ID.");
+            } finally {
+                loader.classList.remove('fa-spin');
+            }
+        }
+
+        // Chargement automatique au démarrage
+        window.onload = fetchResults;
+    </script>
+</body>
+</html>
