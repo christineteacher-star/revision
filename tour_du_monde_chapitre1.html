@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Le Tour du Monde en 80 Jours</title>
+    <style>
+        :root { --primary: #e67e22; --success: #27ae60; --error: #e74c3c; --dark: #2c3e50; }
+        body { font-family: sans-serif; background: #fdf2e9; display: flex; justify-content: center; padding: 20px; color: var(--dark); }
+        .container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 600px; width: 100%; }
+        h1 { text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 10px; color: var(--primary); }
+        .question { font-size: 1.2em; font-weight: bold; margin: 20px 0; min-height: 60px; }
+        .options { display: grid; gap: 10px; }
+        button.opt-btn { padding: 15px; border: 2px solid #eee; border-radius: 10px; background: white; cursor: pointer; text-align: left; font-size: 1em; }
+        button.opt-btn:hover { border-color: var(--primary); background: #fffaf0; }
+        .feedback { margin: 15px 0; padding: 15px; border-radius: 10px; display: none; }
+        .correct { background: #d4edda; color: #155724; }
+        .wrong { background: #f8d7da; color: #721c24; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .stat-card { background: #f8f9fa; padding: 15px; border-radius: 10px; text-align: center; border-top: 4px solid var(--primary); }
+        .flashcard { width: 100%; height: 200px; perspective: 1000px; cursor: pointer; margin-top: 20px; }
+        .card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
+        .flashcard.flipped .card-inner { transform: rotateY(180deg); }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 15px; padding: 20px; box-sizing: border-box; border: 2px solid var(--primary); }
+        .card-front { font-size: 1.4em; font-weight: bold; background: white; }
+        .card-back { background: var(--primary); color: white; transform: rotateY(180deg); }
+        .btn-action { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.1em; }
+        .btn-next { background: var(--success); color: white; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-section">
+        <div id="progress">Question 1 / 10</div>
+        <h1>Chapitre 1 : Fogg & Passepartout</h1>
+        <div class="question" id="q-text"></div>
+        <div class="options" id="options-box"></div>
+        <div id="feedback" class="feedback"></div>
+        <button id="next-btn" class="btn-action btn-next">Suivant &rarr;</button>
+    </div>
+
+    <div id="end-section" style="display:none;">
+        <h1>Bilan du Chapitre 1</h1>
+        <div class="stats-grid">
+            <div class="stat-card"><div>Score</div><div id="res-score" style="font-size: 1.8em; font-weight: bold;"></div></div>
+            <div class="stat-card"><div>Exactitude</div><div id="res-percent" style="font-size: 1.8em; font-weight: bold;"></div></div>
+        </div>
+        <div class="stat-card" style="width: 95%; margin-bottom: 20px;">
+            <div>Catégorie maîtrisée :</div>
+            <div id="res-strength" style="color:var(--success); font-weight:bold;"></div>
+        </div>
+        <button onclick="startFlashcards()" class="btn-action" style="background:var(--dark); color:white;">Passer aux Flashcards</button>
+    </div>
+
+    <div id="flash-section" style="display:none; text-align: center;">
+        <h1>Révision Vocabulaire</h1>
+        <div class="flashcard" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front" id="f-front"></div>
+                <div class="card-back" id="f-back"></div>
+            </div>
+        </div>
+        <button onclick="nextFlashcard()" class="btn-action btn-next" style="display:block; margin-top:30px; background:var(--primary);">Mot Suivant</button>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+        { q: "Phileas Fogg est un homme ________ (qui garde son calme).", opts: ["expansif", "flegmatique", "communicatif", "galant"], r: 1, cat: "Portrait", def: "FLEGMATIQUE : Calme, imperturbable." },
+        { q: "Passepartout a une force ________ (très grande).", opts: ["sédentaire", "soigneusement", "herculéenne", "superflue"], r: 2, cat: "Description", def: "HERCULÉENNE : Une force digne d'Hercule." },
+        { q: "Fogg est l'homme le plus ________ (qui ne bouge pas) de Londres.", opts: ["sédentaire", "expansif", "écuyer", "galant"], r: 0, cat: "Habitudes", def: "SÉDENTAIRE : Qui ne voyage pas, reste au même endroit." },
+        { q: "Passepartout a été ________ (acrobate à cheval).", opts: ["gentleman", "domestique", "écuyer", "pendule"], r: 2, cat: "Métier", def: "ÉCUYER : Artiste de cirque cavalier." },
+        { q: "Fogg ne fait aucun mouvement ________ (inutile).", opts: ["incontestablement", "superflu", "communicatif", "galant"], r: 1, cat: "Vocabulaire", def: "SUPERFLU : Ce qui est en trop, inutile." },
+        { q: "Il est ________ riche, mais discret.", opts: ["incontestablement", "soigneusement", "galant", "flegmatique"], r: 0, cat: "Vocabulaire", def: "INCONTESTABLEMENT : Sans aucun doute." },
+        { q: "Il observe ________ (avec attention) son maître.", opts: ["expansif", "soigneusement", "herculéen", "superflu"], r: 1, cat: "Vocabulaire", def: "SOIGNEUSEMENT : Avec beaucoup de soin." },
+        { q: "Le poste de ________ (serviteur) lui plaît.", opts: ["écuyer", "domestique", "gentleman", "pendule"], r: 1, cat: "Métier", def: "DOMESTIQUE : Employé de maison." },
+        { q: "Fogg est un ________ (homme distingué).", opts: ["écuyer", "domestique", "gentleman", "pendule"], r: 2, cat: "Portrait", def: "GENTLEMAN : Homme de la haute société." },
+        { q: "Il regarde la ________ (horloge) pour l'heure exacte.", opts: ["écuyer", "domestique", "gentleman", "pendule"], r: 3, cat: "Vocabulaire", def: "PENDULE : Horloge murale." }
+    ];
+
+    let current = 0; let score = 0; let cats = {Portrait:0, Description:0, Habitudes:0, Vocabulaire:0, Métier:0}; let fIdx = 0;
+
+    function showQ() {
+        const q = quizData[current];
+        document.getElementById('progress').innerText = `Question ${current+1}/10`;
+        document.getElementById('q-text').innerHTML = q.q;
+        const box = document.getElementById('options-box'); box.innerHTML = '';
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+        q.opts.forEach((o, i) => {
+            const b = document.createElement('button'); b.className = 'opt-btn'; b.innerHTML = o;
+            b.onclick = () => {
+                document.querySelectorAll('.opt-btn').forEach(btn => btn.disabled = true);
+                if(i === q.r) { score++; cats[q.cat]++; document.getElementById('feedback').className="feedback correct"; document.getElementById('feedback').innerHTML=`<b>Correct !</b><br>${q.def}`; }
+                else { document.getElementById('feedback').className="feedback wrong"; document.getElementById('feedback').innerHTML=`<b>Erreur.</b><br>${q.def}`; }
+                document.getElementById('feedback').style.display = 'block'; document.getElementById('next-btn').style.display = 'block';
+            };
+            box.appendChild(b);
+        });
+    }
+
+    document.getElementById('next-btn').onclick = () => {
+        current++; if(current < 10) showQ(); else {
+            document.getElementById('quiz-section').style.display = 'none'; document.getElementById('end-section').style.display = 'block';
+            document.getElementById('res-score').innerText = `${score}/10`;
+            document.getElementById('res-percent').innerText = `${score*10}%`;
+            let best = Object.keys(cats).reduce((a, b) => cats[a] > cats[b] ? a : b);
+            document.getElementById('res-strength').innerText = best;
+        }
+    };
+
+    function startFlashcards() { document.getElementById('end-section').style.display = 'none'; document.getElementById('flash-section').style.display = 'block'; showFlash(); }
+    function showFlash() { 
+        const c = quizData[fIdx]; 
+        document.querySelector('.flashcard').classList.remove('flipped'); 
+        document.getElementById('f-front').innerText = c.opts[c.r].toUpperCase(); 
+        document.getElementById('f-back').innerHTML = c.def; 
+    }
+    function nextFlashcard() { fIdx = (fIdx + 1) % 10; showFlash(); }
+    showQ();
+</script>
+</body>
+</html>
