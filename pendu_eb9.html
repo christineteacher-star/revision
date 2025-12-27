@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Pendu : Révision de Français</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #e0f2f7; text-align: center; padding: 20px; }
+        .box { background: white; max-width: 700px; margin: auto; padding: 30px; border-radius: 20px; border-top: 10px solid #2980b9; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        h1 { color: #2c3e50; margin-bottom: 15px; }
+        #hint-text { font-size: 1.1em; color: #555; margin: 15px 0 25px 0; border-left: 5px solid #2980b9; padding: 10px; background: #f8fcff; text-align: left; }
+        #word-display { font-size: 2.8em; letter-spacing: 10px; margin: 30px 0; font-weight: bold; color: #34495e; text-transform: uppercase; }
+        #lives { color: #e74c3c; font-size: 1.4em; font-weight: bold; margin-bottom: 25px; }
+        .keyboard { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 30px; }
+        .key { width: 50px; height: 50px; font-weight: bold; cursor: pointer; background: #fff; border: 2px solid #ddd; border-radius: 8px; font-size: 1.2em; color: #444; transition: all 0.2s ease; }
+        .key:hover:not(:disabled) { border-color: #2980b9; color: #2980b9; transform: translateY(-2px); box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
+        .key:disabled { background: #e9ecef; border-color: #e9ecef; cursor: default; color: #bbb; }
+        #message { margin-top: 25px; font-weight: bold; font-size: 1.5em; min-height: 30px; }
+        button#btn-restart { display: none; margin-top: 30px; padding: 15px 30px; cursor: pointer; background: #2c3e50; color: white; border: none; border-radius: 8px; font-size: 1.1em; transition: background 0.3s ease; }
+        button#btn-restart:hover { background: #34495e; }
+    </style>
+</head>
+<body>
+<div class="box">
+    <h1>Le Pendu de la Classe de Français</h1>
+    <p id="hint-text">Indice : </p>
+    <div id="lives">Vies restantes : 7</div>
+    <div id="word-display"></div>
+    <div class="keyboard" id="keyboard"></div>
+    <div id="message"></div>
+    <button id="btn-restart" onclick="init()">Recommencer la partie</button>
+</div>
+
+<script>
+    const mots = [
+        // 10 Mots : Défauts et Qualités
+        {w: "NARCISSISME", h: "C'est l'amour excessif de soi-même, comme le personnage de la mythologie."},
+        {w: "VERSATILE", h: "Qualifie une personne qui change trop souvent d'avis ou d'humeur."},
+        {w: "EMPATHIE", h: "C'est la capacité à comprendre et ressentir les émotions des autres."},
+        {w: "ARROGANCE", h: "Un défaut : un sentiment de supériorité qui pousse à mépriser les autres."},
+        {w: "HYPOCRISIE", h: "Le défaut de celui qui feint des sentiments qu'il n'a pas, qui joue un rôle."},
+        {w: "SINCÉRITÉ", h: "La qualité de celui qui dit la vérité et agit avec franchise. Essentiel en autobiographie."},
+        {w: "MANIAQUE", h: "Un défaut qui décrit une personne excessivement ordonnée, voire obsessionnelle."},
+        {w: "ALTRUISTE", h: "La qualité de celui qui pense aux autres, qui se dévoue pour leur bien-être."},
+        {w: "OPINIÂTRE", h: "Une qualité (ou un défaut) : quelqu'un de tenace, persévérant, voire têtu."},
+        {w: "MODESTIE", h: "Une qualité : l'absence d'orgueil, le fait de ne pas se vanter de ses mérites."},
+
+        // 5 Devinettes de Conjugaison
+        {w: "RESOUS", h: "Verbe 'Résoudre' au présent, 1ère personne du singulier."},
+        {w: "ETEIGNONS", h: "Verbe 'Éteindre' au présent, avec le pronom 'Nous'."},
+        {w: "APPELLES", h: "Verbe 'Appeler' au présent, avec le pronom 'Tu'."},
+        {w: "EURENT", h: "Auxiliaire 'Avoir' au passé simple, 3ème personne du pluriel."},
+        {w: "SAURAI", h: "Verbe 'Savoir' au futur simple, avec le pronom 'Je'."},
+
+        // 5 Mots de la Leçon (Formation des mots)
+        {w: "PREFIXE", h: "C'est un élément que l'on place au début d'un mot (ex: 'in-' dans 'impossible')."},
+        {w: "RADICAL", h: "C'est la partie invariable du mot, qui porte son sens principal (ex: 'chant' dans 'chanter')."},
+        {w: "DERIVATION", h: "Le processus qui permet de former un nouveau mot à partir d'un mot existant (ex: 'lent' -> 'lentement')."},
+        {w: "INCORRECT", h: "Un mot qui utilise le préfixe de négation 'IN-'."},
+        {w: "DOMPTABLE", h: "Un mot qui utilise le suffixe de possibilité '-ABLE' (ex: que l'on peut dompter)."},
+
+        // 10 Mots de Grammaire
+        {w: "ADVERBE", h: "La nature grammaticale de mots comme 'Gratuitement', 'Rapidement'."},
+        {w: "PREPOSITION", h: "La nature de mots invariables comme 'À', 'DE', 'POUR', 'SANS'."},
+        {w: "SUBORDONNEE", h: "C'est le type de proposition introduite par des conjonctions comme 'Dès que', 'Quand', 'Parce que'."},
+        {w: "EPITHETE", h: "La fonction de l'adjectif qualificatif quand il est placé directement à côté du nom qu'il qualifie (ex: 'une belle fleur')."},
+        {w: "INJONCTIF", h: "Le type de phrase qui donne un ordre, un conseil ou une instruction (ex: 'Ferme la porte !')."},
+        {w: "COORDINATION", h: "La fonction grammaticale des mots 'Mais, ou, et, donc, or, ni, car' (M.O.E.D.O.N.C.)."},
+        {w: "ANTECEDENT", h: "C'est le nom ou le pronom que reprend un pronom relatif (ex: 'l'homme QUE j'ai vu', 'homme' est l'antécédent)."},
+        {w: "INDICATIF", h: "C'est le mode qui exprime la réalité, la certitude, les faits réels (ex: 'Je mange')."},
+        {w: "GERONDIF", h: "Le mode utilisé lorsque l'on dit 'En écrivant', 'En chantant', 'En faisant'."},
+        {w: "AUTOBIOGRAPHIE", h: "Le genre littéraire où l'auteur raconte sa propre vie, disant 'Je' (auteur = narrateur = personnage)."}
+    ];
+
+    let secretWordObj, secretWord, displayedWord, lives;
+    let guessedLetters = [];
+    const maxLives = 7;
+
+    function init() {
+        // Mélanger les mots pour une nouvelle expérience à chaque fois
+        const shuffledMots = [...mots].sort(() => 0.5 - Math.random());
+        secretWordObj = shuffledMots[0]; // Choisir le premier mot après mélange
+        secretWord = secretWordObj.w.toUpperCase();
+        
+        displayedWord = Array(secretWord.length).fill('_');
+        lives = maxLives;
+        guessedLetters = [];
+
+        document.getElementById('hint-text').innerText = "Indice : " + secretWordObj.h;
+        document.getElementById('lives').innerText = `Vies restantes : ${lives}`;
+        document.getElementById('message').innerText = "";
+        document.getElementById('btn-restart').style.display = "none";
+        
+        createKeyboard();
+        updateWordDisplay();
+    }
+
+    function createKeyboard() {
+        const keyboardDiv = document.getElementById('keyboard');
+        keyboardDiv.innerHTML = "";
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(letter => {
+            let button = document.createElement('button');
+            button.innerText = letter;
+            button.className = "key";
+            button.onclick = () => handleGuess(letter);
+            keyboardDiv.appendChild(button);
+        });
+    }
+
+    function updateWordDisplay() {
+        document.getElementById('word-display').innerText = displayedWord.join(" ");
+    }
+
+    function handleGuess(letter) {
+        if (guessedLetters.includes(letter)) {
+            return; // Ne rien faire si la lettre a déjà été devinée
+        }
+        guessedLetters.push(letter);
+        document.querySelector(`.key:nth-child(${letter.charCodeAt(0) - 64})`).disabled = true; // Désactiver le bouton
+
+        let found = false;
+        for (let i = 0; i < secretWord.length; i++) {
+            if (secretWord[i] === letter) {
+                displayedWord[i] = letter;
+                found = true;
+            }
+        }
+
+        if (!found) {
+            lives--;
+            document.getElementById('lives').innerText = `Vies restantes : ${lives}`;
+        }
+
+        updateWordDisplay();
+        checkGameStatus();
+    }
+
+    function checkGameStatus() {
+        if (!displayedWord.includes('_')) {
+            document.getElementById('message').innerText = "GAGNÉ ! Félicitations, champion de français !";
+            document.getElementById('message').style.color = "#27ae60";
+            endGame();
+        } else if (lives <= 0) {
+            document.getElementById('message').innerText = `PERDU... Le mot était : ${secretWord}`;
+            document.getElementById('message').style.color = "#e74c3c";
+            endGame();
+        }
+    }
+
+    function endGame() {
+        Array.from(document.getElementsByClassName('key')).forEach(button => {
+            button.disabled = true;
+        });
+        document.getElementById('btn-restart').style.display = "inline-block";
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
