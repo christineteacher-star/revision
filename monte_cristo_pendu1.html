@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Pendu : Monte-Cristo (Corrigé)</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f4; text-align: center; padding: 20px; }
+        .box { background: white; max-width: 600px; margin: auto; padding: 20px; border-radius: 15px; border-top: 8px solid #c0392b; }
+        #word-display { font-size: 2.2em; letter-spacing: 8px; margin: 20px; font-weight: bold; }
+        .keyboard { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; margin-top: 20px; }
+        .key { width: 40px; height: 40px; font-weight: bold; cursor: pointer; background: #fff; border: 1px solid #ccc; }
+        .key:disabled { background: #ddd; cursor: default; }
+        #lives { color: #c0392b; font-size: 1.2em; font-weight: bold; }
+        .hint { color: #666; font-style: italic; margin: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h1>Le Pendu du Pharaon</h1>
+    <p id="hint-text" class="hint">Indice : </p>
+    <div id="lives">Vies : 7</div>
+    <div id="word-display"></div>
+    <div class="keyboard" id="keyboard"></div>
+    <div id="message" style="margin-top:20px; font-weight:bold; font-size:1.2em;"></div>
+    <button id="btn-restart" style="display:none; margin-top:20px; padding:10px; cursor:pointer;" onclick="init()">Rejouer</button>
+</div>
+
+<script>
+    // Vos mots du Chapitre 1
+    const mots = [
+        {w: "ACCOSTER", h: "Approcher le navire du quai."},
+        {w: "ARMATEUR", h: "Propriétaire du navire (M. Morrel)."},
+        {w: "MARIN", h: "Le métier d'Edmond Dantès."},
+        {w: "SYMPATHIQUE", h: "Se dit de quelqu'un d'agréable."},
+        {w: "EQUIPAGE", h: "L'ensemble des marins du Pharaon."},
+        {w: "VOILIER", h: "Type de bateau qui avance avec le vent."},
+        {w: "MANOEUVRE", h: "Action de diriger le navire."},
+        {w: "HAINE", h: "Sentiment de Danglars pour Edmond."},
+        {w: "COMPTABLE", h: "Le métier de Danglars."},
+        {w: "EMPEREUR", h: "Napoléon, exilé sur l'île d'Elbe."},
+        {w: "ABSOLUMENT", h: "D'une manière totale."},
+        {w: "IMPARTIAL", h: "Qui est juste et neutre."},
+        {w: "NEGLIGEMMENT", h: "Sans prêter attention."},
+        {w: "PRETENDANT", h: "Homme qui veut épouser Mercédès."},
+        {w: "DECEPTION", h: "Tristesse de Fernand."},
+        {w: "IMPATIEMMENT", h: "Attendre avec hâte."}
+    ];
+
+    let secret, devine, vies;
+
+    function init() {
+        let choisi = mots[Math.floor(Math.random() * mots.length)];
+        secret = choisi.w;
+        devine = [];
+        vies = 7;
+        
+        document.getElementById('hint-text').innerText = "Indice : " + choisi.h;
+        document.getElementById('lives').innerText = "Vies restantes : " + vies;
+        document.getElementById('message').innerText = "";
+        document.getElementById('btn-restart').style.display = "none";
+        
+        creerClavier();
+        actualiser();
+    }
+
+    function creerClavier() {
+        const kb = document.getElementById('keyboard');
+        kb.innerHTML = "";
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for (let i = 0; i < alphabet.length; i++) {
+            let lettre = alphabet[i];
+            let btn = document.createElement('button');
+            btn.innerText = lettre;
+            btn.className = "key";
+            btn.onclick = function() {
+                this.disabled = true;
+                jouer(lettre);
+            };
+            kb.appendChild(btn);
+        }
+    }
+
+    function jouer(L) {
+        if (secret.includes(L)) {
+            devine.push(L);
+        } else {
+            vies--;
+            document.getElementById('lives').innerText = "Vies restantes : " + vies;
+        }
+        
+        actualiser();
+        verifier();
+    }
+
+    function actualiser() {
+        let texte = "";
+        for (let i = 0; i < secret.length; i++) {
+            if (devine.includes(secret[i])) {
+                texte += secret[i] + " ";
+            } else {
+                texte += "_ ";
+            }
+        }
+        document.getElementById('word-display').innerText = texte;
+    }
+
+    function verifier() {
+        let affichage = document.getElementById('word-display').innerText.replace(/ /g, "");
+        if (affichage === secret) {
+            document.getElementById('message').innerText = "GAGNÉ !";
+            document.getElementById('message').style.color = "green";
+            fin();
+        } else if (vies <= 0) {
+            document.getElementById('message').innerText = "PERDU ! Le mot était : " + secret;
+            document.getElementById('message').style.color = "red";
+            fin();
+        }
+    }
+
+    function fin() {
+        let touches = document.getElementsByClassName('key');
+        for (let t of touches) t.disabled = true;
+        document.getElementById('btn-restart').style.display = "inline-block";
+    }
+
+    window.onload = init;
+</script>
+
+</body>
+</html>
