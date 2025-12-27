@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilan : Le Comte de Monte-Cristo</title>
+    <style>
+        :root { --primary: #3498db; --success: #27ae60; --error: #e74c3c; --dark: #2c3e50; }
+        body { font-family: sans-serif; background: #f4f7f9; display: flex; justify-content: center; padding: 20px; color: var(--dark); }
+        .container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 600px; width: 100%; }
+        h1 { text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 10px; }
+        .question { font-size: 1.2em; font-weight: bold; margin: 20px 0; min-height: 60px; }
+        .options { display: grid; gap: 10px; }
+        button.opt-btn { padding: 15px; border: 2px solid #eee; border-radius: 10px; background: white; cursor: pointer; text-align: left; font-size: 1em; }
+        button.opt-btn:hover { border-color: var(--primary); background: #f0f8ff; }
+        .feedback { margin: 15px 0; padding: 15px; border-radius: 10px; display: none; }
+        .correct { background: #d4edda; color: #155724; }
+        .wrong { background: #f8d7da; color: #721c24; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .stat-card { background: #f8f9fa; padding: 15px; border-radius: 10px; text-align: center; border-top: 4px solid var(--primary); }
+        .flashcard { width: 100%; height: 200px; perspective: 1000px; cursor: pointer; margin-top: 20px; }
+        .card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
+        .flashcard.flipped .card-inner { transform: rotateY(180deg); }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 15px; padding: 20px; box-sizing: border-box; border: 2px solid var(--primary); }
+        .card-front { font-size: 1.4em; font-weight: bold; background: white; }
+        .card-back { background: var(--primary); color: white; transform: rotateY(180deg); }
+        .btn-action { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.1em; }
+        .btn-next { background: var(--success); color: white; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-section">
+        <div id="progress">Question 1 / 10</div>
+        <h1>Quiz : Chapitre 1</h1>
+        <div class="question" id="q-text"></div>
+        <div class="options" id="options-box"></div>
+        <div id="feedback" class="feedback"></div>
+        <button id="next-btn" class="btn-action btn-next">Suivant &rarr;</button>
+    </div>
+
+    <div id="end-section" style="display:none;">
+        <h1>Bilan de l'Apprenti Marin</h1>
+        <div class="stats-grid">
+            <div class="stat-card"><div>Score</div><div id="res-score" style="font-size: 1.8em; font-weight: bold;"></div></div>
+            <div class="stat-card"><div>Exactitude</div><div id="res-percent" style="font-size: 1.8em; font-weight: bold;"></div></div>
+        </div>
+        <div class="stat-card" style="width: 95%; margin-bottom: 20px;">
+            <div>Point fort :</div>
+            <div id="res-strength" style="color:var(--success); font-weight:bold;"></div>
+        </div>
+        <button onclick="startFlashcards()" class="btn-action" style="background:var(--dark); color:white;">Continuer avec les Flashcards</button>
+    </div>
+
+    <div id="flash-section" style="display:none; text-align: center;">
+        <h1>R&eacute;vision : Flashcards</h1>
+        <div class="flashcard" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front" id="f-front"></div>
+                <div class="card-back" id="f-back"></div>
+            </div>
+        </div>
+        <button onclick="nextFlashcard()" class="btn-action btn-next" style="display:block; margin-top:30px; background:var(--primary);">Carte Suivante</button>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+        { q: "Edmond semble ________ par la mort du capitaine.", opts: ["accabl&eacute;", "hostile", "prosp&egrave;re", "ambitieux"], r: 0, cat: "Vocabulaire", def: "ACCABL&Eacute; : Tr&egrave;s triste, comme si l'on portait un poids trop lourd." },
+        { q: "Morrel est un marchand _________ (affaires rentables).", opts: ["ambitieux", "accabl&eacute;", "prosp&egrave;re", "hostile"], r: 2, cat: "Vocabulaire", def: "PROSP&Egrave;RE : Qui r&eacute;ussit financi&egrave;rement." },
+        { q: "Danglars lance un regard _________ &agrave; Edmond.", opts: ["hostile", "prosp&egrave;re", "ambitieux", "accabl&eacute;"], r: 0, cat: "Vocabulaire", def: "HOSTILE : Qui se comporte comme un ennemi." },
+        { q: "Edmond est un jeune marin dou&eacute; et _________.", opts: ["accabl&eacute;", "ambitieux", "hostile", "prosp&egrave;re"], r: 1, cat: "Vocabulaire", def: "AMBITIEUX : Qui veut r&eacute;ussir socialement." },
+        { q: "Monsieur Morrel (dit) __________ la mort du capitaine.", opts: ["s'enquiert", "d&eacute;plore", "souligne", "rassure"], r: 1, cat: "Verbes", def: "D&Eacute;PLORER : Regretter tr&egrave; vivement." },
+        { q: "L'armateur (dit) __________ de l'&eacute;tat des marchandises.", opts: ["d&eacute;plore", "rassure", "s'enquiert", "souligne"], r: 2, cat: "Verbes", def: "S'ENQU&Eacute;RIR : Se renseigner, poser des questions." },
+        { q: "Edmond (dit) __________ Morrel pour le calmer.", opts: ["rassure", "d&eacute;plore", "souligne", "s'enquiert"], r: 0, cat: "Verbes", def: "RASSURER : Redonner confiance &agrave; quelqu'un." },
+        { q: "Danglars (dit) __________ l'escale suspecte.", opts: ["rassure", "souligne", "d&eacute;plore", "s'enquiert"], r: 1, cat: "Verbes", def: "SOULIGNER : Mettre en &eacute;vidence un point pr&eacute;cis." },
+        { q: "Intrus : Gouvernail - Boussole - Charrue - Ancre.", opts: ["Gouvernail", "Boussole", "Charrue", "Ancre"], r: 2, cat: "Marine", def: "La CHARRUE est pour la terre, pas pour la mer." },
+        { q: "Intrus : Matelot - Cordonnier - Capitaine - Second.", opts: ["Matelot", "Cordonnier", "Capitaine", "Second"], r: 1, cat: "Marine", def: "Le CORDONNIER travaille en ville, pas sur un bateau." }
+    ];
+
+    let current = 0; let score = 0; let cats = {Vocabulaire:0, Verbes:0, Marine:0}; let fIdx = 0;
+
+    function showQ() {
+        const q = quizData[current];
+        document.getElementById('progress').innerText = `Question ${current+1}/10`;
+        document.getElementById('q-text').innerHTML = q.q;
+        const box = document.getElementById('options-box'); box.innerHTML = '';
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+        q.opts.forEach((o, i) => {
+            const b = document.createElement('button'); b.className = 'opt-btn'; b.innerHTML = o;
+            b.onclick = () => {
+                document.querySelectorAll('.opt-btn').forEach(btn => btn.disabled = true);
+                if(i === q.r) { score++; cats[q.cat]++; document.getElementById('feedback').className="feedback correct"; document.getElementById('feedback').innerHTML=`<b>Correct !</b><br>${q.def}`; }
+                else { document.getElementById('feedback').className="feedback wrong"; document.getElementById('feedback').innerHTML=`<b>Erreur.</b><br>${q.def}`; }
+                document.getElementById('feedback').style.display = 'block'; document.getElementById('next-btn').style.display = 'block';
+            };
+            box.appendChild(b);
+        });
+    }
+
+    document.getElementById('next-btn').onclick = () => {
+        current++; if(current < 10) showQ(); else {
+            document.getElementById('quiz-section').style.display = 'none'; document.getElementById('end-section').style.display = 'block';
+            document.getElementById('res-score').innerText = `${score}/10`;
+            document.getElementById('res-percent').innerText = `${score*10}%`;
+            let best = Object.keys(cats).reduce((a, b) => cats[a] > cats[b] ? a : b);
+            document.getElementById('res-strength').innerText = best;
+        }
+    };
+
+    function startFlashcards() { document.getElementById('end-section').style.display = 'none'; document.getElementById('flash-section').style.display = 'block'; showFlash(); }
+    
+    // Fonction magique pour transformer les &eacute; en vrais accents AVANT le passage en majuscules
+    function decodeHtml(html) {
+        var txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.value;
+    }
+
+    function showFlash() { 
+        const c = quizData[fIdx]; 
+        document.querySelector('.flashcard').classList.remove('flipped'); 
+        // On décode d'abord le code HTML pour avoir le vrai accent, puis on met en majuscules
+        let motDecodé = decodeHtml(c.opts[c.r]);
+        document.getElementById('f-front').innerText = motDecodé.toUpperCase(); 
+        document.getElementById('f-back').innerHTML = c.def; 
+    }
+    
+    function nextFlashcard() { fIdx = (fIdx + 1) % 10; showFlash(); }
+
+    showQ();
+</script>
+</body>
+</html>
