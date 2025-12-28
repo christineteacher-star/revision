@@ -9,61 +9,109 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
-        body { font-family: 'Quicksand', sans-serif; background-color: #f0f7ff; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        .sidebar { width: 85px; background: white; display: flex; flex-direction: column; align-items: center; padding: 25px 0; border-right: 1px solid #eef2f6; }
-        .logo-dragon { width: 48px; height: 48px; background: #0ea5e9; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; margin-bottom: 40px; }
+        
+        body { 
+            font-family: 'Quicksand', sans-serif; 
+            background-color: #f0f7ff; 
+            margin: 0; display: flex; height: 100vh; overflow: hidden; 
+        }
+
+        /* Barre latérale */
+        .sidebar {
+            width: 85px; background: white; display: flex; flex-direction: column;
+            align-items: center; padding: 25px 0; border-right: 1px solid #eef2f6;
+        }
+        .logo-dragon {
+            width: 48px; height: 48px; background: #0ea5e9; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 22px; margin-bottom: 40px;
+        }
+
+        /* Contenu */
         .main-content { flex: 1; display: flex; padding: 30px; gap: 30px; overflow-y: auto; }
         .dashboard-left { flex: 2; display: flex; flex-direction: column; gap: 25px; }
         .dashboard-right { width: 380px; display: flex; flex-direction: column; }
+
+        /* Cartes */
         .card { background: white; border-radius: 35px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
-        .podium-container { background: white; border-radius: 35px; padding: 25px; height: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.04); display: flex; flex-direction: column; }
-        .podium-visual { display: flex; justify-content: center; align-items: flex-end; gap: 12px; margin-top: 60px; margin-bottom: 30px; }
-        .podium-bar { width: 75px; border-radius: 20px 20px 8px 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 15px; font-weight: 800; position: relative; }
+
+        /* Podium */
+        .podium-container {
+            background: white; border-radius: 35px; padding: 25px; height: 100%; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04); display: flex; flex-direction: column;
+        }
+        .podium-visual {
+            display: flex; justify-content: center; align-items: flex-end;
+            gap: 12px; margin-top: 100px; margin-bottom: 30px;
+        }
+        .podium-bar {
+            width: 80px; border-radius: 20px 20px 8px 8px; display: flex;
+            flex-direction: column; align-items: center; justify-content: flex-end;
+            padding-bottom: 15px; color: #1e293b; font-weight: 800; position: relative;
+        }
         .bar-1 { height: 140px; background: #fef3c7; border: 2px solid #fbbf24; order: 2; }
         .bar-2 { height: 100px; background: #f1f5f9; border: 2px solid #cbd5e1; order: 1; }
         .bar-3 { height: 80px; background: #fff1f2; border: 2px solid #fda4af; order: 3; }
-        .podium-avatar { position: absolute; top: -55px; width: 55px; height: 55px; border-radius: 50%; border: 3px solid white; background: #f8fafc; }
-        .class-img-card { flex: 1; height: 150px; border-radius: 30px; position: relative; overflow: hidden; transition: 0.3s; cursor: pointer; }
-        .class-img-card:hover { transform: translateY(-5px); }
-        .class-img-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); }
-        .class-title { position: absolute; bottom: 15px; left: 0; right: 0; text-align: center; color: white; font-weight: bold; font-size: 1.2rem; }
+        
+        .podium-avatar {
+            position: absolute; top: -55px; width: 60px; height: 60px;
+            border-radius: 50%; border: 3px solid white; background: #f8fafc;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .podium-name {
+            position: absolute; top: -85px; width: 110px; text-align: center;
+            font-size: 11px; font-weight: 700; color: #475569;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        /* Boutons Classes */
+        .class-img-card {
+            flex: 1; height: 150px; border-radius: 30px; position: relative;
+            overflow: hidden; transition: 0.3s; cursor: pointer;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        .class-img-card:hover { transform: scale(1.03); }
+        .class-img-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); }
+        .class-title { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            color: white; font-weight: 800; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
 
     <nav class="sidebar">
         <div class="logo-dragon"><i class="fas fa-dragon"></i></div>
-        <div class="text-sky-500 mb-6"><i class="fas fa-home text-2xl"></i></div>
-        <div class="text-slate-300"><i class="fas fa-trophy text-2xl"></i></div>
+        <div class="text-sky-500 mb-6 cursor-pointer"><i class="fas fa-home text-2xl"></i></div>
     </nav>
 
     <main class="main-content">
         <div class="dashboard-left">
-            <h1 class="text-3xl font-bold text-slate-800">Dashboard de la Classe</h1>
+            <h1 class="text-3xl font-bold text-slate-800">Dashboard Académie</h1>
             
             <div class="grid grid-cols-2 gap-6">
-                <div class="card border-b-4 border-sky-400">
+                <div class="card">
                     <h3 class="font-bold text-sky-600 mb-2">Quiz du Jour</h3>
-                    <p class="text-slate-500 text-sm mb-4">Réponds aux questions pour grimper dans le classement !</p>
-                    <button class="w-full bg-sky-500 text-white py-3 rounded-2xl font-bold shadow-lg hover:bg-sky-600">LANCER LE QUIZ</button>
+                    <p class="text-slate-500 text-sm mb-4">Grimpe au classement en répondant au défi !</p>
+                    <button class="w-full bg-sky-500 text-white py-3 rounded-2xl font-bold hover:bg-sky-600 transition">JOUER</button>
                 </div>
                 <div class="card bg-emerald-50 flex flex-col items-center justify-center">
-                    <i class="fas fa-dragon text-4xl text-emerald-500 mb-2"></i>
-                    <p class="font-bold text-emerald-700">Épreuve des Crocs</p>
+                    <i class="fas fa-fire text-4xl text-orange-500 mb-2"></i>
+                    <p class="font-bold text-slate-700">Épreuve des Crocs</p>
                 </div>
             </div>
 
             <div class="flex gap-4 mt-auto">
                 <div class="class-img-card" onclick="window.location.href='brevet.html'">
-                    <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400" alt="Brevet">
+                    <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500&q=80">
                     <div class="class-title">BREVET</div>
                 </div>
                 <div class="class-img-card" onclick="window.location.href='seconde.html'">
-                    <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400" alt="Seconde">
+                    <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=500&q=80">
                     <div class="class-title">SECONDE</div>
                 </div>
                 <div class="class-img-card" onclick="window.location.href='premiere.html'">
-                    <img src="https://images.unsplash.com/photo-1523050853051-f750004c21ad?w=400" alt="Première">
+                    <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=500&q=80">
                     <div class="class-title">PREMIÈRE</div>
                 </div>
             </div>
@@ -72,61 +120,46 @@
         <div class="dashboard-right">
             <div class="podium-container">
                 <h2 class="text-xl font-bold text-slate-800 text-center">Tableau d'Honneur</h2>
-                <div id="podium-ui" class="podium-visual">
-                    </div>
-                <div id="rank-list" class="space-y-3 overflow-y-auto mt-4 pr-2">
-                    <p class="text-center text-slate-400 italic">Connexion au Google Sheet...</p>
+                <div id="podium-ui" class="podium-visual"></div>
+                <div id="rank-list" class="space-y-3 overflow-y-auto pr-2 mt-4">
+                    <p class="text-center text-slate-400">Chargement...</p>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
-        // --- COLLE TON LIEN ICI ---
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzovlnRuIQN3kH1hxK7OtChIn9zzYTx4v79e4k_cPMXdGo8KfAhysGfljg5v2-Qt3vmSw/exec"; 
+        // N'OUBLIEZ PAS DE COLLER VOTRE LIEN GOOGLE SCRIPT CI-DESSOUS
+        const SCRIPT_URL = "VOTRE_URL_ICI_FINISSANT_PAR_EXEC"; 
 
         async function loadLeaderboard() {
-            const listUI = document.getElementById('rank-list');
-            const podiumUI = document.getElementById('podium-ui');
-
             try {
                 const response = await fetch(SCRIPT_URL);
-                const eleves = await response.json();
-                
-                // Tri par score
-                eleves.sort((a, b) => b.score - a.score);
-                render(eleves);
-            } catch (e) {
-                console.log("Mode démo activé");
-                listUI.innerHTML = "<p class='text-red-400 text-xs text-center mb-2'>Lien Google non détecté : Affichage démo</p>";
-                const demo = [
-                    {nom: "Dragon d'Or", score: 5000},
-                    {nom: "Chevalier Argent", score: 4000},
-                    {nom: "Apprenti Bronze", score: 3000}
-                ];
-                render(demo);
+                const data = await response.json();
+                data.sort((a, b) => b.score - a.score);
+                render(data);
+            } catch (error) {
+                console.log("Erreur ou mode démo");
+                render([{nom:"Dragon 1", score:500}, {nom:"Dragon 2", score:400}, {nom:"Dragon 3", score:300}]);
             }
         }
 
-        function render(data) {
+        function render(eleves) {
             const podiumUI = document.getElementById('podium-ui');
             const listUI = document.getElementById('rank-list');
-
-            // Podium
-            const top3 = [data[1], data[0], data[2]];
+            const top3 = [eleves[1], eleves[0], eleves[2]];
             const bars = ['bar-2', 'bar-1', 'bar-3'];
             const labels = ['#2', '#1', '#3'];
 
             podiumUI.innerHTML = top3.map((e, i) => e ? `
                 <div class="podium-bar ${bars[i]}">
+                    <div class="podium-name">${e.nom}</div>
                     <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(e.nom)}" class="podium-avatar">
-                    <span class="text-[10px] font-bold absolute -top-12 text-slate-500 w-full text-center truncate">${e.nom}</span>
-                    ${labels[i]}
+                    <span class="text-lg">${labels[i]}</span>
                 </div>
             ` : '').join('');
 
-            // Liste
-            listUI.innerHTML += data.map((e, i) => `
+            listUI.innerHTML = eleves.map((e, i) => `
                 <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl border border-white">
                     <span class="text-xs font-bold text-slate-300 w-5">#${i + 1}</span>
                     <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(e.nom)}" class="w-10 h-10 rounded-full bg-white">
@@ -137,7 +170,6 @@
                 </div>
             `).join('');
         }
-
         window.onload = loadLeaderboard;
     </script>
 </body>
