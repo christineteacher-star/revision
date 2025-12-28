@@ -8,74 +8,76 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
-        body { font-family: 'Quicksand', sans-serif; background-color: #f8fafc; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        .sidebar { width: 90px; background: white; display: flex; flex-direction: column; align-items: center; padding: 30px 0; border-right: 1px solid #eef2f6; }
-        .main-content { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; }
-        .card { border-radius: 24px; transition: all 0.3s ease; background: white; border: 1px solid #f1f5f9; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .class-img-card { position: relative; border-radius: 20px; overflow: hidden; height: 160px; flex: 1; cursor: pointer; }
-        .class-img-card img { width: 100%; height: 100%; object-fit: cover; }
-        .class-title { position: absolute; bottom: 15px; left: 15px; color: white; font-weight: 800; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        body { font-family: 'Quicksand', sans-serif; background-color: #f0f7ff; margin: 0; display: flex; height: 100vh; }
+        .sidebar { width: 100px; background: white; display: flex; flex-direction: column; align-items: center; padding: 30px 0; border-right: 1px solid #eef2f6; }
+        .main-content { flex: 1; padding: 40px; display: flex; flex-direction: column; }
+        .card { border-radius: 24px; transition: all 0.3s ease; }
+        .class-img-card { position: relative; border-radius: 20px; overflow: hidden; height: 180px; flex: 1; cursor: pointer; }
+        .class-img-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .class-img-card:hover img { transform: scale(1.1); }
+        .class-title { position: absolute; bottom: 20px; left: 20px; color: white; font-weight: 800; font-size: 1.2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
 
     <nav class="sidebar">
-        <div class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white mb-10 shadow-lg cursor-pointer" onclick="location.reload()">
+        <div class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white mb-10 shadow-lg shadow-sky-200">
             <i class="fas fa-dragon text-2xl"></i>
         </div>
-        <div class="text-sky-500 bg-sky-50 p-4 rounded-2xl cursor-pointer">
+        <div class="text-sky-500 bg-sky-50 p-4 rounded-2xl">
             <i class="fas fa-home text-2xl"></i>
         </div>
     </nav>
 
     <main class="main-content">
-        <h1 class="text-3xl font-black text-slate-800 mb-8">Dashboard Académie</h1>
+        <h1 class="text-4xl font-black text-slate-800 mb-8">Dashboard Académie</h1>
 
         <div class="grid grid-cols-2 gap-6 mb-6">
-            <div class="card p-6 cursor-pointer flex items-center gap-5" onclick="window.location.href='quiz.html'">
-                <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600">
-                    <i class="fas fa-rocket text-xl"></i>
+            <div class="card bg-white p-6 shadow-sm border border-slate-100 hover:shadow-md cursor-pointer flex items-center gap-5" onclick="window.location.href='quiz.html'">
+                <div class="w-16 h-16 bg-sky-100 rounded-2xl flex items-center justify-center text-sky-600">
+                    <i class="fas fa-rocket text-2xl"></i>
                 </div>
                 <div>
-                    <h3 class="font-bold text-slate-800">Quiz du Jour</h3>
-                    <p class="text-slate-400 text-xs">Réponds au défi !</p>
+                    <h3 class="font-bold text-slate-800 text-lg">Quiz du Jour</h3>
+                    <p class="text-slate-500 text-sm">Réponds au défi !</p>
                 </div>
             </div>
 
-            <div class="card p-6 cursor-pointer flex items-center gap-5" onclick="window.location.href='epreuve.html'">
-                <div class="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center text-orange-600">
-                    <i class="fas fa-fire text-xl"></i>
+            <div class="card bg-white p-6 shadow-sm border border-slate-100 hover:shadow-md cursor-pointer flex items-center gap-5" onclick="window.location.href='epreuve.html'">
+                <div class="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center text-orange-600">
+                    <i class="fas fa-fire text-2xl"></i>
                 </div>
                 <div>
-                    <h3 class="font-bold text-slate-800">Épreuve des Crocs</h3>
-                    <p class="text-slate-400 text-xs">Conjugaison chrono</p>
+                    <h3 class="font-bold text-slate-800 text-lg">Épreuve des Crocs</h3>
+                    <p class="text-slate-500 text-sm">Conjugaison chrono</p>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-6 mb-8">
-            <div class="card border-l-8 border-purple-500 overflow-hidden cursor-pointer" onclick="window.location.href='grammaire.html'">
-                <div class="p-6 flex items-center gap-4">
-                    <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold">A</div>
+        <div class="grid grid-cols-2 gap-6 mb-10">
+            <div class="card bg-white border-l-8 border-purple-500 p-6 shadow-sm cursor-pointer hover:bg-purple-50" onclick="window.location.href='grammaire.html'">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600">
+                        <i class="fas fa-font"></i>
+                    </div>
                     <h3 class="font-bold text-slate-800">Maître des Classes</h3>
                 </div>
-                <div class="bg-purple-50/50 p-4 text-center border-t border-purple-100">
-                    <p class="text-[10px] font-bold text-purple-400 uppercase tracking-widest mb-1">🏆 Meilleur Score Mondial</p>
-                    <p id="best-grammaire" class="text-purple-700 font-bold font-mono italic">Chargement...</p>
+                <div class="bg-purple-50 rounded-xl p-3 text-center border border-purple-100">
+                    <p class="text-[10px] font-bold text-purple-400 uppercase">🏆 Meilleur Score</p>
+                    <p class="text-sm font-bold text-purple-700" id="best-grammaire">Aucun record</p>
                 </div>
             </div>
 
-            <div class="card border-l-8 border-amber-500 overflow-hidden cursor-pointer" onclick="window.location.href='sens.html'">
-                <div class="p-6 flex items-center gap-4">
-                    <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600">
+            <div class="card bg-white border-l-8 border-amber-500 p-6 shadow-sm cursor-pointer hover:bg-amber-50" onclick="window.location.href='sens.html'">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center text-amber-600">
                         <i class="fas fa-eye"></i>
                     </div>
                     <h3 class="font-bold text-slate-800">L'Œil du Dragon</h3>
                 </div>
-                <div class="bg-amber-50/50 p-4 text-center border-t border-amber-100">
-                    <p class="text-[10px] font-bold text-amber-400 uppercase tracking-widest mb-1">🏆 Meilleur Score Mondial</p>
-                    <p id="best-sens" class="text-amber-700 font-bold font-mono italic">Chargement...</p>
+                <div class="bg-amber-50 rounded-xl p-3 text-center border border-amber-100">
+                    <p class="text-[10px] font-bold text-amber-400 uppercase">🏆 Meilleur Score</p>
+                    <p class="text-sm font-bold text-amber-700" id="best-sens">Aucun record</p>
                 </div>
             </div>
         </div>
@@ -97,39 +99,13 @@
     </main>
 
     <script>
-        // Ton URL Web App Google Script
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzovlnRuIQN3kH1hxK7OtChIn9zzYTx4v79e4k_cPMXdGo8KfAhysGfljg5v2-Qt3vmSw/exec";
-
-        async function fetchGlobalRecords() {
-            try {
-                const response = await fetch(SCRIPT_URL);
-                const data = await response.json();
-
-                // Recherche du record pour chaque jeu dans la liste reçue
-                const gramRecord = data.find(item => item.jeu === "Grammaire");
-                const sensRecord = data.find(item => item.jeu === "Sens");
-
-                if (gramRecord) {
-                    document.getElementById('best-grammaire').innerText = `${gramRecord.pseudo} : ${gramRecord.score} pts`;
-                } else {
-                    document.getElementById('best-grammaire').innerText = "Aucun record";
-                }
-
-                if (sensRecord) {
-                    document.getElementById('best-sens').innerText = `${sensRecord.pseudo} : ${sensRecord.score} pts`;
-                } else {
-                    document.getElementById('best-sens').innerText = "Aucun record";
-                }
-
-            } catch (error) {
-                console.error("Erreur API :", error);
-                document.getElementById('best-grammaire').innerText = "Erreur réseau";
-                document.getElementById('best-sens').innerText = "Erreur réseau";
-            }
+        function updateScores() {
+            const gRecord = JSON.parse(localStorage.getItem('recordGrammaire'));
+            const sRecord = JSON.parse(localStorage.getItem('recordSens'));
+            if(gRecord) document.getElementById('best-grammaire').innerText = gRecord.pseudo + " : " + gRecord.score;
+            if(sRecord) document.getElementById('best-sens').innerText = sRecord.pseudo + " : " + sRecord.score;
         }
-
-        // Charger les scores mondiaux dès que la page est prête
-        window.addEventListener('DOMContentLoaded', fetchGlobalRecords);
+        window.onload = updateScores;
     </script>
 </body>
 </html>
