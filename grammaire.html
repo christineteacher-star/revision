@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Maître des Classes | Académie</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        body { font-family: 'Quicksand', sans-serif; background-color: #f0f7ff; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 85px; background: white; display: flex; flex-direction: column; align-items: center; padding: 25px 0; border-right: 1px solid #eef2f6; }
+        .logo-dragon { width: 48px; height: 48px; background: #a855f7; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; margin-bottom: 40px; cursor:pointer; }
+        .main-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .game-card { background: white; border-radius: 35px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 700px; text-align: center; }
+        .grid-buttons { display: grid; grid-template-cols: repeat(2, 1fr); gap: 10px; }
+        @media (min-width: 640px) { .grid-buttons { grid-template-columns: repeat(3, 1fr); } }
+        .btn-answer { background: #f8fafc; padding: 12px 8px; border-radius: 18px; font-weight: 700; transition: 0.2s; cursor: pointer; border: 2px solid #e2e8f0; color: #475569; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; }
+        .btn-answer:hover { background: #a855f7; color: white; border-color: #a855f7; transform: translateY(-2px); }
+        .correct { background: #10b981 !important; color: white !important; border-color: #10b981 !important; }
+        .wrong { background: #ef4444 !important; color: white !important; border-color: #ef4444 !important; animation: shake 0.3s; }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="logo-dragon" onclick="window.location.href='index.html'"><i class="fas fa-dragon"></i></div>
+        <div class="text-slate-300 hover:text-purple-500 cursor-pointer" onclick="window.location.href='index.html'"><i class="fas fa-home text-2xl"></i></div>
+    </nav>
+    <main class="main-content">
+        <div class="game-card">
+            <div id="game-zone">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="text-left"><p class="text-slate-400 text-xs font-bold uppercase">Points</p><p class="text-3xl font-black text-slate-800" id="score">0</p></div>
+                    <div class="w-1/2 h-2 bg-slate-100 rounded-full overflow-hidden"><div id="timer" class="h-full bg-purple-500" style="width: 100%"></div></div>
+                </div>
+                <div class="mb-8">
+                    <p class="text-purple-500 font-bold uppercase tracking-widest text-xs mb-1">Classe grammaticale de :</p>
+                    <h1 id="word-display" class="text-5xl font-black text-slate-800 uppercase py-4">---</h1>
+                </div>
+                <div class="grid-buttons">
+                    <div class="btn-answer" onclick="check('Nom')">NOM</div>
+                    <div class="btn-answer" onclick="check('Verbe')">VERBE</div>
+                    <div class="btn-answer" onclick="check('Adjectif')">ADJECTIF</div>
+                    <div class="btn-answer" onclick="check('Adverbe')">ADVERBE</div>
+                    <div class="btn-answer" onclick="check('Pronom')">PRONOM</div>
+                    <div class="btn-answer" onclick="check('Déterminant Démonstratif')">DÉT. DÉMONSTRATIF</div>
+                    <div class="btn-answer" onclick="check('Conjonction')">CONJONCTION</div>
+                </div>
+            </div>
+            <div id="result-zone" class="hidden">
+                <i class="fas fa-award text-5xl text-purple-500 mb-4"></i>
+                <h2 class="text-3xl font-black text-slate-800 mb-2">Défi terminé !</h2>
+                <p class="text-slate-500 mb-8 text-xl">Score : <span id="final-score" class="text-purple-600 font-bold">0</span></p>
+                <button onclick="location.reload()" class="w-full bg-purple-500 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-purple-600 transition">RECOMMENCER</button>
+            </div>
+        </div>
+    </main>
+    <script>
+        const mots = [
+            {w: "Cette", c: "Déterminant Démonstratif"}, {w: "Ces", c: "Déterminant Démonstratif"},
+            {w: "Il", c: "Pronom"}, {w: "Nous", c: "Pronom"}, {w: "Celui-ci", c: "Pronom"},
+            {w: "Mais", c: "Conjonction"}, {w: "Donc", c: "Conjonction"}, {w: "Car", c: "Conjonction"},
+            {w: "Ch
