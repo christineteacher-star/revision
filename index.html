@@ -84,4 +84,107 @@
     <nav class="sidebar">
         <div class="logo-dragon"><i class="fas fa-dragon"></i></div>
         <div class="nav-icon active"><i class="fas fa-home"></i></div>
-        <div class="nav-icon"><i class="
+        <div class="nav-icon"><i class="fas fa-book-open"></i></div>
+        <div class="nav-icon"><i class="fas fa-gamepad"></i></div>
+        <div class="nav-icon"><i class="fas fa-trophy"></i></div>
+    </nav>
+
+    <main class="main-content">
+        
+        <div class="dashboard-left">
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-bold text-slate-800">Dashboard</h1>
+                <div class="flex gap-4">
+                    <div class="bg-white px-4 py-2 rounded-full shadow-sm flex items-center gap-2">
+                        <i class="fas fa-gem text-sky-400"></i> <span class="font-bold">166</span>
+                    </div>
+                    <div class="bg-white px-4 py-2 rounded-full shadow-sm flex items-center gap-2">
+                        <i class="fas fa-coins text-yellow-400"></i> <span class="font-bold">2,381</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <div class="stat-box bg-sky-50 text-sky-700 font-bold">Missions: 5%</div>
+                <div class="stat-box bg-purple-50 text-purple-700 font-bold">Leçons: 21/23</div>
+                <div class="stat-box bg-pink-50 text-pink-700 font-bold">Vol: 120/111</div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div class="card">
+                    <h3 class="font-bold mb-4">Épreuve des Crocs</h3>
+                    <div class="grid grid-cols-4 gap-2">
+                        <div class="h-10 bg-sky-100 rounded-lg"></div>
+                        <div class="h-10 bg-sky-100 rounded-lg"></div>
+                        <div class="h-10 bg-slate-50 rounded-lg"></div>
+                        <div class="h-10 bg-slate-50 rounded-lg"></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="font-bold mb-2 text-sky-600">Quiz du Jour</h3>
+                    <p class="text-sm text-slate-500 mb-4">Les Dragons de France</p>
+                    <button class="w-full bg-sky-500 text-white py-2 rounded-xl font-bold">JOUE</button>
+                </div>
+            </div>
+
+            <div class="flex gap-4 mt-auto">
+                <div class="class-btn bg-orange-100 text-orange-700"><i class="fas fa-graduation-cap text-2xl"></i><span class="font-bold">BREVET</span></div>
+                <div class="class-btn bg-emerald-100 text-emerald-700"><i class="fas fa-leaf text-2xl"></i><span class="font-bold">SECONDE</span></div>
+                <div class="class-btn bg-blue-100 text-blue-700"><i class="fas fa-university text-2xl"></i><span class="font-bold">PREMIÈRE</span></div>
+            </div>
+        </div>
+
+        <div class="dashboard-right">
+            <div class="podium-container shadow-xl">
+                <h2 class="text-xl font-bold text-slate-800 text-center">Tableau d'Honneur</h2>
+                
+                <div class="podium-visual" id="podium-ui">
+                    </div>
+
+                <div class="space-y-3 overflow-y-auto pr-2" id="rank-list">
+                    </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const eleves = [
+            { nom: "Brody Bennet", score: 5299, trend: 'up' },
+            { nom: "Jeck Hlotior", score: 4709, trend: 'up' },
+            { nom: "Tivery Bell", score: 3739, trend: 'down' },
+            { nom: "Mila Rose", score: 2850, trend: 'up' }
+        ];
+
+        function render() {
+            const podium = document.getElementById('podium-ui');
+            const list = document.getElementById('rank-list');
+
+            // Podium (Top 3)
+            const top3 = [eleves[1], eleves[0], eleves[2]];
+            const bars = ['bar-2', 'bar-1', 'bar-3'];
+            const labels = ['#2', '#1', '#3'];
+
+            podium.innerHTML = top3.map((e, i) => `
+                <div class="podium-bar ${bars[i]}">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${e.nom}" class="podium-avatar">
+                    <span class="text-[10px] font-bold absolute -top-12 text-slate-400 text-center w-full">${e.nom}</span>
+                    ${labels[i]}
+                </div>
+            `).join('');
+
+            // Liste
+            list.innerHTML = eleves.map((e, i) => `
+                <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl border border-white">
+                    <span class="text-xs font-bold text-slate-300 w-5">#${i + 1}</span>
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${e.nom}" class="w-10 h-10 rounded-full bg-white shadow-inner">
+                    <div class="flex-1">
+                        <p class="text-xs font-bold text-slate-700">${e.nom}</p>
+                        <p class="text-[10px] text-sky-500 font-bold">${e.score} pts</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+        window.onload = render;
+    </script>
+</body>
+</html>
