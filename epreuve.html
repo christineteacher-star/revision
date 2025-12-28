@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Épreuve des Crocs | Conjugaison</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        body { font-family: 'Quicksand', sans-serif; background: #0f172a; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
+        .game-card { background: #1e293b; padding: 40px; border-radius: 40px; border: 4px solid #334155; text-align: center; width: 90%; max-width: 500px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .btn-answer { background: #334155; padding: 15px; border-radius: 20px; font-weight: bold; transition: 0.2s; cursor: pointer; border: 2px solid transparent; }
+        .btn-answer:hover { background: #0ea5e9; border-color: white; transform: translateY(-3px); }
+        .timer-bar { height: 10px; background: #0ea5e9; width: 100%; border-radius: 5px; margin-top: 20px; transition: width 0.1s linear; }
+    </style>
+</head>
+<body>
+
+    <div class="game-card">
+        <div class="flex justify-between items-center mb-8">
+            <button onclick="window.location.href='index.html'" class="text-slate-400 hover:text-white"><i class="fas fa-arrow-left"></i> Retour</button>
+            <div class="text-xl font-bold text-orange-500"><i class="fas fa-fire"></i> Score: <span id="score">0</span></div>
+        </div>
+
+        <div id="game-zone">
+            <h1 class="text-3xl font-bold mb-2">Épreuve des Crocs</h1>
+            <p class="text-slate-400 mb-8">Conjugue le verbe au présent !</p>
+
+            <div class="bg-slate-800 p-8 rounded-3xl mb-8">
+                <div id="pronoun" class="text-2xl text-sky-400 font-bold uppercase tracking-widest">---</div>
+                <div id="verb" class="text-5xl font-black my-2">PRÊT ?</div>
+                <div id="tense" class="text-sm text-slate-500 uppercase">Présent de l'indicatif</div>
+            </div>
+
+            <div id="options" class="grid grid-cols-2 gap-4">
+                </div>
+            
+            <div class="timer-bar" id="timer"></div>
+        </div>
+
+        <div id="result-zone" class="hidden">
+            <h2 class="text-4xl font-bold mb-4">Temps écoulé !</h2>
+            <p class="text-xl mb-8">Ton score final est de <span id="final-score" class="text-sky-400 font-bold">0</span></p>
+            <button onclick="location.reload()" class="bg-sky-500 w-full py-4 rounded-2xl font-bold text-xl shadow-lg hover:bg-sky-600">RECOMMENCER</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { v: "Manger", p: "Nous", r: "mangeons", f: ["mangeons", "mangeont", "mangons", "mangez"] },
+            { v: "Finir", p: "Tu", r: "finis", f: ["finit", "finis", "finie", "finies"] },
+            { v: "Prendre", p: "Ils", r: "prennent", f: ["prennent", "prenent", "prendront", "prendent"] },
+            { v: "Aller", p: "Je", r: "vais", f: ["vais", "vait", "vas", "vait"] },
+            { v: "Être", p: "Vous", r: "êtes", f: ["êtes", "êtes", "etes", "est"] },
+            { v: "Avoir", p: "Ils", r: "ont", f: ["ont", "on", "onts", "font"] },
+            { v: "Vouloir", p: "On", r: "veut", f: ["veut", "veu", "veuts", "veulent"] },
+            { v: "Faire", p: "Vous", r: "faites", f: ["faisez", "faites", "font", "faisons"] }
+        ];
+
+        let score = 0;
+        let timeLeft = 100;
+        let timerId;
+
+        function startGame() {
+            nextQuestion();
+            timerId = setInterval(() => {
+                timeLeft -= 0.5;
+                document.getElementById('timer').style.width = timeLeft + "%";
+                if (timeLeft <= 0) endGame();
+            }, 100);
+        }
+
+        function nextQuestion() {
+            const q = questions[Math.floor(Math.random() * questions.length)];
+            document.getElementById('verb').innerText = q.v;
+            document.getElementById('pronoun').innerText = q.p;
+            
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = "";
+            
+            // Mélanger les réponses
+            const shuffledOptions = q.f.sort(() => Math.random() - 0.5);
+            
+            shuffledOptions.forEach(opt => {
+                const btn = document.createElement('div');
+                btn.className = "btn-answer";
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(opt, q.r);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(chosen, correct) {
+            if (chosen === correct) {
+                score += 10;
+                timeLeft = Math.min(timeLeft + 15, 100); // Gagne du temps si juste
+                document.getElementById('score').innerText = score;
+                nextQuestion();
+            } else {
+                timeLeft -= 20; // Perd du temps si faux
+            }
+        }
+
+        function endGame() {
+            clearInterval(timerId);
+            document.getElementById('game-zone').classList.add('hidden');
+            document.getElementById('result-zone').classList.remove('hidden');
+            document.getElementById('final-score').innerText = score;
+        }
+
+        setTimeout(startGame, 1500);
+    </script>
+</body>
+</html>
