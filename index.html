@@ -9,35 +9,24 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
         body { font-family: 'Quicksand', sans-serif; background-color: #f8fbff; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        
-        /* 3 Colonnes */
         .sidebar { width: 90px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; align-items: center; padding: 30px 0; }
         .main-content { flex: 1; padding: 40px; display: flex; gap: 30px; overflow: hidden; }
         .games-section { flex: 2; display: flex; flex-direction: column; gap: 20px; }
         .leaderboard-section { flex: 1; background: white; border-radius: 35px; padding: 25px; display: flex; flex-direction: column; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
-        
-        /* Podiums et Cartes */
         .card { background: white; border-radius: 30px; padding: 20px; border: 1px solid #f1f5f9; position: relative; }
-        .podium-bar { margin-top: 12px; padding: 10px; border-radius: 18px; text-align: center; font-weight: 700; font-size: 0.9rem; }
-        .bg-gram { background: #f5f3ff; color: #7c3aed; border: 1px solid #ddd6fe; }
-        .bg-sens { background: #fffbeb; color: #d97706; border: 1px solid #fef3c7; }
-        
+        .podium-bar { margin-top: 10px; padding: 8px; border-radius: 15px; text-align: center; font-weight: 700; font-size: 0.85rem; background: #f5f3ff; color: #7c3aed; }
         .btn-jouer { background: #0ea5e9; color: white; padding: 12px; border-radius: 15px; font-weight: 800; width: 100%; margin-top: 10px; cursor: pointer; border: none; }
-        .class-img-card { position: relative; border-radius: 25px; overflow: hidden; height: 135px; flex: 1; cursor: pointer; }
-        .class-img-card img { width: 100%; height: 100%; object-fit: cover; }
-        .class-title { position: absolute; bottom: 12px; left: 15px; color: white; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-
-        /* Lignes Tableau avec Avatars */
         .honor-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f8fafc; }
         .avatar-circle { width: 40px; height: 40px; background: #e0f2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0ea5e9; font-size: 1.3rem; }
+        .class-img-card { position: relative; border-radius: 25px; overflow: hidden; height: 130px; flex: 1; cursor: pointer; }
+        .class-img-card img { width: 100%; height: 100%; object-fit: cover; }
+        .class-title { position: absolute; bottom: 12px; left: 15px; color: white; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
     </style>
 </head>
 <body>
 
     <nav class="sidebar">
-        <div class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white mb-10 shadow-lg">
-            <i class="fas fa-dragon text-2xl"></i>
-        </div>
+        <div class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white mb-10 shadow-lg"><i class="fas fa-dragon text-2xl"></i></div>
         <div class="text-sky-500 bg-sky-50 p-4 rounded-2xl cursor-pointer" onclick="location.reload()"><i class="fas fa-home text-2xl"></i></div>
     </nav>
 
@@ -50,26 +39,20 @@
                     <p class="text-slate-400 text-xs">Monte-Cristo Ch.1</p>
                     <button class="btn-jouer" onclick="window.location.href='quiz.html'">JOUER</button>
                 </div>
-                <div class="card flex flex-col items-center justify-center bg-emerald-50/40 border-emerald-100 cursor-pointer" onclick="window.location.href='epreuve.html'">
-                    <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white mb-2 shadow-md"><i class="fas fa-fire text-lg"></i></div>
-                    <h3 class="font-bold text-slate-700">Épreuve des Crocs</h3>
+                <div class="card flex flex-col items-center justify-center bg-emerald-50/40 border-emerald-100">
+                    <i class="fas fa-fire text-orange-500 text-2xl mb-2"></i>
+                    <h3 class="font-bold text-slate-700 text-sm">Épreuve des Crocs</h3>
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-5">
-                <div class="card border-l-8 border-purple-500 cursor-pointer" onclick="window.location.href='grammaire.html'">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold text-xs">A</div>
-                        <h3 class="font-bold text-slate-800">Maître des Classes</h3>
-                    </div>
-                    <div class="podium-bar bg-gram"><p id="best-grammaire" class="italic">Chargement...</p></div>
+                <div class="card border-l-8 border-purple-500">
+                    <h3 class="font-bold text-slate-800 text-sm">Maître des Classes</h3>
+                    <div class="podium-bar" id="best-gram">Chargement...</div>
                 </div>
-                <div class="card border-l-8 border-amber-500 cursor-pointer" onclick="window.location.href='sens.html'">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold text-xs"><i class="fas fa-eye"></i></div>
-                        <h3 class="font-bold text-slate-800">L'Œil du Dragon</h3>
-                    </div>
-                    <div class="podium-bar bg-sens"><p id="best-sens" class="italic">Chargement...</p></div>
+                <div class="card border-l-8 border-amber-500">
+                    <h3 class="font-bold text-slate-800 text-sm">L'Œil du Dragon</h3>
+                    <div class="podium-bar" style="background:#fffbeb; color:#d97706" id="best-sens">Chargement...</div>
                 </div>
             </div>
 
@@ -82,8 +65,8 @@
 
         <section class="leaderboard-section">
             <h2 class="text-xl font-black text-slate-800 text-center mb-6">Tableau d'Honneur</h2>
-            <div id="quiz-leaderboard" class="overflow-y-auto pr-2 flex-1">
-                <p class="text-center text-slate-400 py-10 italic">Lecture de l'Excel...</p>
+            <div id="quiz-leaderboard" class="overflow-y-auto flex-1 pr-2">
+                <p class="text-center text-slate-400 py-10 italic">Connexion au Quiz...</p>
             </div>
         </section>
     </main>
@@ -91,39 +74,33 @@
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzovlnRuIQN3kH1hxK7OtChIn9zzYTx4v79e4k_cPMXdGo8KfAhysGfljg5v2-Qt3vmSw/exec";
 
-        async function updateDashboard() {
+        async function updateData() {
             try {
                 const response = await fetch(SCRIPT_URL);
                 const data = await response.json();
-
-                // 1. Podiums (On cherche dans la colonne 'sujet')
+                
+                // 1. Podiums Mondiaux (Filtre par sujet)
                 const gRec = data.find(i => i.sujet && i.sujet.includes("Grammaire"));
                 const sRec = data.find(i => i.sujet && i.sujet.includes("Sens"));
-                document.getElementById('best-grammaire').innerText = gRec ? `🏆 ${gRec.nom} : ${gRec.score}` : "Record : --";
+                document.getElementById('best-gram').innerText = gRec ? `🏆 ${gRec.nom} : ${gRec.score}` : "Record : --";
                 document.getElementById('best-sens').innerText = sRec ? `🏆 ${sRec.nom} : ${sRec.score}` : "Record : --";
 
                 // 2. Tableau d'Honneur (Filtré sur Monte-Cristo)
                 const container = document.getElementById('quiz-leaderboard');
                 container.innerHTML = "";
+                
+                const entries = data.filter(i => i.sujet && i.sujet.includes("Monte-Cristo"))
+                                    .sort((a,b) => b.score - a.score);
 
-                // FILTRE : On prend tout ce qui contient "Monte-Cristo"
-                const monteCristoEntries = data.filter(i => i.sujet && i.sujet.includes("Monte-Cristo"));
-
-                if (monteCristoEntries.length === 0) {
-                    container.innerHTML = "<p class='text-center text-slate-400 py-10 text-xs'>Aucun score Monte-Cristo.</p>";
-                    return;
-                }
-
-                // Tri par score et affichage avec avatars
-                monteCristoEntries.sort((a,b) => b.score - a.score).forEach((player, index) => {
+                entries.forEach((player, index) => {
                     const row = document.createElement('div');
                     row.className = "honor-row";
-                    let medal = index === 0 ? "text-amber-400" : (index === 1 ? "text-slate-400" : (index === 2 ? "text-orange-400" : "text-slate-200"));
+                    let medal = index === 0 ? "text-amber-400" : (index === 1 ? "text-slate-400" : (index === 2 ? "text-orange-400" : "text-transparent"));
                     row.innerHTML = `
                         <div class="avatar-circle"><i class="fas fa-user-circle"></i></div>
                         <div class="flex-1">
-                            <p class="font-bold text-slate-700 text-sm leading-none">${player.nom}</p>
-                            <p class="text-[9px] text-sky-500 font-bold uppercase mt-1">Quiz Master</p>
+                            <p class="font-bold text-slate-700 text-sm">${player.nom}</p>
+                            <p class="text-[9px] text-sky-500 font-bold uppercase">${player.sujet}</p>
                         </div>
                         <div class="text-right">
                             <p class="font-black text-slate-800 text-sm">${player.score}</p>
@@ -131,9 +108,9 @@
                         </div>`;
                     container.appendChild(row);
                 });
-            } catch (error) { document.getElementById('quiz-leaderboard').innerHTML = "Erreur de connexion"; }
+            } catch (e) { document.getElementById('quiz-leaderboard').innerHTML = "Erreur de connexion"; }
         }
-        window.onload = updateDashboard;
+        window.onload = updateData;
     </script>
 </body>
 </html>
