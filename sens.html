@@ -32,38 +32,55 @@
                     <div class="text-left"><p class="text-slate-400 text-xs font-bold uppercase">Points</p><p class="text-4xl font-black text-slate-800" id="score">0</p></div>
                     <div class="w-1/2 h-3 bg-slate-100 rounded-full overflow-hidden"><div id="timer" class="h-full bg-orange-500" style="width: 100%"></div></div>
                 </div>
-                <div class="mb-12"><p class="text-orange-500 font-bold uppercase text-sm mb-4">Cette expression est au sens...</p><h1 id="phrase-display" class="text-3xl font-bold text-slate-700 italic px-4">---</h1></div>
+                <div class="mb-12"><h1 id="phrase-display" class="text-3xl font-bold text-slate-700 italic px-4">...</h1></div>
                 <div class="grid grid-cols-2 gap-6">
                     <div class="btn-choice" onclick="check('Propre')">PROPRE</div>
                     <div class="btn-choice" onclick="check('Figuré')">FIGURÉ</div>
                 </div>
             </div>
             <div id="result-zone" class="hidden">
-                <i class="fas fa-eye text-6xl text-orange-500 mb-6"></i>
                 <h2 class="text-4xl font-black text-slate-800 mb-2">Terminé !</h2>
                 <p class="text-slate-500 mb-8 text-xl">Score : <span id="final-score" class="text-orange-600 font-bold">0</span></p>
-                <button onclick="location.reload()" class="w-full bg-orange-500 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-orange-600 transition">RECOMMENCER</button>
+                <button onclick="location.reload()" class="w-full bg-orange-500 text-white py-4 rounded-2xl font-bold">RECOMMENCER</button>
             </div>
         </div>
     </main>
     <script>
-        const banque = [
+        const banquePhrases = [
             {p: "Il a dévoré son livre.", s: "Figuré"}, {p: "Le lion dévore sa proie.", s: "Propre"},
             {p: "J'ai un poids sur le cœur.", s: "Figuré"}, {p: "Il a jeté l'argent par les fenêtres.", s: "Figuré"},
-            {p: "Elle est tombée de sa chaise.", s: "Propre"}, {p: "Il a le cœur sur la main.", s: "Figuré"}
+            {p: "Elle est tombée de sa chaise.", s: "Propre"}, {p: "Il a le cœur sur la main.", s: "Figuré"},
+            {p: "Cette nouvelle m'a glacé le sang.", s: "Figuré"}, {p: "Il fait fondre du chocolat.", s: "Propre"},
+            {p: "Il a creusé un trou.", s: "Propre"}, {p: "Il se creuse la tête.", s: "Figuré"},
+            {p: "Elle a une langue de vipère.", s: "Figuré"}, {p: "Le serpent tire la langue.", s: "Propre"},
+            {p: "Il brise le silence.", s: "Figuré"}, {p: "Il brise son verre.", s: "Propre"}
         ];
-        let score = 0, timeLeft = 60, currentIdx = -1, active = true;
+
+        let score = 0, timeLeft = 60, active = true;
+        let fileAttente = [];
+
         function next() {
-            active = true; currentIdx = Math.floor(Math.random() * banque.length);
-            document.getElementById('phrase-display').innerText = `"${banque[currentIdx].p}"`;
+            if (fileAttente.length === 0) fileAttente = [...banquePhrases].sort(() => Math.random() - 0.5);
+            let q = fileAttente.pop();
+            currentQ = q;
+            document.getElementById('phrase-display').innerText = `"${q.p}"`;
             document.querySelectorAll('.btn-choice').forEach(b => b.className = "btn-choice");
+            active = true;
         }
+
         function check(choice) {
             if(!active) return; active = false;
             const btn = Array.from(document.querySelectorAll('.btn-choice')).find(b => b.innerText === choice.toUpperCase());
-            if(choice === banque[currentIdx].s) { btn.classList.add('correct'); score += 20; document.getElementById('score').innerText = score; setTimeout(next, 400); }
-            else { btn.classList.add('wrong'); setTimeout(() => { active = true; next(); }, 600); }
+            if(choice === currentQ.s) {
+                btn.classList.add('correct'); score += 20;
+                document.getElementById('score').innerText = score;
+                setTimeout(next, 300);
+            } else {
+                btn.classList.add('wrong');
+                setTimeout(() => { active = true; next(); }, 600);
+            }
         }
+
         const timer = setInterval(() => { timeLeft -= 0.1; document.getElementById('timer').style.width = (timeLeft/60*100) + "%"; if(timeLeft <= 0) { clearInterval(timer); document.getElementById('game-zone').classList.add('hidden'); document.getElementById('result-zone').classList.remove('hidden'); document.getElementById('final-score').innerText = score; } }, 100);
         next();
     </script>
