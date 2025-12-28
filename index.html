@@ -21,31 +21,30 @@
 
         .card { background: white; border-radius: 35px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
 
-        /* PODIUM CORRIGÉ */
+        /* PODIUM */
         .podium-container { background: white; border-radius: 35px; padding: 25px; height: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.04); display: flex; flex-direction: column; }
-        .podium-visual { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin-top: 120px; margin-bottom: 30px; }
+        .podium-visual { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin-top: 130px; margin-bottom: 30px; }
         
         .podium-bar { width: 85px; border-radius: 20px 20px 8px 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 15px; font-weight: 800; position: relative; }
         .bar-1 { height: 140px; background: #fef3c7; border: 2px solid #fbbf24; order: 2; }
         .bar-2 { height: 100px; background: #f1f5f9; border: 2px solid #cbd5e1; order: 1; }
         .bar-3 { height: 80px; background: #fff1f2; border: 2px solid #fda4af; order: 3; }
         
-        .podium-avatar { position: absolute; top: -60px; width: 65px; height: 65px; border-radius: 50%; border: 3px solid white; background: #f8fafc; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .podium-avatar { position: absolute; top: -65px; width: 70px; height: 70px; border-radius: 50%; border: 4px solid white; background: #f8fafc; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
-        /* NOM AGRANDI ET MONTÉ PLUS HAUT */
+        /* NOM TRÈS HAUT ET GROS */
         .podium-name {
             position: absolute; 
-            top: -100px; /* Augmenté pour ne plus toucher l'avatar */
-            width: 120px; 
+            top: -110px; 
+            width: 130px; 
             text-align: center; 
-            font-size: 14px; /* Agrandit la taille du nom */
+            font-size: 15px; 
             font-weight: 800; 
             color: #1e293b; 
-            white-space: nowrap;
+            text-transform: uppercase;
         }
 
         .class-img-card { flex: 1; height: 150px; border-radius: 30px; position: relative; overflow: hidden; transition: 0.3s; cursor: pointer; box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
-        .class-img-card:hover { transform: scale(1.03); }
         .class-img-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); }
         .class-title { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: 800; font-size: 1.2rem; text-transform: uppercase; }
     </style>
@@ -92,29 +91,37 @@
             <div class="podium-container">
                 <h2 class="text-xl font-bold text-slate-800 text-center mb-10">Tableau d'Honneur</h2>
                 <div id="podium-ui" class="podium-visual"></div>
-                <div id="rank-list" class="space-y-3 overflow-y-auto pr-2 mt-4">
-                    </div>
+                <div id="rank-list" class="space-y-3 overflow-y-auto pr-2 mt-4"></div>
             </div>
         </div>
     </main>
 
     <script>
-        const SCRIPT_URL = "VOTRE_URL_ICI_FINISSANT_PAR_EXEC"; 
+        // --- COLLE TON LIEN ICI ---
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzovlnRuIQN3kH1hxK7OtChIn9zzYTx4v79e4k_cPMXdGo8KfAhysGfljg5v2-Qt3vmSw/exec"; 
 
         async function loadLeaderboard() {
             try {
                 const response = await fetch(SCRIPT_URL);
                 const data = await response.json();
-                data.sort((a, b) => b.score - a.score);
-                render(data);
+                if(data && data.length > 0) {
+                    data.sort((a, b) => b.score - a.score);
+                    render(data);
+                }
             } catch (error) {
-                console.log("Erreur");
+                console.log("Erreur de chargement");
             }
         }
 
         function render(eleves) {
             const podiumUI = document.getElementById('podium-ui');
             const listUI = document.getElementById('rank-list');
+            
+            // On vide avant de remplir
+            podiumUI.innerHTML = "";
+            listUI.innerHTML = "";
+
+            // Podium
             const top3 = [eleves[1], eleves[0], eleves[2]];
             const bars = ['bar-2', 'bar-1', 'bar-3'];
             const labels = ['#2', '#1', '#3'];
@@ -127,6 +134,7 @@
                 </div>
             ` : '').join('');
 
+            // Liste
             listUI.innerHTML = eleves.map((e, i) => `
                 <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl border border-white">
                     <span class="text-xs font-bold text-slate-300 w-5">#${i + 1}</span>
