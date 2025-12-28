@@ -3,109 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Académie</title>
+    <title>Dragon Dashboard | Académie</title>
+    <link rel="icon" href="https://img.icons8.com/color/48/dragon.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
-        body { font-family: 'Quicksand', sans-serif; background-color: #f0f7ff; margin: 0; display: flex; height: 100vh; }
-        .sidebar { width: 100px; background: white; display: flex; flex-direction: column; align-items: center; padding: 30px 0; border-right: 1px solid #eef2f6; }
-        .main-content { flex: 1; padding: 40px; display: flex; flex-direction: column; }
-        .card { border-radius: 24px; transition: all 0.3s ease; }
-        .class-img-card { position: relative; border-radius: 20px; overflow: hidden; height: 180px; flex: 1; cursor: pointer; }
-        .class-img-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
-        .class-img-card:hover img { transform: scale(1.1); }
-        .class-title { position: absolute; bottom: 20px; left: 20px; color: white; font-weight: 800; font-size: 1.2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        
+        body { font-family: 'Quicksand', sans-serif; background-color: #f0f7ff; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+
+        .sidebar { width: 85px; background: white; display: flex; flex-direction: column; align-items: center; padding: 25px 0; border-right: 1px solid #eef2f6; }
+        .logo-dragon { width: 48px; height: 48px; background: #0ea5e9; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; margin-bottom: 40px; }
+
+        .main-content { flex: 1; display: flex; padding: 30px; gap: 30px; overflow-y: auto; }
+        .dashboard-left { flex: 2; display: flex; flex-direction: column; gap: 25px; }
+        .dashboard-right { width: 380px; display: flex; flex-direction: column; }
+
+        .card { background: white; border-radius: 35px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
+
+        /* PODIUM */
+        .podium-container { background: white; border-radius: 35px; padding: 25px; height: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.04); display: flex; flex-direction: column; }
+        .podium-visual { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin-top: 130px; margin-bottom: 30px; }
+        
+        .podium-bar { width: 85px; border-radius: 20px 20px 8px 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 15px; font-weight: 800; position: relative; }
+        .bar-1 { height: 140px; background: #fef3c7; border: 2px solid #fbbf24; order: 2; }
+        .bar-2 { height: 100px; background: #f1f5f9; border: 2px solid #cbd5e1; order: 1; }
+        .bar-3 { height: 80px; background: #fff1f2; border: 2px solid #fda4af; order: 3; }
+        
+        .podium-avatar { position: absolute; top: -65px; width: 70px; height: 70px; border-radius: 50%; border: 4px solid white; background: #f8fafc; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        /* NOM TRÈS HAUT ET GROS */
+        .podium-name {
+            position: absolute; 
+            top: -110px; 
+            width: 130px; 
+            text-align: center; 
+            font-size: 15px; 
+            font-weight: 800; 
+            color: #1e293b; 
+            text-transform: uppercase;
+        }
+
+        .class-img-card { flex: 1; height: 150px; border-radius: 30px; position: relative; overflow: hidden; transition: 0.3s; cursor: pointer; box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+        .class-img-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); }
+        .class-title { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: 800; font-size: 1.2rem; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
     <nav class="sidebar">
-        <div class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white mb-10 shadow-lg shadow-sky-200">
-            <i class="fas fa-dragon text-2xl"></i>
-        </div>
-        <div class="text-sky-500 bg-sky-50 p-4 rounded-2xl">
-            <i class="fas fa-home text-2xl"></i>
-        </div>
+        <div class="logo-dragon"><i class="fas fa-dragon"></i></div>
+        <div class="text-sky-500 mb-6 cursor-pointer"><i class="fas fa-home text-2xl"></i></div>
     </nav>
 
     <main class="main-content">
-        <h1 class="text-4xl font-black text-slate-800 mb-8">Dashboard Académie</h1>
-
-        <div class="grid grid-cols-2 gap-6 mb-6">
-            <div class="card bg-white p-6 shadow-sm border border-slate-100 hover:shadow-md cursor-pointer flex items-center gap-5" onclick="window.location.href='quiz.html'">
-                <div class="w-16 h-16 bg-sky-100 rounded-2xl flex items-center justify-center text-sky-600">
-                    <i class="fas fa-rocket text-2xl"></i>
+        <div class="dashboard-left">
+            <h1 class="text-3xl font-bold text-slate-800">Dashboard Académie</h1>
+            <div class="grid grid-cols-2 gap-6">
+                <div class="card">
+                    <h3 class="font-bold text-sky-600 mb-2">Quiz du Jour</h3>
+                    <p class="text-slate-500 text-sm mb-4">Réponds au défi !</p>
+                    <button class="w-full bg-sky-500 text-white py-3 rounded-2xl font-bold hover:bg-sky-600 transition">JOUER</button>
                 </div>
-                <div>
-                    <h3 class="font-bold text-slate-800 text-lg">Quiz du Jour</h3>
-                    <p class="text-slate-500 text-sm">Réponds au défi !</p>
+                <div class="card bg-emerald-50 flex flex-col items-center justify-center">
+                    <i class="fas fa-fire text-4xl text-orange-500 mb-2"></i>
+                    <p class="font-bold text-slate-700">Épreuve des Crocs</p>
                 </div>
             </div>
 
-            <div class="card bg-white p-6 shadow-sm border border-slate-100 hover:shadow-md cursor-pointer flex items-center gap-5" onclick="window.location.href='epreuve.html'">
-                <div class="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center text-orange-600">
-                    <i class="fas fa-fire text-2xl"></i>
+            <div class="flex gap-4 mt-auto">
+                <div class="class-img-card" onclick="window.location.href='brevet.html'">
+                    <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500">
+                    <div class="class-title">BREVET</div>
                 </div>
-                <div>
-                    <h3 class="font-bold text-slate-800 text-lg">Épreuve des Crocs</h3>
-                    <p class="text-slate-500 text-sm">Conjugaison chrono</p>
+                <div class="class-img-card" onclick="window.location.href='seconde.html'">
+                    <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=500">
+                    <div class="class-title">SECONDE</div>
+                </div>
+                <div class="class-img-card" onclick="window.location.href='premiere.html'">
+                    <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=500">
+                    <div class="class-title">PREMIÈRE</div>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-6 mb-10">
-            <div class="card bg-white border-l-8 border-purple-500 p-6 shadow-sm cursor-pointer hover:bg-purple-50" onclick="window.location.href='grammaire.html'">
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600">
-                        <i class="fas fa-font"></i>
-                    </div>
-                    <h3 class="font-bold text-slate-800">Maître des Classes</h3>
-                </div>
-                <div class="bg-purple-50 rounded-xl p-3 text-center border border-purple-100">
-                    <p class="text-[10px] font-bold text-purple-400 uppercase">🏆 Meilleur Score</p>
-                    <p class="text-sm font-bold text-purple-700" id="best-grammaire">Aucun record</p>
-                </div>
-            </div>
-
-            <div class="card bg-white border-l-8 border-amber-500 p-6 shadow-sm cursor-pointer hover:bg-amber-50" onclick="window.location.href='sens.html'">
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center text-amber-600">
-                        <i class="fas fa-eye"></i>
-                    </div>
-                    <h3 class="font-bold text-slate-800">L'Œil du Dragon</h3>
-                </div>
-                <div class="bg-amber-50 rounded-xl p-3 text-center border border-amber-100">
-                    <p class="text-[10px] font-bold text-amber-400 uppercase">🏆 Meilleur Score</p>
-                    <p class="text-sm font-bold text-amber-700" id="best-sens">Aucun record</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="flex gap-4 mt-auto">
-            <div class="class-img-card" onclick="window.location.href='brevet.html'">
-                <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500">
-                <div class="class-title">BREVET</div>
-            </div>
-            <div class="class-img-card" onclick="window.location.href='seconde.html'">
-                <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=500">
-                <div class="class-title">SECONDE</div>
-            </div>
-            <div class="class-img-card" onclick="window.location.href='premiere.html'">
-                <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=500">
-                <div class="class-title">PREMIÈRE</div>
+        <div class="dashboard-right">
+            <div class="podium-container">
+                <h2 class="text-xl font-bold text-slate-800 text-center mb-10">Tableau d'Honneur</h2>
+                <div id="podium-ui" class="podium-visual"></div>
+                <div id="rank-list" class="space-y-3 overflow-y-auto pr-2 mt-4"></div>
             </div>
         </div>
     </main>
 
     <script>
-        function updateScores() {
-            const gRecord = JSON.parse(localStorage.getItem('recordGrammaire'));
-            const sRecord = JSON.parse(localStorage.getItem('recordSens'));
-            if(gRecord) document.getElementById('best-grammaire').innerText = gRecord.pseudo + " : " + gRecord.score;
-            if(sRecord) document.getElementById('best-sens').innerText = sRecord.pseudo + " : " + sRecord.score;
+        // --- COLLE TON LIEN ICI ---
+        const SCRIPT_URL = "TON_LIEN_ICI"; 
+
+        async function loadLeaderboard() {
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+                if(data && data.length > 0) {
+                    data.sort((a, b) => b.score - a.score);
+                    render(data);
+                }
+            } catch (error) {
+                console.log("Erreur de chargement");
+            }
         }
-        window.onload = updateScores;
+
+        function render(eleves) {
+            const podiumUI = document.getElementById('podium-ui');
+            const listUI = document.getElementById('rank-list');
+            
+            // On vide avant de remplir
+            podiumUI.innerHTML = "";
+            listUI.innerHTML = "";
+
+            // Podium
+            const top3 = [eleves[1], eleves[0], eleves[2]];
+            const bars = ['bar-2', 'bar-1', 'bar-3'];
+            const labels = ['#2', '#1', '#3'];
+
+            podiumUI.innerHTML = top3.map((e, i) => e ? `
+                <div class="podium-bar ${bars[i]}">
+                    <div class="podium-name">${e.nom}</div>
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(e.nom)}" class="podium-avatar">
+                    <span class="text-xl">${labels[i]}</span>
+                </div>
+            ` : '').join('');
+
+            // Liste
+            listUI.innerHTML = eleves.map((e, i) => `
+                <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl border border-white">
+                    <span class="text-xs font-bold text-slate-300 w-5">#${i + 1}</span>
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(e.nom)}" class="w-10 h-10 rounded-full bg-white">
+                    <div class="flex-1">
+                        <p class="text-sm font-bold text-slate-700">${e.nom}</p>
+                        <p class="text-[11px] text-sky-500 font-bold">${e.score} pts</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+        window.onload = loadLeaderboard;
     </script>
 </body>
 </html>
