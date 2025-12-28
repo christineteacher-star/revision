@@ -12,10 +12,10 @@
         .sidebar { width: 85px; background: white; display: flex; flex-direction: column; align-items: center; padding: 25px 0; border-right: 1px solid #eef2f6; }
         .logo-dragon { width: 48px; height: 48px; background: #a855f7; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; margin-bottom: 40px; cursor:pointer; }
         .main-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .game-card { background: white; border-radius: 35px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 700px; text-align: center; }
+        .game-card { background: white; border-radius: 35px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 800px; text-align: center; }
         .grid-buttons { display: grid; grid-template-cols: repeat(2, 1fr); gap: 10px; }
         @media (min-width: 640px) { .grid-buttons { grid-template-columns: repeat(3, 1fr); } }
-        .btn-answer { background: #f8fafc; padding: 15px 5px; border-radius: 18px; font-weight: 700; transition: 0.2s; cursor: pointer; border: 2px solid #e2e8f0; color: #475569; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; text-transform: uppercase; }
+        .btn-answer { background: #f8fafc; padding: 12px; border-radius: 18px; font-weight: 700; transition: 0.2s; cursor: pointer; border: 2px solid #e2e8f0; color: #475569; font-size: 0.75rem; text-transform: uppercase; display: flex; align-items: center; justify-content: center; }
         .btn-answer:hover { background: #a855f7; color: white; border-color: #a855f7; transform: translateY(-2px); }
         .correct { background: #10b981 !important; color: white !important; border-color: #10b981 !important; }
         .wrong { background: #ef4444 !important; color: white !important; border-color: #ef4444 !important; animation: shake 0.3s; }
@@ -31,56 +31,56 @@
         <div class="game-card">
             <div id="game-zone">
                 <div class="flex justify-between items-center mb-6">
-                    <div class="text-left"><p class="text-slate-400 text-xs font-bold uppercase">Points</p><p class="text-3xl font-black text-slate-800" id="score">0</p></div>
+                    <div class="text-left"><p class="text-slate-400 text-xs font-bold uppercase">Score</p><p class="text-3xl font-black text-slate-800" id="score">0</p></div>
                     <div class="w-1/2 h-2 bg-slate-100 rounded-full overflow-hidden"><div id="timer" class="h-full bg-purple-500" style="width: 100%"></div></div>
                 </div>
                 <div class="mb-8">
-                    <p class="text-purple-500 font-bold uppercase tracking-widest text-xs mb-1">Quelle est la classe de :</p>
-                    <h1 id="word-display" class="text-5xl font-black text-slate-800 py-4">...</h1>
+                    <h1 id="word-display" class="text-5xl font-black text-slate-800 uppercase py-4">PRÊT ?</h1>
                 </div>
                 <div class="grid-buttons">
-                    <div class="btn-answer" onclick="check('Nom', this)">NOM</div>
-                    <div class="btn-answer" onclick="check('Verbe', this)">VERBE</div>
-                    <div class="btn-answer" onclick="check('Adjectif', this)">ADJECTIF</div>
-                    <div class="btn-answer" onclick="check('Adverbe', this)">ADVERBE</div>
-                    <div class="btn-answer" onclick="check('Pronom', this)">PRONOM</div>
-                    <div class="btn-answer" onclick="check('Déterminant Démonstratif', this)">DÉT. DÉMONSTRATIF</div>
-                    <div class="btn-answer" onclick="check('Conjonction', this)">CONJONCTION</div>
+                    <div class="btn-answer" onclick="check('Nom', this)">Nom</div>
+                    <div class="btn-answer" onclick="check('Verbe', this)">Verbe</div>
+                    <div class="btn-answer" onclick="check('Adjectif', this)">Adjectif</div>
+                    <div class="btn-answer" onclick="check('Adverbe', this)">Adverbe</div>
+                    <div class="btn-answer" onclick="check('Pronom', this)">Pronom</div>
+                    <div class="btn-answer" onclick="check('Déterminant', this)">Déterminant</div>
+                    <div class="btn-answer" onclick="check('Conjonction', this)">Conjonction</div>
+                    <div class="btn-answer" onclick="check('Préposition', this)">Préposition</div>
+                    <div class="btn-answer" onclick="check('Interjection', this)">Interjection</div>
                 </div>
             </div>
             <div id="result-zone" class="hidden">
-                <h2 class="text-3xl font-black text-slate-800 mb-2">Terminé !</h2>
+                <h2 class="text-3xl font-black text-slate-800 mb-2">Fin du temps !</h2>
                 <p class="text-slate-500 mb-8 text-xl">Score : <span id="final-score" class="text-purple-600 font-bold">0</span></p>
-                <button onclick="location.reload()" class="w-full bg-purple-500 text-white py-4 rounded-2xl font-bold">RECOMMENCER</button>
+                <button onclick="location.reload()" class="w-full bg-purple-500 text-white py-4 rounded-2xl font-bold">REJOUER</button>
             </div>
         </div>
     </main>
+
     <script>
-        const banqueMots = [
-            {w: "Cette", c: "Déterminant Démonstratif"}, {w: "Ce", c: "Déterminant Démonstratif"}, {w: "Ces", c: "Déterminant Démonstratif"},
-            {w: "Il", c: "Pronom"}, {w: "Nous", c: "Pronom"}, {w: "On", c: "Pronom"}, {w: "Moi", c: "Pronom"},
-            {w: "Mais", c: "Conjonction"}, {w: "Car", c: "Conjonction"}, {w: "Donc", c: "Conjonction"}, {w: "Ou", c: "Conjonction"},
-            {w: "Lentement", c: "Adverbe"}, {w: "Hier", c: "Adverbe"}, {w: "Souvent", c: "Adverbe"},
-            {w: "Forêt", c: "Nom"}, {w: "Courage", c: "Nom"}, {w: "Chien", c: "Nom"},
-            {w: "Petit", c: "Adjectif"}, {w: "Brillant", c: "Adjectif"}, {w: "Rouge", c: "Adjectif"},
-            {w: "Chanter", c: "Verbe"}, {w: "Finir", c: "Verbe"}, {w: "Vendre", c: "Verbe"}
+        const banque = [
+            {w: "Chien", c: "Nom"}, {w: "Liberté", c: "Nom"}, {w: "Manger", c: "Verbe"}, {w: "Briller", c: "Verbe"},
+            {w: "Grand", c: "Adjectif"}, {w: "Magnifique", c: "Adjectif"}, {w: "Vitement", c: "Adverbe"}, {w: "Hier", c: "Adverbe"},
+            {w: "Il", c: "Pronom"}, {w: "Celui-ci", c: "Pronom"}, {w: "Cette", c: "Déterminant"}, {w: "Chaque", c: "Déterminant"},
+            {w: "Mais", c: "Conjonction"}, {w: "Car", c: "Conjonction"}, {w: "Dans", c: "Préposition"}, {w: "Chez", c: "Préposition"},
+            {w: "Hélas", c: "Interjection"}, {w: "Bravo", c: "Interjection"}, {w: "Sous", c: "Préposition"}, {w: "Pour", c: "Préposition"}
         ];
 
-        let score = 0, timeLeft = 60, currentWord = {}, active = true;
-        let fileAttente = [];
+        let score = 0, timeLeft = 60, active = false, pseudo = "";
+        let sac = [];
 
         function next() {
-            if (fileAttente.length === 0) fileAttente = [...banqueMots].sort(() => Math.random() - 0.5);
-            currentWord = fileAttente.pop();
-            document.getElementById('word-display').innerText = currentWord.w;
-            document.querySelectorAll('.btn-answer').forEach(b => b.className = "btn-answer");
+            if (sac.length === 0) sac = [...banque].sort(() => Math.random() - 0.5);
+            currentQ = sac.pop();
+            document.getElementById('word-display').innerText = currentQ.w;
+            document.querySelectorAll('.btn-answer').forEach(b => b.classList.remove('correct', 'wrong'));
             active = true;
         }
 
         function check(choice, btn) {
             if(!active) return; active = false;
-            if(choice === currentWord.c) {
-                btn.classList.add('correct'); score += 15;
+            if(choice === currentQ.c) {
+                btn.classList.add('correct'); score += 10;
                 document.getElementById('score').innerText = score;
                 setTimeout(next, 300);
             } else {
@@ -90,17 +90,29 @@
         }
 
         const timer = setInterval(() => {
+            if(!active && timeLeft === 60) return;
             timeLeft -= 0.1;
             document.getElementById('timer').style.width = (timeLeft/60*100) + "%";
-            if(timeLeft <= 0) { 
-                clearInterval(timer); 
-                document.getElementById('game-zone').classList.add('hidden'); 
-                document.getElementById('result-zone').classList.remove('hidden'); 
-                document.getElementById('final-score').innerText = score; 
+            if(timeLeft <= 0) {
+                clearInterval(timer);
+                endGame();
             }
         }, 100);
 
-        next();
+        function endGame() {
+            const record = JSON.parse(localStorage.getItem('recordGrammaire')) || {score: 0};
+            if(score > record.score) {
+                localStorage.setItem('recordGrammaire', JSON.stringify({pseudo: pseudo, score: score}));
+            }
+            document.getElementById('game-zone').classList.add('hidden');
+            document.getElementById('result-zone').classList.remove('hidden');
+            document.getElementById('final-score').innerText = score;
+        }
+
+        window.onload = () => {
+            pseudo = prompt("Ton Pseudo :") || "Élève";
+            next();
+        }
     </script>
 </body>
 </html>
