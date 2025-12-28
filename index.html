@@ -8,18 +8,32 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
-        body { font-family: 'Quicksand', sans-serif; background-color: #f0f9ff; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        body { font-family: 'Quicksand', sans-serif; background-color: #f0f7ff; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Barre latérale gauche */
         .sidebar { width: 90px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; align-items: center; padding: 30px 0; }
-        .main-content { flex: 1; padding: 40px; display: flex; flex-direction: column; }
-        .game-grid { display: flex; gap: 24px; flex: 1; }
-        .left-column { flex: 2; display: flex; flex-direction: column; gap: 24px; }
-        .right-column { flex: 1; background: white; border-radius: 30px; padding: 30px; display: flex; flex-direction: column; shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; }
-        .card { background: white; border-radius: 30px; padding: 25px; transition: all 0.3s ease; border: 1px solid #f1f5f9; }
-        .btn-jouer { background: #0ea5e9; color: white; padding: 10px 20px; border-radius: 15px; font-weight: 700; width: 100%; margin-top: 15px; cursor: pointer; }
-        .class-img-card { position: relative; border-radius: 30px; overflow: hidden; height: 140px; flex: 1; cursor: pointer; }
+        
+        /* Zone centrale et droite */
+        .main-content { flex: 1; padding: 40px; display: flex; gap: 30px; overflow: hidden; }
+        
+        /* Colonne des jeux (milieu) */
+        .games-section { flex: 2; display: flex; flex-direction: column; gap: 25px; }
+        
+        /* Colonne Leaderboard (droite) */
+        .leaderboard-section { flex: 1; background: white; border-radius: 35px; padding: 30px; display: flex; flex-direction: column; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
+        
+        .card { background: white; border-radius: 30px; padding: 25px; border: 1px solid #f1f5f9; position: relative; }
+        
+        /* Bouton Jouer style image 3 */
+        .btn-jouer { background: #0ea5e9; color: white; padding: 12px; border-radius: 15px; font-weight: 800; width: 100%; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; }
+
+        .class-img-card { position: relative; border-radius: 25px; overflow: hidden; height: 140px; flex: 1; transition: 0.3s; }
         .class-img-card img { width: 100%; height: 100%; object-fit: cover; }
-        .class-title { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: 800; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .quiz-item { border-bottom: 1px solid #f1f5f9; padding: 10px 0; display: flex; justify-content: space-between; align-items: center; }
+        .class-title { position: absolute; bottom: 15px; left: 15px; color: white; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+
+        /* Style des lignes du Tableau d'Honneur */
+        .honor-row { display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid #f8fafc; }
+        .avatar-circle { width: 40px; height: 40px; background: #e0f2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0ea5e9; font-size: 1.2rem; }
     </style>
 </head>
 <body>
@@ -28,45 +42,102 @@
         <div class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white mb-10 shadow-lg">
             <i class="fas fa-dragon text-2xl"></i>
         </div>
-        <div class="text-sky-500 bg-sky-50 p-4 rounded-2xl cursor-pointer" onclick="location.reload()">
+        <div class="text-sky-500 bg-sky-50 p-4 rounded-2xl cursor-pointer">
             <i class="fas fa-home text-2xl"></i>
         </div>
     </nav>
 
     <main class="main-content">
-        <h1 class="text-3xl font-black text-slate-800 mb-8">Dashboard Académie</h1>
-
-        <div class="game-grid">
-            <div class="left-column">
-                <div class="grid grid-cols-2 gap-6">
-                    <div class="card text-center shadow-sm">
-                        <h3 class="text-sky-500 font-bold mb-1">Quiz du Jour</h3>
-                        <p class="text-slate-400 text-xs mb-4">Réponds au défi !</p>
-                        <button class="btn-jouer" onclick="window.location.href='quiz.html'">JOUER</button>
-                    </div>
-                    <div class="card flex flex-col items-center justify-center bg-emerald-50/50 border-emerald-100 cursor-pointer" onclick="window.location.href='epreuve.html'">
-                        <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-white mb-3">
-                            <i class="fas fa-fire text-xl"></i>
-                        </div>
-                        <h3 class="font-bold text-slate-700">Épreuve des Crocs</h3>
-                    </div>
+        
+        <section class="games-section">
+            <h1 class="text-3xl font-black text-slate-800">Dashboard Académie</h1>
+            
+            <div class="grid grid-cols-2 gap-6">
+                <div class="card text-center shadow-sm">
+                    <h3 class="text-sky-500 font-bold">Quiz du Jour</h3>
+                    <p class="text-slate-400 text-xs">Réponds au défi !</p>
+                    <button class="btn-jouer" onclick="window.location.href='quiz.html'">JOUER</button>
                 </div>
-
-                <div class="grid grid-cols-2 gap-6">
-                    <div class="card border-l-8 border-purple-500 cursor-pointer" onclick="window.location.href='grammaire.html'">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold">A</div>
-                            <h3 class="font-bold text-slate-800">Maître des Classes</h3>
-                        </div>
+                <div class="card flex flex-col items-center justify-center bg-emerald-50/40 border-emerald-100 cursor-pointer" onclick="window.location.href='epreuve.html'">
+                    <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-white mb-3 shadow-md">
+                        <i class="fas fa-fire text-xl"></i>
                     </div>
-                    <div class="card border-l-8 border-amber-500 cursor-pointer" onclick="window.location.href='sens.html'">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold"><i class="fas fa-eye"></i></div>
-                            <h3 class="font-bold text-slate-800">L'Œil du Dragon</h3>
-                        </div>
-                    </div>
+                    <h3 class="font-bold text-slate-700">Épreuve des Crocs</h3>
                 </div>
+            </div>
 
-                <div class="flex gap-4 mt-auto">
-                    <div class="class-img-card" onclick="window.location.href='brevet.html'"><img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500"><div class="class-title">BREVET</div></div>
-                    <div class="class-img-card" onclick="window.location.href='seconde.html'"><img src="https://images.unsplash.
+            <div class="flex gap-4 mt-auto">
+                <div class="class-img-card" onclick="window.location.href='brevet.html'">
+                    <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500">
+                    <div class="class-title">BREVET</div>
+                </div>
+                <div class="class-img-card" onclick="window.location.href='seconde.html'">
+                    <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=500">
+                    <div class="class-title">SECONDE</div>
+                </div>
+                <div class="class-img-card" onclick="window.location.href='premiere.html'">
+                    <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=500">
+                    <div class="class-title">PREMIÈRE</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="leaderboard-section">
+            <h2 class="text-xl font-black text-slate-800 text-center mb-6">Tableau d'Honneur</h2>
+            <div id="honor-list" class="overflow-y-auto pr-2 flex-1">
+                <p class="text-center text-slate-400 py-10">Récupération des champions...</p>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // URL de ton Google Script
+        const API_URL = "https://script.google.com/macros/s/AKfycbzovlnRuIQN3kH1hxK7OtChIn9zzYTx4v79e4k_cPMXdGo8KfAhysGfljg5v2-Qt3vmSw/exec";
+
+        async function loadHonors() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                
+                // On filtre les données pour le Quiz (ou on prend tout si tu veux mélanger)
+                const winners = data.filter(item => item.jeu === "Quiz");
+                const list = document.getElementById('honor-list');
+                list.innerHTML = "";
+
+                if(winners.length === 0) {
+                    list.innerHTML = "<p class='text-center text-slate-400'>Aucun champion inscrit.</p>";
+                    return;
+                }
+
+                // On trie par score décroissant
+                winners.sort((a,b) => b.score - a.score);
+
+                winners.forEach(player => {
+                    const row = document.createElement('div');
+                    row.className = "honor-row";
+                    row.innerHTML = `
+                        <div class="avatar-circle">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-slate-700 text-sm">${player.pseudo}</p>
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">Score: ${player.score}</p>
+                        </div>
+                        <div class="text-amber-400">
+                            <i class="fas fa-medal"></i>
+                        </div>
+                    `;
+                    list.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error("Erreur Excel:", error);
+                document.getElementById('honor-list').innerHTML = "<p class='text-center text-red-400'>Erreur de connexion</p>";
+            }
+        }
+
+        window.onload = loadHonors;
+    </script>
+</body>
+</html>
