@@ -13,13 +13,13 @@
         .main-content { flex: 1; padding: 40px; display: flex; flex-direction: column; }
         .game-grid { display: flex; gap: 24px; flex: 1; }
         .left-column { flex: 2; display: flex; flex-direction: column; gap: 24px; }
-        .right-column { flex: 1; background: white; border-radius: 30px; padding: 30px; display: flex; flex-direction: column; shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .right-column { flex: 1; background: white; border-radius: 30px; padding: 30px; display: flex; flex-direction: column; shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; }
         .card { background: white; border-radius: 30px; padding: 25px; transition: all 0.3s ease; border: 1px solid #f1f5f9; }
-        .btn-jouer { background: #0ea5e9; color: white; padding: 10px 20px; border-radius: 15px; font-weight: 700; width: 100%; margin-top: 15px; transition: 0.2s; }
-        .btn-jouer:hover { background: #0284c7; transform: translateY(-2px); }
+        .btn-jouer { background: #0ea5e9; color: white; padding: 10px 20px; border-radius: 15px; font-weight: 700; width: 100%; margin-top: 15px; cursor: pointer; }
         .class-img-card { position: relative; border-radius: 30px; overflow: hidden; height: 140px; flex: 1; cursor: pointer; }
         .class-img-card img { width: 100%; height: 100%; object-fit: cover; }
         .class-title { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: 800; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .quiz-item { border-bottom: 1px solid #f1f5f9; padding: 10px 0; display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
@@ -39,12 +39,12 @@
         <div class="game-grid">
             <div class="left-column">
                 <div class="grid grid-cols-2 gap-6">
-                    <div class="card text-center">
+                    <div class="card text-center shadow-sm">
                         <h3 class="text-sky-500 font-bold mb-1">Quiz du Jour</h3>
                         <p class="text-slate-400 text-xs mb-4">Réponds au défi !</p>
                         <button class="btn-jouer" onclick="window.location.href='quiz.html'">JOUER</button>
                     </div>
-                    <div class="card flex flex-col items-center justify-center bg-emerald-50/50 border-emerald-100" onclick="window.location.href='epreuve.html'">
+                    <div class="card flex flex-col items-center justify-center bg-emerald-50/50 border-emerald-100 cursor-pointer" onclick="window.location.href='epreuve.html'">
                         <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-white mb-3">
                             <i class="fas fa-fire text-xl"></i>
                         </div>
@@ -61,7 +61,7 @@
                     </div>
                     <div class="card border-l-8 border-amber-500 cursor-pointer" onclick="window.location.href='sens.html'">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600"><i class="fas fa-eye"></i></div>
+                            <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold"><i class="fas fa-eye"></i></div>
                             <h3 class="font-bold text-slate-800">L'Œil du Dragon</h3>
                         </div>
                     </div>
@@ -69,45 +69,4 @@
 
                 <div class="flex gap-4 mt-auto">
                     <div class="class-img-card" onclick="window.location.href='brevet.html'"><img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500"><div class="class-title">BREVET</div></div>
-                    <div class="class-img-card" onclick="window.location.href='seconde.html'"><img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=500"><div class="class-title">SECONDE</div></div>
-                    <div class="class-img-card" onclick="window.location.href='premiere.html'"><img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=500"><div class="class-title">PREMIÈRE</div></div>
-                </div>
-            </div>
-
-            <div class="right-column">
-                <h2 class="text-xl font-black text-slate-800 text-center mb-6">Tableau d'Honneur</h2>
-                <div id="leaderboard-content" class="space-y-4">
-                    <div class="p-4 bg-purple-50 rounded-2xl border border-purple-100">
-                        <p class="text-[10px] font-bold text-purple-400 uppercase">Maître des Classes</p>
-                        <p id="best-grammaire" class="font-bold text-purple-700">Chargement...</p>
-                    </div>
-                    <div class="p-4 bg-amber-50 rounded-2xl border border-amber-100">
-                        <p class="text-[10px] font-bold text-amber-400 uppercase">L'Œil du Dragon</p>
-                        <p id="best-sens" class="font-bold text-amber-700">Chargement...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzovlnRuIQN3kH1hxK7OtChIn9zzYTx4v79e4k_cPMXdGo8KfAhysGfljg5v2-Qt3vmSw/exec";
-
-        async function fetchGlobalRecords() {
-            try {
-                const response = await fetch(SCRIPT_URL);
-                const data = await response.json();
-                const gram = data.find(i => i.jeu === "Grammaire");
-                const sens = data.find(i => i.jeu === "Sens");
-
-                document.getElementById('best-grammaire').innerText = gram ? `${gram.pseudo} : ${gram.score}` : "Aucun record";
-                document.getElementById('best-sens').innerText = sens ? `${sens.pseudo} : ${sens.score}` : "Aucun record";
-            } catch (e) {
-                document.getElementById('best-grammaire').innerText = "Erreur de connexion";
-                document.getElementById('best-sens').innerText = "Erreur de connexion";
-            }
-        }
-        window.onload = fetchGlobalRecords;
-    </script>
-</body>
-</html>
+                    <div class="class-img-card" onclick="window.location.href='seconde.html'"><img src="https://images.unsplash.
