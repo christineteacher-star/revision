@@ -13,8 +13,7 @@
         .logo-dragon { width: 48px; height: 48px; background: #f97316; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; margin-bottom: 40px; cursor:pointer; }
         .main-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .game-card { background: white; border-radius: 35px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 650px; text-align: center; }
-        .btn-choice { background: #f8fafc; padding: 25px; border-radius: 25px; font-weight: 800; transition: 0.2s; cursor: pointer; border: 2px solid #e2e8f0; color: #475569; font-size: 1.2rem; }
-        .btn-choice:hover { border-color: #f97316; background: #fff7ed; color: #c2410c; transform: translateY(-3px); }
+        .btn-choice { background: #f8fafc; padding: 25px; border-radius: 25px; font-weight: 800; cursor: pointer; border: 2px solid #e2e8f0; color: #475569; font-size: 1.2rem; }
         .correct { background: #10b981 !important; color: white !important; border-color: #10b981 !important; }
         .wrong { background: #ef4444 !important; color: white !important; border-color: #ef4444 !important; animation: shake 0.3s; }
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
@@ -32,38 +31,36 @@
                     <div class="text-left"><p class="text-slate-400 text-xs font-bold uppercase">Points</p><p class="text-4xl font-black text-slate-800" id="score">0</p></div>
                     <div class="w-1/2 h-3 bg-slate-100 rounded-full overflow-hidden"><div id="timer" class="h-full bg-orange-500" style="width: 100%"></div></div>
                 </div>
-                <div class="mb-12"><h1 id="phrase-display" class="text-3xl font-bold text-slate-700 italic px-4">...</h1></div>
+                <div class="mb-12"><h1 id="phrase-display" class="text-3xl font-bold text-slate-700 italic">...</h1></div>
                 <div class="grid grid-cols-2 gap-6">
                     <div class="btn-choice" onclick="check('Propre')">PROPRE</div>
                     <div class="btn-choice" onclick="check('Figuré')">FIGURÉ</div>
                 </div>
             </div>
             <div id="result-zone" class="hidden">
-                <h2 class="text-4xl font-black text-slate-800 mb-2">Terminé !</h2>
+                <h2 class="text-4xl font-black text-slate-800 mb-2">Temps fini !</h2>
                 <p class="text-slate-500 mb-8 text-xl">Score : <span id="final-score" class="text-orange-600 font-bold">0</span></p>
-                <button onclick="location.reload()" class="w-full bg-orange-500 text-white py-4 rounded-2xl font-bold">RECOMMENCER</button>
+                <button onclick="location.reload()" class="w-full bg-orange-500 text-white py-4 rounded-2xl font-bold">REJOUER</button>
             </div>
         </div>
     </main>
+
     <script>
-        const banquePhrases = [
-            {p: "Il a dévoré son livre.", s: "Figuré"}, {p: "Le lion dévore sa proie.", s: "Propre"},
-            {p: "J'ai un poids sur le cœur.", s: "Figuré"}, {p: "Il a jeté l'argent par les fenêtres.", s: "Figuré"},
-            {p: "Elle est tombée de sa chaise.", s: "Propre"}, {p: "Il a le cœur sur la main.", s: "Figuré"},
-            {p: "Cette nouvelle m'a glacé le sang.", s: "Figuré"}, {p: "Il fait fondre du chocolat.", s: "Propre"},
-            {p: "Il a creusé un trou.", s: "Propre"}, {p: "Il se creuse la tête.", s: "Figuré"},
+        const banque = [
+            {p: "Il dévore son livre.", s: "Figuré"}, {p: "Le lion dévore sa proie.", s: "Propre"},
+            {p: "Il a jeté l'argent par les fenêtres.", s: "Figuré"}, {p: "Il a jeté ses clés.", s: "Propre"},
+            {p: "Il se creuse la tête.", s: "Figuré"}, {p: "Il creuse un trou.", s: "Propre"},
+            {p: "Brise le silence.", s: "Figuré"}, {p: "Il brise son verre.", s: "Propre"},
             {p: "Elle a une langue de vipère.", s: "Figuré"}, {p: "Le serpent tire la langue.", s: "Propre"},
-            {p: "Il brise le silence.", s: "Figuré"}, {p: "Il brise son verre.", s: "Propre"}
+            {p: "Cœur de pierre.", s: "Figuré"}, {p: "Une pierre sur le chemin.", s: "Propre"}
         ];
 
-        let score = 0, timeLeft = 60, active = true;
-        let fileAttente = [];
+        let score = 0, timeLeft = 60, active = false, pseudo = "", sac = [];
 
         function next() {
-            if (fileAttente.length === 0) fileAttente = [...banquePhrases].sort(() => Math.random() - 0.5);
-            let q = fileAttente.pop();
-            currentQ = q;
-            document.getElementById('phrase-display').innerText = `"${q.p}"`;
+            if (sac.length === 0) sac = [...banque].sort(() => Math.random() - 0.5);
+            currentQ = sac.pop();
+            document.getElementById('phrase-display').innerText = `"${currentQ.p}"`;
             document.querySelectorAll('.btn-choice').forEach(b => b.className = "btn-choice");
             active = true;
         }
@@ -74,15 +71,34 @@
             if(choice === currentQ.s) {
                 btn.classList.add('correct'); score += 20;
                 document.getElementById('score').innerText = score;
-                setTimeout(next, 300);
+                setTimeout(next, 400);
             } else {
                 btn.classList.add('wrong');
                 setTimeout(() => { active = true; next(); }, 600);
             }
         }
 
-        const timer = setInterval(() => { timeLeft -= 0.1; document.getElementById('timer').style.width = (timeLeft/60*100) + "%"; if(timeLeft <= 0) { clearInterval(timer); document.getElementById('game-zone').classList.add('hidden'); document.getElementById('result-zone').classList.remove('hidden'); document.getElementById('final-score').innerText = score; } }, 100);
-        next();
+        const timer = setInterval(() => {
+            if(!active && timeLeft === 60) return;
+            timeLeft -= 0.1;
+            document.getElementById('timer').style.width = (timeLeft/60*100) + "%";
+            if(timeLeft <= 0) { clearInterval(timer); endGame(); }
+        }, 100);
+
+        function endGame() {
+            const record = JSON.parse(localStorage.getItem('recordSens')) || {score: 0};
+            if(score > record.score) {
+                localStorage.setItem('recordSens', JSON.stringify({pseudo: pseudo, score: score}));
+            }
+            document.getElementById('game-zone').classList.add('hidden');
+            document.getElementById('result-zone').classList.remove('hidden');
+            document.getElementById('final-score').innerText = score;
+        }
+
+        window.onload = () => {
+            pseudo = prompt("Ton Pseudo :") || "Élève";
+            next();
+        }
     </script>
 </body>
 </html>
