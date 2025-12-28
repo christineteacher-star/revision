@@ -9,31 +9,22 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
         body { font-family: 'Quicksand', sans-serif; background-color: #f0f7ff; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        
-        /* Colonne 1 : Sidebar */
         .sidebar { width: 90px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; align-items: center; padding: 30px 0; }
-        
-        /* Conteneur principal qui crée les Colonnes 2 et 3 */
         .main-content { flex: 1; padding: 40px; display: flex; gap: 30px; overflow: hidden; }
-        
-        /* Colonne 2 : Section des Jeux */
         .games-section { flex: 2; display: flex; flex-direction: column; gap: 20px; }
+        .leaderboard-section { flex: 1; background: white; border-radius: 35px; padding: 25px; display: flex; flex-direction: column; border: 1px solid #e2e8f0; }
         
-        /* Colonne 3 : Tableau d'Honneur (Leaderboard) */
-        .leaderboard-section { flex: 1; background: white; border-radius: 35px; padding: 25px; display: flex; flex-direction: column; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
-        
+        /* Style des Cartes avec Podiums intégrés */
         .card { background: white; border-radius: 30px; padding: 20px; border: 1px solid #f1f5f9; transition: transform 0.2s; }
-        .card:hover { transform: translateY(-5px); }
+        .podium-bar { margin-top: 15px; padding: 10px; border-radius: 15px; text-align: center; }
+        .bg-gram { background: #f5f3ff; border: 1px solid #ddd6fe; }
+        .bg-sens { background: #fffbeb; border: 1px solid #fef3c7; }
         
-        .btn-jouer { background: #0ea5e9; color: white; padding: 12px; border-radius: 15px; font-weight: 800; width: 100%; margin-top: 10px; text-transform: uppercase; cursor: pointer; border: none; }
-
-        .class-img-card { position: relative; border-radius: 25px; overflow: hidden; height: 130px; flex: 1; cursor: pointer; }
+        .btn-jouer { background: #0ea5e9; color: white; padding: 12px; border-radius: 15px; font-weight: 800; width: 100%; margin-top: 10px; cursor: pointer; border: none; }
+        .class-img-card { position: relative; border-radius: 25px; overflow: hidden; height: 130px; flex: 1; }
         .class-img-card img { width: 100%; height: 100%; object-fit: cover; }
         .class-title { position: absolute; bottom: 15px; left: 15px; color: white; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-
-        /* Styles du Tableau d'Honneur avec avatars */
         .honor-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f8fafc; }
-        .avatar-box { width: 35px; height: 35px; background: #e0f2fe; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #0ea5e9; }
     </style>
 </head>
 <body>
@@ -42,13 +33,10 @@
         <div class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white mb-10 shadow-lg">
             <i class="fas fa-dragon text-2xl"></i>
         </div>
-        <div class="text-sky-500 bg-sky-50 p-4 rounded-2xl cursor-pointer" onclick="location.reload()">
-            <i class="fas fa-home text-2xl"></i>
-        </div>
+        <div class="text-sky-500 bg-sky-50 p-4 rounded-2xl cursor-pointer" onclick="location.reload()"><i class="fas fa-home text-2xl"></i></div>
     </nav>
 
     <main class="main-content">
-        
         <section class="games-section">
             <h1 class="text-3xl font-black text-slate-800">Dashboard Académie</h1>
             
@@ -58,10 +46,8 @@
                     <p class="text-slate-400 text-xs">Le défi quotidien</p>
                     <button class="btn-jouer" onclick="window.location.href='quiz.html'">JOUER</button>
                 </div>
-                <div class="card flex flex-col items-center justify-center bg-emerald-50/40 border-emerald-100 cursor-pointer" onclick="window.location.href='epreuve.html'">
-                    <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white mb-2 shadow-md">
-                        <i class="fas fa-fire text-lg"></i>
-                    </div>
+                <div class="card flex flex-col items-center justify-center bg-emerald-50/40 border-emerald-100" onclick="window.location.href='epreuve.html'">
+                    <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white mb-2 shadow-md"><i class="fas fa-fire text-lg"></i></div>
                     <h3 class="font-bold text-slate-700">Épreuve des Crocs</h3>
                 </div>
             </div>
@@ -72,13 +58,20 @@
                         <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold text-xs">A</div>
                         <h3 class="font-bold text-slate-800">Maître des Classes</h3>
                     </div>
+                    <div class="podium-bar bg-gram">
+                        <p class="text-[9px] font-bold text-purple-400 uppercase">🏆 Meilleur Score</p>
+                        <p id="best-grammaire" class="text-purple-700 font-bold text-sm italic">Chargement...</p>
+                    </div>
                 </div>
+
                 <div class="card border-l-8 border-amber-500 cursor-pointer" onclick="window.location.href='sens.html'">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold text-xs">
-                            <i class="fas fa-eye"></i>
-                        </div>
+                        <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold text-xs"><i class="fas fa-eye"></i></div>
                         <h3 class="font-bold text-slate-800">L'Œil du Dragon</h3>
+                    </div>
+                    <div class="podium-bar bg-sens">
+                        <p class="text-[9px] font-bold text-amber-400 uppercase">🏆 Meilleur Score</p>
+                        <p id="best-sens" class="text-amber-700 font-bold text-sm italic">Chargement...</p>
                     </div>
                 </div>
             </div>
@@ -93,53 +86,44 @@
         <section class="leaderboard-section">
             <h2 class="text-xl font-black text-slate-800 text-center mb-6">Tableau d'Honneur</h2>
             <div id="honor-list" class="overflow-y-auto pr-2 flex-1">
-                <p class="text-center text-slate-400 py-10 italic">Connexion au Google Sheet...</p>
+                <p class="text-center text-slate-400 py-10 italic">Connexion...</p>
             </div>
         </section>
-
     </main>
 
     <script>
-        // Ton URL de script Google Sheets
         const API_URL = "https://script.google.com/macros/s/AKfycbzovlnRuIQN3kH1hxK7OtChIn9zzYTx4v79e4k_cPMXdGo8KfAhysGfljg5v2-Qt3vmSw/exec";
 
-        async function loadHonors() {
+        async function loadData() {
             try {
                 const response = await fetch(API_URL);
                 const data = await response.json();
+
+                // 1. Mise à jour des PODIUMS dans les cartes
+                const gRec = data.find(i => i.jeu === "Grammaire");
+                const sRec = data.find(i => i.jeu === "Sens");
+                document.getElementById('best-grammaire').innerText = gRec ? `${gRec.pseudo} : ${gRec.score}` : "Aucun record";
+                document.getElementById('best-sens').innerText = sRec ? `${sRec.pseudo} : ${sRec.score}` : "Aucun record";
+
+                // 2. Mise à jour du TABLEAU D'HONNEUR à droite
                 const list = document.getElementById('honor-list');
                 list.innerHTML = "";
-
-                if(!data || data.length === 0) {
-                    list.innerHTML = "<p class='text-center text-slate-400 py-10'>Aucun champion inscrit.</p>";
-                    return;
-                }
-
-                // Tri des scores du plus haut au plus bas
-                data.sort((a,b) => b.score - a.score);
-
-                data.slice(0, 10).forEach((player, index) => {
+                data.sort((a,b) => b.score - a.score).slice(0, 10).forEach((player, index) => {
                     const row = document.createElement('div');
                     row.className = "honor-row";
-                    let medalClass = index === 0 ? "text-amber-400" : (index === 1 ? "text-slate-400" : (index === 2 ? "text-orange-400" : "text-slate-200"));
-
+                    let medal = index === 0 ? "text-amber-400" : (index === 1 ? "text-slate-400" : "text-orange-400");
                     row.innerHTML = `
-                        <div class="avatar-box"><i class="fas fa-user-circle"></i></div>
+                        <div class="w-8 h-8 bg-sky-100 rounded-lg flex items-center justify-center text-sky-600 text-xs"><i class="fas fa-user"></i></div>
                         <div class="flex-1">
-                            <p class="font-bold text-slate-700 text-sm leading-none">${player.pseudo || "Joueur"}</p>
-                            <p class="text-[9px] text-slate-400 font-black uppercase mt-1">${player.jeu || "Défi"}</p>
+                            <p class="font-bold text-slate-700 text-xs leading-none">${player.pseudo}</p>
+                            <p class="text-[8px] text-slate-400 font-bold uppercase">${player.jeu}</p>
                         </div>
-                        <div class="text-right">
-                            <p class="font-black text-sky-600 text-sm">${player.score}</p>
-                            <i class="fas fa-medal ${medalClass} text-[10px]"></i>
-                        </div>`;
+                        <div class="text-right font-black text-sky-600 text-xs">${player.score} <i class="fas fa-medal ${medal}"></i></div>`;
                     list.appendChild(row);
                 });
-            } catch (error) {
-                document.getElementById('honor-list').innerHTML = "<p class='text-center text-red-400 py-10'>Erreur de connexion</p>";
-            }
+            } catch (e) { console.error(e); }
         }
-        window.onload = loadHonors;
+        window.onload = loadData;
     </script>
 </body>
 </html>
