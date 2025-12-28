@@ -8,110 +8,133 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
-        body { font-family: 'Quicksand', sans-serif; background-color: #f8fbff; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        .sidebar { width: 90px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; align-items: center; padding: 30px 0; }
-        .main-content { flex: 1; padding: 40px; display: flex; gap: 30px; overflow: hidden; }
+        body { font-family: 'Quicksand', sans-serif; background-color: #f0f7ff; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Structure 3 Colonnes */
+        .sidebar { width: 80px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; align-items: center; padding: 25px 0; }
+        .main-content { flex: 1; padding: 30px; display: flex; gap: 25px; overflow: hidden; }
         .games-section { flex: 2; display: flex; flex-direction: column; gap: 20px; }
-        .leaderboard-section { flex: 1; background: white; border-radius: 35px; padding: 25px; display: flex; flex-direction: column; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
-        .card { background: white; border-radius: 30px; padding: 20px; border: 1px solid #f1f5f9; position: relative; }
-        .podium-bar { margin-top: 10px; padding: 8px; border-radius: 15px; text-align: center; font-weight: 700; font-size: 0.85rem; background: #f5f3ff; color: #7c3aed; }
-        .btn-jouer { background: #0ea5e9; color: white; padding: 12px; border-radius: 15px; font-weight: 800; width: 100%; margin-top: 10px; cursor: pointer; border: none; }
+        .leaderboard-section { flex: 1; background: white; border-radius: 35px; padding: 25px; display: flex; flex-direction: column; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.03); }
+
+        /* Cartes et Podiums */
+        .card { background: white; border-radius: 25px; padding: 20px; border: 1px solid #f1f5f9; position: relative; }
+        .podium-bar { margin-top: 10px; padding: 8px; border-radius: 12px; text-align: center; font-weight: 700; font-size: 0.85rem; }
+        .bg-purple { background: #f5f3ff; color: #7c3aed; border: 1px solid #ddd6fe; }
+        .bg-orange { background: #fff7ed; color: #ea580c; border: 1px solid #ffedd5; }
+        
+        /* Avatars de bonshommes */
         .honor-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f8fafc; }
-        .avatar-circle { width: 40px; height: 40px; background: #e0f2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0ea5e9; font-size: 1.3rem; }
-        .class-img-card { position: relative; border-radius: 25px; overflow: hidden; height: 130px; flex: 1; cursor: pointer; }
-        .class-img-card img { width: 100%; height: 100%; object-fit: cover; }
-        .class-title { position: absolute; bottom: 12px; left: 15px; color: white; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        .avatar-box { width: 36px; height: 36px; background: #e0f2fe; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #0ea5e9; font-size: 1.1rem; }
+        
+        .btn-jouer { background: #0ea5e9; color: white; padding: 10px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; border: none; margin-top: 10px; }
+        .img-nav { border-radius: 20px; overflow: hidden; height: 120px; flex: 1; position: relative; }
+        .img-nav img { width: 100%; height: 100%; object-fit: cover; }
+        .img-nav span { position: absolute; bottom: 10px; left: 10px; color: white; font-weight: 800; font-size: 0.7rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
 
     <nav class="sidebar">
-        <div class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white mb-10 shadow-lg"><i class="fas fa-dragon text-2xl"></i></div>
-        <div class="text-sky-500 bg-sky-50 p-4 rounded-2xl cursor-pointer" onclick="location.reload()"><i class="fas fa-home text-2xl"></i></div>
+        <div class="w-10 h-10 bg-sky-500 rounded-xl flex items-center justify-center text-white mb-8 shadow-md">
+            <i class="fas fa-dragon text-xl"></i>
+        </div>
+        <div class="text-sky-400 bg-sky-50 p-3 rounded-xl cursor-pointer"><i class="fas fa-home text-xl"></i></div>
     </nav>
 
     <main class="main-content">
         <section class="games-section">
-            <h1 class="text-3xl font-black text-slate-800 mb-2">Dashboard Académie</h1>
-            <div class="grid grid-cols-2 gap-5">
-                <div class="card text-center">
-                    <h3 class="text-sky-500 font-bold">Quiz du Jour</h3>
-                    <p class="text-slate-400 text-xs">Monte-Cristo Ch.1</p>
-                    <button class="btn-jouer" onclick="window.location.href='quiz.html'">JOUER</button>
+            <h1 class="text-2xl font-black text-slate-800">Dashboard Académie</h1>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="card text-center shadow-sm">
+                    <h3 class="text-sky-500 font-bold text-sm">Quiz du Jour</h3>
+                    <p class="text-slate-400 text-[10px] mb-2">Le défi de la journée</p>
+                    <button class="btn-jouer">JOUER</button>
                 </div>
-                <div class="card flex flex-col items-center justify-center bg-emerald-50/40 border-emerald-100">
-                    <i class="fas fa-fire text-orange-500 text-2xl mb-2"></i>
-                    <h3 class="font-bold text-slate-700 text-sm">Épreuve des Crocs</h3>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-5">
-                <div class="card border-l-8 border-purple-500">
-                    <h3 class="font-bold text-slate-800 text-sm">Maître des Classes</h3>
-                    <div class="podium-bar" id="best-gram">Chargement...</div>
-                </div>
-                <div class="card border-l-8 border-amber-500">
-                    <h3 class="font-bold text-slate-800 text-sm">L'Œil du Dragon</h3>
-                    <div class="podium-bar" style="background:#fffbeb; color:#d97706" id="best-sens">Chargement...</div>
+                <div class="card flex flex-col items-center justify-center bg-emerald-50/30 border-emerald-100">
+                    <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white mb-1 shadow-md">
+                        <i class="fas fa-fire text-sm"></i>
+                    </div>
+                    <span class="font-bold text-slate-700 text-xs">Épreuve des Crocs</span>
                 </div>
             </div>
 
-            <div class="flex gap-4 mt-auto">
-                <div class="class-img-card" onclick="window.location.href='brevet.html'"><img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500"><div class="class-title text-xs">BREVET</div></div>
-                <div class="class-img-card" onclick="window.location.href='seconde.html'"><img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=500"><div class="class-title text-xs">SECONDE</div></div>
-                <div class="class-img-card" onclick="window.location.href='premiere.html'"><img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=500"><div class="class-title text-xs">PREMIÈRE</div></div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="card border-l-4 border-purple-500">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold text-[10px]">A</div>
+                        <h3 class="font-bold text-slate-700 text-xs">Maître des Classes</h3>
+                    </div>
+                    <div class="podium-bar bg-purple" id="podium-gram">Record : --</div>
+                </div>
+                <div class="card border-l-4 border-orange-400">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center text-orange-500 font-bold text-[10px]"><i class="fas fa-eye"></i></div>
+                        <h3 class="font-bold text-slate-700 text-xs">L'Œil du Dragon</h3>
+                    </div>
+                    <div class="podium-bar bg-orange" id="podium-sens">Record : --</div>
+                </div>
+            </div>
+
+            <div class="flex gap-3 mt-auto">
+                <div class="img-nav"><img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400"><span>BREVET</span></div>
+                <div class="img-nav"><img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400"><span>SECONDE</span></div>
+                <div class="img-nav"><img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400"><span>PREMIÈRE</span></div>
             </div>
         </section>
 
         <section class="leaderboard-section">
-            <h2 class="text-xl font-black text-slate-800 text-center mb-6">Tableau d'Honneur</h2>
-            <div id="quiz-leaderboard" class="overflow-y-auto flex-1 pr-2">
-                <p class="text-center text-slate-400 py-10 italic">Connexion au Quiz...</p>
+            <h2 class="text-lg font-black text-slate-800 text-center mb-4">Tableau d'Honneur</h2>
+            <div id="leaderboard-content" class="overflow-y-auto flex-1 pr-1">
+                <p class="text-center text-slate-400 py-10 italic text-xs">Chargement des avatars...</p>
             </div>
         </section>
     </main>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxYf0QYThuERRywVUKismX1y4Y3hA5bhc60fOtMWO9TkU0CC2vL7o8AZxzTNK7UP66AsA/exec";
+        // METTEZ VOTRE LIEN ICI :
+        const SCRIPT_URL = "VOTRE_LIEN_SCRIPT_GOOGLE_ICI/exec";
 
-        async function updateData() {
+        async function loadData() {
             try {
                 const response = await fetch(SCRIPT_URL);
                 const data = await response.json();
-                
-                // 1. Podiums Mondiaux (Filtre par sujet)
-                const gRec = data.find(i => i.sujet && i.sujet.includes("Grammaire"));
-                const sRec = data.find(i => i.sujet && i.sujet.includes("Sens"));
-                document.getElementById('best-gram').innerText = gRec ? `🏆 ${gRec.nom} : ${gRec.score}` : "Record : --";
-                document.getElementById('best-sens').innerText = sRec ? `🏆 ${sRec.nom} : ${sRec.score}` : "Record : --";
 
-                // 2. Tableau d'Honneur (Filtré sur Monte-Cristo)
-                const container = document.getElementById('quiz-leaderboard');
-                container.innerHTML = "";
-                
-                const entries = data.filter(i => i.sujet && i.sujet.includes("Monte-Cristo"))
-                                    .sort((a,b) => b.score - a.score);
+                // 1. Mise à jour des podiums
+                const gBest = data.find(i => i.sujet && i.sujet.includes("Grammaire"));
+                const sBest = data.find(i => i.sujet && i.sujet.includes("Sens"));
+                if(gBest) document.getElementById('podium-gram').innerText = `${gBest.nom} : ${gBest.score}`;
+                if(sBest) document.getElementById('podium-sens').innerText = `${sBest.nom} : ${sBest.score}`;
 
-                entries.forEach((player, index) => {
+                // 2. Tableau d'Honneur avec avatars de bonshommes
+                const list = document.getElementById('leaderboard-content');
+                list.innerHTML = "";
+
+                // On filtre les élèves de Monte-Cristo cités (Sylvie, Cathy, etc.)
+                const pupils = data.filter(i => i.sujet && i.sujet.includes("Monte-Cristo"))
+                                   .sort((a,b) => b.score - a.score);
+
+                pupils.forEach((p, idx) => {
                     const row = document.createElement('div');
                     row.className = "honor-row";
-                    let medal = index === 0 ? "text-amber-400" : (index === 1 ? "text-slate-400" : (index === 2 ? "text-orange-400" : "text-transparent"));
+                    let medalColor = idx === 0 ? "text-yellow-500" : (idx === 1 ? "text-slate-400" : (idx === 2 ? "text-orange-400" : "text-slate-200"));
+                    
                     row.innerHTML = `
-                        <div class="avatar-circle"><i class="fas fa-user-circle"></i></div>
+                        <div class="avatar-box"><i class="fas fa-user"></i></div>
                         <div class="flex-1">
-                            <p class="font-bold text-slate-700 text-sm">${player.nom}</p>
-                            <p class="text-[9px] text-sky-500 font-bold uppercase">${player.sujet}</p>
+                            <p class="font-bold text-slate-700 text-xs leading-none">${p.nom}</p>
+                            <p class="text-[8px] text-sky-500 font-bold uppercase mt-1">DÉFI</p>
                         </div>
                         <div class="text-right">
-                            <p class="font-black text-slate-800 text-sm">${player.score}</p>
-                            <i class="fas fa-medal ${medal} text-[10px]"></i>
-                        </div>`;
-                    container.appendChild(row);
+                            <p class="font-black text-slate-800 text-xs">${p.score}</p>
+                            <i class="fas fa-medal ${medalColor} text-[10px]"></i>
+                        </div>
+                    `;
+                    list.appendChild(row);
                 });
-            } catch (e) { document.getElementById('quiz-leaderboard').innerHTML = "Erreur de connexion"; }
+            } catch (e) { console.error(e); }
         }
-        window.onload = updateData;
+        window.onload = loadData;
     </script>
 </body>
 </html>
-
