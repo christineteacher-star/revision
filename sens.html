@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Œil du Dragon | Académie</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        body { font-family: 'Quicksand', sans-serif; background-color: #f0f7ff; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 85px; background: white; display: flex; flex-direction: column; align-items: center; padding: 25px 0; border-right: 1px solid #eef2f6; }
+        .logo-dragon { width: 48px; height: 48px; background: #f97316; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; margin-bottom: 40px; cursor:pointer; }
+        .main-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .game-card { background: white; border-radius: 35px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 650px; text-align: center; }
+        .btn-choice { background: #f8fafc; padding: 25px; border-radius: 25px; font-weight: 800; transition: 0.2s; cursor: pointer; border: 2px solid #e2e8f0; color: #475569; font-size: 1.2rem; }
+        .btn-choice:hover { border-color: #f97316; background: #fff7ed; color: #c2410c; transform: translateY(-3px); }
+        .correct { background: #10b981 !important; color: white !important; border-color: #10b981 !important; }
+        .wrong { background: #ef4444 !important; color: white !important; border-color: #ef4444 !important; animation: shake 0.3s; }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="logo-dragon" onclick="window.location.href='index.html'"><i class="fas fa-dragon"></i></div>
+        <div class="text-slate-300 hover:text-orange-500 cursor-pointer" onclick="window.location.href='index.html'"><i class="fas fa-home text-2xl"></i></div>
+    </nav>
+    <main class="main-content">
+        <div class="game-card">
+            <div id="game-zone">
+                <div class="flex justify-between items-center mb-10">
+                    <div class="text-left"><p class="text-slate-400 text-xs font-bold uppercase">Points</p><p class="text-4xl font-black text-slate-800" id="score">0</p></div>
+                    <div class="w-1/2 h-3 bg-slate-100 rounded-full overflow-hidden"><div id="timer" class="h-full bg-orange-500" style="width: 100%"></div></div>
+                </div>
+                <div class="mb-12"><p class="text-orange-500 font-bold uppercase text-sm mb-4">Cette expression est au sens...</p><h1 id="phrase-display" class="text-3xl font-bold text-slate-700 italic px-4">---</h1></div>
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="btn-choice" onclick="check('Propre')">PROPRE</div>
+                    <div class="btn-choice" onclick="check('Figuré')">FIGURÉ</div>
+                </div>
+            </div>
+            <div id="result-zone" class="hidden">
+                <i class="fas fa-eye text-6xl text-orange-500 mb-6"></i>
+                <h2 class="text-4xl font-black text-slate-800 mb-2">Terminé !</h2>
+                <p class="text-slate-500 mb-8 text-xl">Score : <span id="final-score" class="text-orange-600 font-bold">0</span></p>
+                <button onclick="location.reload()" class="w-full bg-orange-500 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-orange-600 transition">RECOMMENCER</button>
+            </div>
+        </div>
+    </main>
+    <script>
+        const banque = [
+            {p: "Il a dévoré son livre.", s: "Figuré"}, {p: "Le lion dévore sa proie.", s: "Propre"},
+            {p: "J'ai un poids sur le cœur.", s: "Figuré"}, {p: "Il a jeté l'argent par les fenêtres.", s: "Figuré"},
+            {p: "Elle est tombée de sa chaise.", s: "Propre"}, {p: "Il a le cœur sur la main.", s: "Figuré"}
+        ];
+        let score = 0, timeLeft = 60, currentIdx = -1, active = true;
+        function next() {
+            active = true; currentIdx = Math.floor(Math.random() * banque.length);
+            document.getElementById('phrase-display').innerText = `"${banque[currentIdx].p}"`;
+            document.querySelectorAll('.btn-choice').forEach(b => b.className = "btn-choice");
+        }
+        function check(choice) {
+            if(!active) return; active = false;
+            const btn = Array.from(document.querySelectorAll('.btn-choice')).find(b => b.innerText === choice.toUpperCase());
+            if(choice === banque[currentIdx].s) { btn.classList.add('correct'); score += 20; document.getElementById('score').innerText = score; setTimeout(next, 400); }
+            else { btn.classList.add('wrong'); setTimeout(() => { active = true; next(); }, 600); }
+        }
+        const timer = setInterval(() => { timeLeft -= 0.1; document.getElementById('timer').style.width = (timeLeft/60*100) + "%"; if(timeLeft <= 0) { clearInterval(timer); document.getElementById('game-zone').classList.add('hidden'); document.getElementById('result-zone').classList.remove('hidden'); document.getElementById('final-score').innerText = score; } }, 100);
+        next();
+    </script>
+</body>
+</html>
