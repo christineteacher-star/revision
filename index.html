@@ -13,10 +13,9 @@
         .main-content { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; }
         .card { border-radius: 24px; transition: all 0.3s ease; background: white; border: 1px solid #f1f5f9; }
         .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .class-img-card { position: relative; border-radius: 20px; overflow: hidden; height: 150px; flex: 1; cursor: pointer; }
+        .class-img-card { position: relative; border-radius: 20px; overflow: hidden; height: 160px; flex: 1; cursor: pointer; }
         .class-img-card img { width: 100%; height: 100%; object-fit: cover; }
         .class-title { position: absolute; bottom: 15px; left: 15px; color: white; font-weight: 800; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .badge-record { background: #fefce8; border: 1px solid #fef08a; border-radius: 12px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; }
     </style>
 </head>
 <body>
@@ -40,7 +39,7 @@
                 </div>
                 <div>
                     <h3 class="font-bold text-slate-800">Quiz du Jour</h3>
-                    <p class="text-slate-400 text-xs">Défi quotidien</p>
+                    <p class="text-slate-400 text-xs">Réponds au défi !</p>
                 </div>
             </div>
 
@@ -50,39 +49,33 @@
                 </div>
                 <div>
                     <h3 class="font-bold text-slate-800">Épreuve des Crocs</h3>
-                    <p class="text-slate-400 text-xs">Conjugaison</p>
+                    <p class="text-slate-400 text-xs">Conjugaison chrono</p>
                 </div>
             </div>
         </div>
 
         <div class="grid grid-cols-2 gap-6 mb-8">
-            <div class="card p-6 border-l-8 border-purple-500 cursor-pointer" onclick="window.location.href='grammaire.html'">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600">
-                        <i class="fas fa-font"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-slate-800">Maître des Classes</h3>
-                        <div class="badge-record">
-                            <i class="fas fa-trophy text-amber-500 text-[10px]"></i>
-                            <span id="best-grammaire" class="text-[11px] font-bold text-amber-700 uppercase">Aucun record</span>
-                        </div>
-                    </div>
+            <div class="card border-l-8 border-purple-500 overflow-hidden cursor-pointer" onclick="window.location.href='grammaire.html'">
+                <div class="p-6 flex items-center gap-4">
+                    <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold">A</div>
+                    <h3 class="font-bold text-slate-800">Maître des Classes</h3>
+                </div>
+                <div class="bg-purple-50/50 p-4 text-center border-t border-purple-100">
+                    <p class="text-[10px] font-bold text-purple-400 uppercase tracking-widest mb-1">🏆 Meilleur Score Mondial</p>
+                    <p id="best-grammaire" class="text-purple-700 font-bold font-mono italic">Chargement...</p>
                 </div>
             </div>
 
-            <div class="card p-6 border-l-8 border-amber-500 cursor-pointer" onclick="window.location.href='sens.html'">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center text-amber-600">
+            <div class="card border-l-8 border-amber-500 overflow-hidden cursor-pointer" onclick="window.location.href='sens.html'">
+                <div class="p-6 flex items-center gap-4">
+                    <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600">
                         <i class="fas fa-eye"></i>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-slate-800">L'Œil du Dragon</h3>
-                        <div class="badge-record">
-                            <i class="fas fa-trophy text-amber-500 text-[10px]"></i>
-                            <span id="best-sens" class="text-[11px] font-bold text-amber-700 uppercase">Aucun record</span>
-                        </div>
-                    </div>
+                    <h3 class="font-bold text-slate-800">L'Œil du Dragon</h3>
+                </div>
+                <div class="bg-amber-50/50 p-4 text-center border-t border-amber-100">
+                    <p class="text-[10px] font-bold text-amber-400 uppercase tracking-widest mb-1">🏆 Meilleur Score Mondial</p>
+                    <p id="best-sens" class="text-amber-700 font-bold font-mono italic">Chargement...</p>
                 </div>
             </div>
         </div>
@@ -104,21 +97,39 @@
     </main>
 
     <script>
-        // Fonction pour charger les scores depuis la mémoire du navigateur
-        function loadRecords() {
-            const gramRecord = JSON.parse(localStorage.getItem('recordGrammaire'));
-            const sensRecord = JSON.parse(localStorage.getItem('recordSens'));
+        // Ton URL Web App Google Script
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzovlnRuIQN3kH1hxK7OtChIn9zzYTx4v79e4k_cPMXdGo8KfAhysGfljg5v2-Qt3vmSw/exec";
 
-            if (gramRecord) {
-                document.getElementById('best-grammaire').innerText = `${gramRecord.pseudo} : ${gramRecord.score} PTS`;
-            }
-            if (sensRecord) {
-                document.getElementById('best-sens').innerText = `${sensRecord.pseudo} : ${sensRecord.score} PTS`;
+        async function fetchGlobalRecords() {
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+
+                // Recherche du record pour chaque jeu dans la liste reçue
+                const gramRecord = data.find(item => item.jeu === "Grammaire");
+                const sensRecord = data.find(item => item.jeu === "Sens");
+
+                if (gramRecord) {
+                    document.getElementById('best-grammaire').innerText = `${gramRecord.pseudo} : ${gramRecord.score} pts`;
+                } else {
+                    document.getElementById('best-grammaire').innerText = "Aucun record";
+                }
+
+                if (sensRecord) {
+                    document.getElementById('best-sens').innerText = `${sensRecord.pseudo} : ${sensRecord.score} pts`;
+                } else {
+                    document.getElementById('best-sens').innerText = "Aucun record";
+                }
+
+            } catch (error) {
+                console.error("Erreur API :", error);
+                document.getElementById('best-grammaire').innerText = "Erreur réseau";
+                document.getElementById('best-sens').innerText = "Erreur réseau";
             }
         }
 
-        // Lancer au démarrage
-        window.onload = loadRecords;
+        // Charger les scores mondiaux dès que la page est prête
+        window.addEventListener('DOMContentLoaded', fetchGlobalRecords);
     </script>
 </body>
 </html>
