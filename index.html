@@ -10,72 +10,44 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
         
-        body { 
-            font-family: 'Quicksand', sans-serif; 
-            background-color: #f0f7ff; 
-            margin: 0; display: flex; height: 100vh; overflow: hidden; 
-        }
+        body { font-family: 'Quicksand', sans-serif; background-color: #f0f7ff; margin: 0; display: flex; height: 100vh; overflow: hidden; }
 
-        /* Barre latérale */
-        .sidebar {
-            width: 85px; background: white; display: flex; flex-direction: column;
-            align-items: center; padding: 25px 0; border-right: 1px solid #eef2f6;
-        }
-        .logo-dragon {
-            width: 48px; height: 48px; background: #0ea5e9; border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 22px; margin-bottom: 40px;
-        }
+        .sidebar { width: 85px; background: white; display: flex; flex-direction: column; align-items: center; padding: 25px 0; border-right: 1px solid #eef2f6; }
+        .logo-dragon { width: 48px; height: 48px; background: #0ea5e9; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; margin-bottom: 40px; }
 
-        /* Contenu */
         .main-content { flex: 1; display: flex; padding: 30px; gap: 30px; overflow-y: auto; }
         .dashboard-left { flex: 2; display: flex; flex-direction: column; gap: 25px; }
         .dashboard-right { width: 380px; display: flex; flex-direction: column; }
 
-        /* Cartes */
         .card { background: white; border-radius: 35px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
 
-        /* Podium */
-        .podium-container {
-            background: white; border-radius: 35px; padding: 25px; height: 100%; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.04); display: flex; flex-direction: column;
-        }
-        .podium-visual {
-            display: flex; justify-content: center; align-items: flex-end;
-            gap: 12px; margin-top: 100px; margin-bottom: 30px;
-        }
-        .podium-bar {
-            width: 80px; border-radius: 20px 20px 8px 8px; display: flex;
-            flex-direction: column; align-items: center; justify-content: flex-end;
-            padding-bottom: 15px; color: #1e293b; font-weight: 800; position: relative;
-        }
+        /* PODIUM CORRIGÉ */
+        .podium-container { background: white; border-radius: 35px; padding: 25px; height: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.04); display: flex; flex-direction: column; }
+        .podium-visual { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin-top: 120px; margin-bottom: 30px; }
+        
+        .podium-bar { width: 85px; border-radius: 20px 20px 8px 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 15px; font-weight: 800; position: relative; }
         .bar-1 { height: 140px; background: #fef3c7; border: 2px solid #fbbf24; order: 2; }
         .bar-2 { height: 100px; background: #f1f5f9; border: 2px solid #cbd5e1; order: 1; }
         .bar-3 { height: 80px; background: #fff1f2; border: 2px solid #fda4af; order: 3; }
         
-        .podium-avatar {
-            position: absolute; top: -55px; width: 60px; height: 60px;
-            border-radius: 50%; border: 3px solid white; background: #f8fafc;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
+        .podium-avatar { position: absolute; top: -60px; width: 65px; height: 65px; border-radius: 50%; border: 3px solid white; background: #f8fafc; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        /* NOM AGRANDI ET MONTÉ PLUS HAUT */
         .podium-name {
-            position: absolute; top: -85px; width: 110px; text-align: center;
-            font-size: 11px; font-weight: 700; color: #475569;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            position: absolute; 
+            top: -100px; /* Augmenté pour ne plus toucher l'avatar */
+            width: 120px; 
+            text-align: center; 
+            font-size: 14px; /* Agrandit la taille du nom */
+            font-weight: 800; 
+            color: #1e293b; 
+            white-space: nowrap;
         }
 
-        /* Boutons Classes */
-        .class-img-card {
-            flex: 1; height: 150px; border-radius: 30px; position: relative;
-            overflow: hidden; transition: 0.3s; cursor: pointer;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-        }
+        .class-img-card { flex: 1; height: 150px; border-radius: 30px; position: relative; overflow: hidden; transition: 0.3s; cursor: pointer; box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
         .class-img-card:hover { transform: scale(1.03); }
         .class-img-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); }
-        .class-title { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            color: white; font-weight: 800; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px;
-        }
+        .class-title { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: 800; font-size: 1.2rem; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -88,11 +60,10 @@
     <main class="main-content">
         <div class="dashboard-left">
             <h1 class="text-3xl font-bold text-slate-800">Dashboard Académie</h1>
-            
             <div class="grid grid-cols-2 gap-6">
                 <div class="card">
                     <h3 class="font-bold text-sky-600 mb-2">Quiz du Jour</h3>
-                    <p class="text-slate-500 text-sm mb-4">Grimpe au classement en répondant au défi !</p>
+                    <p class="text-slate-500 text-sm mb-4">Réponds au défi !</p>
                     <button class="w-full bg-sky-500 text-white py-3 rounded-2xl font-bold hover:bg-sky-600 transition">JOUER</button>
                 </div>
                 <div class="card bg-emerald-50 flex flex-col items-center justify-center">
@@ -103,15 +74,15 @@
 
             <div class="flex gap-4 mt-auto">
                 <div class="class-img-card" onclick="window.location.href='brevet.html'">
-                    <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500&q=80">
+                    <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500">
                     <div class="class-title">BREVET</div>
                 </div>
                 <div class="class-img-card" onclick="window.location.href='seconde.html'">
-                    <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=500&q=80">
+                    <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=500">
                     <div class="class-title">SECONDE</div>
                 </div>
                 <div class="class-img-card" onclick="window.location.href='premiere.html'">
-                    <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=500&q=80">
+                    <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=500">
                     <div class="class-title">PREMIÈRE</div>
                 </div>
             </div>
@@ -119,17 +90,15 @@
 
         <div class="dashboard-right">
             <div class="podium-container">
-                <h2 class="text-xl font-bold text-slate-800 text-center">Tableau d'Honneur</h2>
+                <h2 class="text-xl font-bold text-slate-800 text-center mb-10">Tableau d'Honneur</h2>
                 <div id="podium-ui" class="podium-visual"></div>
                 <div id="rank-list" class="space-y-3 overflow-y-auto pr-2 mt-4">
-                    <p class="text-center text-slate-400">Chargement...</p>
-                </div>
+                    </div>
             </div>
         </div>
     </main>
 
     <script>
-        // N'OUBLIEZ PAS DE COLLER VOTRE LIEN GOOGLE SCRIPT CI-DESSOUS
         const SCRIPT_URL = "VOTRE_URL_ICI_FINISSANT_PAR_EXEC"; 
 
         async function loadLeaderboard() {
@@ -139,8 +108,7 @@
                 data.sort((a, b) => b.score - a.score);
                 render(data);
             } catch (error) {
-                console.log("Erreur ou mode démo");
-                render([{nom:"Dragon 1", score:500}, {nom:"Dragon 2", score:400}, {nom:"Dragon 3", score:300}]);
+                console.log("Erreur");
             }
         }
 
@@ -155,7 +123,7 @@
                 <div class="podium-bar ${bars[i]}">
                     <div class="podium-name">${e.nom}</div>
                     <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(e.nom)}" class="podium-avatar">
-                    <span class="text-lg">${labels[i]}</span>
+                    <span class="text-xl">${labels[i]}</span>
                 </div>
             ` : '').join('');
 
@@ -164,8 +132,8 @@
                     <span class="text-xs font-bold text-slate-300 w-5">#${i + 1}</span>
                     <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(e.nom)}" class="w-10 h-10 rounded-full bg-white">
                     <div class="flex-1">
-                        <p class="text-xs font-bold text-slate-700">${e.nom}</p>
-                        <p class="text-[10px] text-sky-500 font-bold">${e.score} pts</p>
+                        <p class="text-sm font-bold text-slate-700">${e.nom}</p>
+                        <p class="text-[11px] text-sky-500 font-bold">${e.score} pts</p>
                     </div>
                 </div>
             `).join('');
