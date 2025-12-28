@@ -56,3 +56,179 @@
         .podium-visual {
             display: flex; justify-content: center; align-items: flex-end;
             gap: 8px; margin-top: 60px; margin-bottom: 30px;
+        }
+        .podium-bar {
+            width: 70px; border-radius: 15px 15px 5px 5px; display: flex;
+            flex-direction: column; align-items: center; justify-content: flex-end;
+            padding-bottom: 15px; color: #1e293b; font-weight: 800; position: relative;
+        }
+        .bar-1 { height: 130px; background: #fef3c7; border: 2px solid #fbbf24; order: 2; }
+        .bar-2 { height: 90px; background: #f1f5f9; border: 2px solid #cbd5e1; order: 1; }
+        .bar-3 { height: 70px; background: #fff1f2; border: 2px solid #fda4af; order: 3; }
+        
+        .podium-avatar {
+            position: absolute; top: -50px; width: 50px; height: 50px;
+            border-radius: 50%; border: 3px solid white; background: #f8fafc;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Boutons Classes */
+        .class-btn {
+            flex: 1; height: 130px; border-radius: 30px; display: flex;
+            align-items: center; justify-content: center; flex-direction: column;
+            transition: 0.3s; cursor: pointer; border: 1px solid rgba(0,0,0,0.05);
+        }
+        .class-btn:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+
+        /* Scrollbar discrète */
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="logo-dragon">
+            <i class="fas fa-dragon"></i>
+        </div>
+        <div class="nav-icon active"><i class="fas fa-home"></i></div>
+        <div class="nav-icon"><i class="fas fa-book-open"></i></div>
+        <div class="nav-icon"><i class="fas fa-gamepad"></i></div>
+        <div class="nav-icon"><i class="fas fa-trophy"></i></div>
+        <div class="mt-auto nav-icon"><i class="fas fa-sign-out-alt"></i></div>
+    </nav>
+
+    <main class="main-content">
+        
+        <div class="dashboard-left">
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-bold text-slate-800">Dashboard</h1>
+                <div class="flex gap-4">
+                    <div class="bg-white px-5 py-2 rounded-full shadow-sm flex items-center gap-2">
+                        <i class="fas fa-gem text-sky-400"></i> <span class="font-bold">166</span>
+                    </div>
+                    <div class="bg-white px-5 py-2 rounded-full shadow-sm flex items-center gap-2">
+                        <i class="fas fa-coins text-yellow-400"></i> <span class="font-bold">2,381</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <div class="stat-box bg-sky-50 text-sky-700">
+                    <p class="text-[10px] uppercase font-bold tracking-wider">Missions</p>
+                    <p class="text-2xl font-bold">5%</p>
+                </div>
+                <div class="stat-box bg-purple-50 text-purple-700">
+                    <p class="text-[10px] uppercase font-bold tracking-wider">Leçons</p>
+                    <p class="text-2xl font-bold">21/23</p>
+                </div>
+                <div class="stat-box bg-pink-50 text-pink-700">
+                    <p class="text-[10px] uppercase font-bold tracking-wider">Heures de Vol</p>
+                    <p class="text-2xl font-bold">120/111</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div class="card">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-slate-700">Épreuve des Crocs</h3>
+                        <i class="fas fa-ellipsis-h text-slate-300"></i>
+                    </div>
+                    <div class="grid grid-cols-4 gap-2 mb-6">
+                        <div class="h-10 bg-sky-100 rounded-lg flex items-center justify-center text-sky-500"><i class="fas fa-tooth"></i></div>
+                        <div class="h-10 bg-sky-100 rounded-lg flex items-center justify-center text-sky-500"><i class="fas fa-tooth"></i></div>
+                        <div class="h-10 bg-slate-50 rounded-lg flex items-center justify-center text-slate-200"><i class="fas fa-tooth"></i></div>
+                        <div class="h-10 bg-slate-50 rounded-lg flex items-center justify-center text-slate-200"><i class="fas fa-tooth"></i></div>
+                    </div>
+                    <div class="flex justify-center gap-4 text-2xl opacity-80">
+                        <span>🥚</span><span>🥚</span><span>🥚</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="font-bold text-slate-700 mb-4">Quiz du Jour</h3>
+                    <div class="h-24 bg-slate-50 rounded-2xl flex flex-col items-center justify-center border-b-4 border-sky-400">
+                        <p class="text-sky-600 font-bold">Les Rois de France</p>
+                        <p class="text-[10px] text-slate-400">Chapitre 1 • 10 Questions</p>
+                    </div>
+                    <button class="w-full mt-4 bg-sky-500 text-white py-3 rounded-2xl font-bold shadow-lg shadow-sky-100 hover:bg-sky-600 transition">COMMENCER</button>
+                </div>
+            </div>
+
+            <div class="flex gap-4 mt-auto">
+                <div class="class-btn bg-orange-100 text-orange-700" onclick="location.href='brevet.html'">
+                    <i class="fas fa-star text-3xl mb-2"></i>
+                    <span class="font-bold">BREVET</span>
+                </div>
+                <div class="class-btn bg-emerald-100 text-emerald-700" onclick="location.href='seconde.html'">
+                    <i class="fas fa-leaf text-3xl mb-2"></i>
+                    <span class="font-bold">SECONDE</span>
+                </div>
+                <div class="class-btn bg-blue-100 text-blue-700" onclick="location.href='premiere.html'">
+                    <i class="fas fa-fire text-3xl mb-2"></i>
+                    <span class="font-bold">PREMIÈRE</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-right">
+            <div class="podium-container shadow-xl">
+                <h2 class="text-xl font-bold text-slate-800 mb-2">Tableau d'Honneur</h2>
+                <p class="text-[11px] text-slate-400 mb-4">Classement mis à jour en direct</p>
+                
+                <div class="podium-visual" id="podium-box">
+                    </div>
+
+                <div class="space-y-3 overflow-y-auto flex-1 custom-scroll pr-2" id="ranking-list">
+                    </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Données à lier avec vos deux APIs de scores
+        const eleves = [
+            { nom: "Brody Bennet", score: 5299, status: 'up' },
+            { nom: "Jeck Hlotior", score: 4709, status: 'up' },
+            { nom: "Tivery Bell", score: 3739, status: 'down' },
+            { nom: "Léo Casto", score: 2850, status: 'up' },
+            { nom: "Mila Rose", score: 2100, status: 'down' },
+            { nom: "Yanis Drac", score: 1950, status: 'up' }
+        ];
+
+        function renderApp() {
+            const podium = document.getElementById('podium-box');
+            const list = document.getElementById('ranking-list');
+
+            // 1. Remplissage du Podium (Visualisation #2, #1, #3)
+            const top3 = [eleves[1], eleves[0], eleves[2]]; 
+            const bars = ['bar-2', 'bar-1', 'bar-3'];
+            const labels = ['#2', '#1', '#3'];
+
+            podium.innerHTML = top3.map((e, i) => `
+                <div class="podium-bar ${bars[i]} shadow-sm">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${e.nom}" class="podium-avatar">
+                    <span class="text-[10px] font-bold text-slate-400 absolute -top-14 w-20 text-center">${e.nom}</span>
+                    ${labels[i]}
+                </div>
+            `).join('');
+
+            // 2. Remplissage de la liste complète
+            list.innerHTML = eleves.map((e, i) => `
+                <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl border border-white hover:shadow-md transition cursor-default">
+                    <span class="text-xs font-bold text-slate-300 w-5">#${i + 1}</span>
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${e.nom}" class="w-10 h-10 rounded-full bg-white shadow-inner">
+                    <div class="flex-1">
+                        <p class="text-sm font-bold text-slate-700">${e.nom}</p>
+                        <p class="text-[10px] text-sky-500 font-bold">${e.score.toLocaleString()} pts</p>
+                    </div>
+                    <i class="fas fa-caret-${e.status} ${e.status === 'up' ? 'text-green-400' : 'text-red-400'}"></i>
+                </div>
+            `).join('');
+        }
+
+        window.onload = renderApp;
+    </script>
+</body>
+</html>
