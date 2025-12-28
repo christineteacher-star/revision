@@ -4,79 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dragon Dashboard | Académie</title>
-    
     <link rel="icon" href="https://img.icons8.com/color/48/dragon.png" type="image/png">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
-        
-        body { 
-            font-family: 'Quicksand', sans-serif; 
-            background-color: #f0f7ff; 
-            margin: 0; display: flex; height: 100vh; overflow: hidden; 
-        }
-
-        /* Barre latérale */
-        .sidebar {
-            width: 85px; background: white; display: flex; flex-direction: column;
-            align-items: center; padding: 25px 0; border-right: 1px solid #eef2f6;
-        }
-        .logo-dragon {
-            width: 48px; height: 48px; background: #0ea5e9; border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 22px; margin-bottom: 40px; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
-        }
-        
-        .nav-icon {
-            width: 42px; height: 42px; border-radius: 12px; display: flex;
-            align-items: center; justify-content: center; margin-bottom: 20px;
-            color: #94a3b8; transition: 0.3s; cursor: pointer;
-        }
+        body { font-family: 'Quicksand', sans-serif; background-color: #f0f7ff; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 85px; background: white; display: flex; flex-direction: column; align-items: center; padding: 25px 0; border-right: 1px solid #eef2f6; }
+        .logo-dragon { width: 48px; height: 48px; background: #0ea5e9; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; margin-bottom: 40px; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3); }
+        .nav-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; color: #94a3b8; cursor: pointer; }
         .nav-icon.active { background: #f1f5f9; color: #0ea5e9; }
-
-        /* Zones de contenu */
         .main-content { flex: 1; display: flex; padding: 30px; gap: 30px; overflow-y: auto; }
         .dashboard-left { flex: 2; display: flex; flex-direction: column; gap: 25px; }
         .dashboard-right { width: 380px; display: flex; flex-direction: column; }
-
-        /* Cartes */
         .card { background: white; border-radius: 35px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
-        .stat-box { border-radius: 20px; padding: 15px; flex: 1; }
-
-        /* Podium Illustration à droite */
-        .podium-container {
-            background: white; border-radius: 35px; padding: 25px; height: 100%; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.04); display: flex; flex-direction: column;
-        }
-        .podium-visual {
-            display: flex; justify-content: center; align-items: flex-end;
-            gap: 12px; margin-top: 60px; margin-bottom: 30px;
-        }
-        .podium-bar {
-            width: 75px; border-radius: 20px 20px 8px 8px; display: flex;
-            flex-direction: column; align-items: center; justify-content: flex-end;
-            padding-bottom: 15px; color: #1e293b; font-weight: 800; position: relative;
-        }
+        .podium-container { background: white; border-radius: 35px; padding: 25px; height: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.04); display: flex; flex-direction: column; }
+        .podium-visual { display: flex; justify-content: center; align-items: flex-end; gap: 12px; margin-top: 60px; margin-bottom: 30px; }
+        .podium-bar { width: 75px; border-radius: 20px 20px 8px 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 15px; color: #1e293b; font-weight: 800; position: relative; }
         .bar-1 { height: 140px; background: #fef3c7; border: 2px solid #fbbf24; order: 2; }
         .bar-2 { height: 100px; background: #f1f5f9; border: 2px solid #cbd5e1; order: 1; }
         .bar-3 { height: 80px; background: #fff1f2; border: 2px solid #fda4af; order: 3; }
-        
-        .podium-avatar {
-            position: absolute; top: -55px; width: 55px; height: 55px;
-            border-radius: 50%; border: 3px solid white; background: #f8fafc;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        /* Boutons Classes */
-        .class-btn {
-            flex: 1; height: 130px; border-radius: 30px; display: flex;
-            align-items: center; justify-content: center; flex-direction: column;
-            transition: 0.3s; cursor: pointer;
-        }
-        .class-btn:hover { transform: translateY(-5px); }
+        .podium-avatar { position: absolute; top: -55px; width: 55px; height: 55px; border-radius: 50%; border: 3px solid white; background: #f8fafc; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .class-btn { flex: 1; height: 130px; border-radius: 30px; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: 0.3s; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -84,99 +33,86 @@
     <nav class="sidebar">
         <div class="logo-dragon"><i class="fas fa-dragon"></i></div>
         <div class="nav-icon active"><i class="fas fa-home"></i></div>
-        <div class="nav-icon"><i class="fas fa-book-open"></i></div>
-        <div class="nav-icon"><i class="fas fa-gamepad"></i></div>
         <div class="nav-icon"><i class="fas fa-trophy"></i></div>
     </nav>
 
     <main class="main-content">
-        
         <div class="dashboard-left">
             <div class="flex justify-between items-center">
                 <h1 class="text-3xl font-bold text-slate-800">Dashboard</h1>
-                <div class="flex gap-4">
-                    <div class="bg-white px-4 py-2 rounded-full shadow-sm flex items-center gap-2">
-                        <i class="fas fa-gem text-sky-400"></i> <span class="font-bold">166</span>
-                    </div>
-                    <div class="bg-white px-4 py-2 rounded-full shadow-sm flex items-center gap-2">
-                        <i class="fas fa-coins text-yellow-400"></i> <span class="font-bold">2,381</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex gap-4">
-                <div class="stat-box bg-sky-50 text-sky-700 font-bold">Missions: 5%</div>
-                <div class="stat-box bg-purple-50 text-purple-700 font-bold">Leçons: 21/23</div>
-                <div class="stat-box bg-pink-50 text-pink-700 font-bold">Vol: 120/111</div>
             </div>
 
             <div class="grid grid-cols-2 gap-6">
                 <div class="card">
-                    <h3 class="font-bold mb-4">Épreuve des Crocs</h3>
-                    <div class="grid grid-cols-4 gap-2">
-                        <div class="h-10 bg-sky-100 rounded-lg"></div>
-                        <div class="h-10 bg-sky-100 rounded-lg"></div>
-                        <div class="h-10 bg-slate-50 rounded-lg"></div>
-                        <div class="h-10 bg-slate-50 rounded-lg"></div>
-                    </div>
+                    <h3 class="font-bold mb-2 text-sky-600">Quiz du Jour</h3>
+                    <p class="text-sm text-slate-500 mb-4">Mise à jour selon vos résultats</p>
+                    <button class="w-full bg-sky-500 text-white py-2 rounded-xl font-bold">LANCER</button>
                 </div>
                 <div class="card">
-                    <h3 class="font-bold mb-2 text-sky-600">Quiz du Jour</h3>
-                    <p class="text-sm text-slate-500 mb-4">Les Dragons de France</p>
-                    <button class="w-full bg-sky-500 text-white py-2 rounded-xl font-bold">JOUE</button>
+                    <h3 class="font-bold mb-4">Épreuve des Crocs</h3>
+                    <div class="flex justify-center text-3xl">🐉</div>
                 </div>
             </div>
 
             <div class="flex gap-4 mt-auto">
-                <div class="class-btn bg-orange-100 text-orange-700"><i class="fas fa-graduation-cap text-2xl"></i><span class="font-bold">BREVET</span></div>
-                <div class="class-btn bg-emerald-100 text-emerald-700"><i class="fas fa-leaf text-2xl"></i><span class="font-bold">SECONDE</span></div>
-                <div class="class-btn bg-blue-100 text-blue-700"><i class="fas fa-university text-2xl"></i><span class="font-bold">PREMIÈRE</span></div>
+                <div class="class-btn bg-orange-100 text-orange-700 font-bold"><i class="fas fa-graduation-cap text-2xl mb-1"></i>BREVET</div>
+                <div class="class-btn bg-emerald-100 text-emerald-700 font-bold"><i class="fas fa-leaf text-2xl mb-1"></i>SECONDE</div>
+                <div class="class-btn bg-blue-100 text-blue-700 font-bold"><i class="fas fa-university text-2xl mb-1"></i>PREMIÈRE</div>
             </div>
         </div>
 
         <div class="dashboard-right">
             <div class="podium-container shadow-xl">
                 <h2 class="text-xl font-bold text-slate-800 text-center">Tableau d'Honneur</h2>
-                
                 <div class="podium-visual" id="podium-ui">
-                    </div>
-
-                <div class="space-y-3 overflow-y-auto pr-2" id="rank-list">
-                    </div>
+                    <p class="text-slate-400">Chargement...</p>
+                </div>
+                <div class="space-y-3 overflow-y-auto pr-2" id="rank-list"></div>
             </div>
         </div>
     </main>
 
     <script>
-        const eleves = [
-            { nom: "Brody Bennet", score: 5299, trend: 'up' },
-            { nom: "Jeck Hlotior", score: 4709, trend: 'up' },
-            { nom: "Tivery Bell", score: 3739, trend: 'down' },
-            { nom: "Mila Rose", score: 2850, trend: 'up' }
-        ];
+        // --- CONFIGURATION ---
+        const URL_GOOGLE_SHEET = "VOTRE_URL_API_GOOGLE_SHEET"; // <--- METTEZ VOTRE LIEN ICI
 
-        function render() {
+        async function loadLeaderboard() {
+            try {
+                const response = await fetch(URL_GOOGLE_SHEET);
+                const data = await response.json();
+                
+                // Trier par score décroissant
+                const eleves = data.sort((a, b) => b.score - a.score);
+                
+                renderUI(eleves);
+            } catch (error) {
+                console.error("Erreur de chargement des noms :", error);
+                document.getElementById('podium-ui').innerHTML = "<p class='text-red-500'>Erreur de connexion</p>";
+            }
+        }
+
+        function renderUI(eleves) {
             const podium = document.getElementById('podium-ui');
             const list = document.getElementById('rank-list');
 
             // Podium (Top 3)
-            const top3 = [eleves[1], eleves[0], eleves[2]];
+            const top3 = [eleves[1], eleves[0], eleves[2]]; // Argent, Or, Bronze
             const bars = ['bar-2', 'bar-1', 'bar-3'];
             const labels = ['#2', '#1', '#3'];
 
-            podium.innerHTML = top3.map((e, i) => `
+            podium.innerHTML = top3.map((e, i) => e ? `
                 <div class="podium-bar ${bars[i]}">
-                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${e.nom}" class="podium-avatar">
-                    <span class="text-[10px] font-bold absolute -top-12 text-slate-400 text-center w-full">${e.nom}</span>
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(e.nom)}" class="podium-avatar">
+                    <span class="text-[10px] font-bold absolute -top-12 text-slate-500 text-center w-full truncate">${e.nom}</span>
                     ${labels[i]}
                 </div>
-            `).join('');
+            ` : '').join('');
 
-            // Liste
+            // Liste complète
             list.innerHTML = eleves.map((e, i) => `
                 <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl border border-white">
                     <span class="text-xs font-bold text-slate-300 w-5">#${i + 1}</span>
-                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${e.nom}" class="w-10 h-10 rounded-full bg-white shadow-inner">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(e.nom)}" class="w-10 h-10 rounded-full bg-white">
                     <div class="flex-1">
                         <p class="text-xs font-bold text-slate-700">${e.nom}</p>
                         <p class="text-[10px] text-sky-500 font-bold">${e.score} pts</p>
@@ -184,7 +120,8 @@
                 </div>
             `).join('');
         }
-        window.onload = render;
+
+        window.onload = loadLeaderboard;
     </script>
 </body>
 </html>
