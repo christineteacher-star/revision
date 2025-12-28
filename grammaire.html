@@ -15,7 +15,7 @@
         .game-card { background: white; border-radius: 35px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 700px; text-align: center; }
         .grid-buttons { display: grid; grid-template-cols: repeat(2, 1fr); gap: 10px; }
         @media (min-width: 640px) { .grid-buttons { grid-template-columns: repeat(3, 1fr); } }
-        .btn-answer { background: #f8fafc; padding: 12px 8px; border-radius: 18px; font-weight: 700; transition: 0.2s; cursor: pointer; border: 2px solid #e2e8f0; color: #475569; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; }
+        .btn-answer { background: #f8fafc; padding: 15px 5px; border-radius: 18px; font-weight: 700; transition: 0.2s; cursor: pointer; border: 2px solid #e2e8f0; color: #475569; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; text-transform: uppercase; }
         .btn-answer:hover { background: #a855f7; color: white; border-color: #a855f7; transform: translateY(-2px); }
         .correct { background: #10b981 !important; color: white !important; border-color: #10b981 !important; }
         .wrong { background: #ef4444 !important; color: white !important; border-color: #ef4444 !important; animation: shake 0.3s; }
@@ -35,30 +35,72 @@
                     <div class="w-1/2 h-2 bg-slate-100 rounded-full overflow-hidden"><div id="timer" class="h-full bg-purple-500" style="width: 100%"></div></div>
                 </div>
                 <div class="mb-8">
-                    <p class="text-purple-500 font-bold uppercase tracking-widest text-xs mb-1">Classe grammaticale de :</p>
-                    <h1 id="word-display" class="text-5xl font-black text-slate-800 uppercase py-4">---</h1>
+                    <p class="text-purple-500 font-bold uppercase tracking-widest text-xs mb-1">Quelle est la classe de :</p>
+                    <h1 id="word-display" class="text-5xl font-black text-slate-800 py-4">...</h1>
                 </div>
                 <div class="grid-buttons">
-                    <div class="btn-answer" onclick="check('Nom')">NOM</div>
-                    <div class="btn-answer" onclick="check('Verbe')">VERBE</div>
-                    <div class="btn-answer" onclick="check('Adjectif')">ADJECTIF</div>
-                    <div class="btn-answer" onclick="check('Adverbe')">ADVERBE</div>
-                    <div class="btn-answer" onclick="check('Pronom')">PRONOM</div>
-                    <div class="btn-answer" onclick="check('Déterminant Démonstratif')">DÉT. DÉMONSTRATIF</div>
-                    <div class="btn-answer" onclick="check('Conjonction')">CONJONCTION</div>
+                    <div class="btn-answer" onclick="check('Nom', this)">NOM</div>
+                    <div class="btn-answer" onclick="check('Verbe', this)">VERBE</div>
+                    <div class="btn-answer" onclick="check('Adjectif', this)">ADJECTIF</div>
+                    <div class="btn-answer" onclick="check('Adverbe', this)">ADVERBE</div>
+                    <div class="btn-answer" onclick="check('Pronom', this)">PRONOM</div>
+                    <div class="btn-answer" onclick="check('Déterminant Démonstratif', this)">DÉT. DÉMONSTRATIF</div>
+                    <div class="btn-answer" onclick="check('Conjonction', this)">CONJONCTION</div>
                 </div>
             </div>
             <div id="result-zone" class="hidden">
-                <i class="fas fa-award text-5xl text-purple-500 mb-4"></i>
-                <h2 class="text-3xl font-black text-slate-800 mb-2">Défi terminé !</h2>
+                <h2 class="text-3xl font-black text-slate-800 mb-2">Terminé !</h2>
                 <p class="text-slate-500 mb-8 text-xl">Score : <span id="final-score" class="text-purple-600 font-bold">0</span></p>
-                <button onclick="location.reload()" class="w-full bg-purple-500 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-purple-600 transition">RECOMMENCER</button>
+                <button onclick="location.reload()" class="w-full bg-purple-500 text-white py-4 rounded-2xl font-bold">RECOMMENCER</button>
             </div>
         </div>
     </main>
     <script>
-        const mots = [
-            {w: "Cette", c: "Déterminant Démonstratif"}, {w: "Ces", c: "Déterminant Démonstratif"},
-            {w: "Il", c: "Pronom"}, {w: "Nous", c: "Pronom"}, {w: "Celui-ci", c: "Pronom"},
-            {w: "Mais", c: "Conjonction"}, {w: "Donc", c: "Conjonction"}, {w: "Car", c: "Conjonction"},
-            {w: "Ch
+        const banqueMots = [
+            {w: "Cette", c: "Déterminant Démonstratif"}, {w: "Ce", c: "Déterminant Démonstratif"}, {w: "Ces", c: "Déterminant Démonstratif"},
+            {w: "Il", c: "Pronom"}, {w: "Nous", c: "Pronom"}, {w: "On", c: "Pronom"}, {w: "Moi", c: "Pronom"},
+            {w: "Mais", c: "Conjonction"}, {w: "Car", c: "Conjonction"}, {w: "Donc", c: "Conjonction"}, {w: "Ou", c: "Conjonction"},
+            {w: "Lentement", c: "Adverbe"}, {w: "Hier", c: "Adverbe"}, {w: "Souvent", c: "Adverbe"},
+            {w: "Forêt", c: "Nom"}, {w: "Courage", c: "Nom"}, {w: "Chien", c: "Nom"},
+            {w: "Petit", c: "Adjectif"}, {w: "Brillant", c: "Adjectif"}, {w: "Rouge", c: "Adjectif"},
+            {w: "Chanter", c: "Verbe"}, {w: "Finir", c: "Verbe"}, {w: "Vendre", c: "Verbe"}
+        ];
+
+        let score = 0, timeLeft = 60, currentWord = {}, active = true;
+        let fileAttente = [];
+
+        function next() {
+            if (fileAttente.length === 0) fileAttente = [...banqueMots].sort(() => Math.random() - 0.5);
+            currentWord = fileAttente.pop();
+            document.getElementById('word-display').innerText = currentWord.w;
+            document.querySelectorAll('.btn-answer').forEach(b => b.className = "btn-answer");
+            active = true;
+        }
+
+        function check(choice, btn) {
+            if(!active) return; active = false;
+            if(choice === currentWord.c) {
+                btn.classList.add('correct'); score += 15;
+                document.getElementById('score').innerText = score;
+                setTimeout(next, 300);
+            } else {
+                btn.classList.add('wrong');
+                setTimeout(() => { active = true; next(); }, 600);
+            }
+        }
+
+        const timer = setInterval(() => {
+            timeLeft -= 0.1;
+            document.getElementById('timer').style.width = (timeLeft/60*100) + "%";
+            if(timeLeft <= 0) { 
+                clearInterval(timer); 
+                document.getElementById('game-zone').classList.add('hidden'); 
+                document.getElementById('result-zone').classList.remove('hidden'); 
+                document.getElementById('final-score').innerText = score; 
+            }
+        }, 100);
+
+        next();
+    </script>
+</body>
+</html>
