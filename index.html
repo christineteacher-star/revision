@@ -3,122 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Enseignant - Résultats</title>
+    <title>Dragon Academy - Dashboard</title>
+    <link rel="icon" href="https://img.icons8.com/color/48/dragon.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        body { font-family: 'Quicksand', sans-serif; background-color: #f0f4f8; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+
+        /* Sidebar */
+        .sidebar { width: 80px; background: white; display: flex; flex-direction: column; align-items: center; padding: 20px 0; border-right: 1px solid #e2e8f0; }
+        .logo-dragon { width: 50px; height: 50px; background: #0ea5e9; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; margin-bottom: 30px; transition: 0.5s; }
+        .logo-dragon:hover { transform: rotate(15deg) scale(1.1); }
+
+        /* Layout */
+        .main-container { flex: 1; display: flex; padding: 25px; gap: 25px; overflow: hidden; }
+        .content-area { flex: 1; overflow-y: auto; padding-right: 10px; }
+        .glass-card { background: white; border-radius: 30px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); cursor: pointer; transition: 0.3s; }
+        .glass-card:hover { transform: translateY(-3px); }
+
+        /* Leaderboard (Tableau d'Honneur) */
+        .leaderboard-panel { width: 350px; background: white; border-radius: 30px; padding: 25px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .medal-col { width: 65px; border-radius: 15px 15px 5px 5px; display: flex; align-items: center; justify-content: flex-end; padding-bottom: 10px; font-weight: 800; flex-direction: column; transition: height 1s; }
+        .gold { background: linear-gradient(to top, #fbbf24, #fef3c7); color: #92400e; height: 120px; }
+        .silver { background: linear-gradient(to top, #94a3b8, #f1f5f9); color: #334155; height: 90px; }
+        .bronze { background: linear-gradient(to top, #d97706, #ffedd5); color: #78350f; height: 70px; }
+
+        /* Crocodile Game */
+        .tooth { width: 45px; height: 60px; background: white; border: 2px solid #e2e8f0; border-radius: 0 0 20px 20px; cursor: pointer; transition: 0.2s; }
+        .tooth.pressed { background: #cbd5e1; transform: translateY(10px); }
+        .tooth.danger { background: #ef4444; border-color: #b91c1c; }
+
+        /* Modals */
+        .modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: white; width: 95%; max-width: 600px; padding: 40px; border-radius: 40px; position: relative; }
+    </style>
 </head>
-<body class="bg-slate-50 p-6">
+<body>
 
-    <div class="max-w-5xl mx-auto">
-        <header class="flex justify-between items-center mb-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800">Résultats des élèves</h1>
-                <p class="text-slate-500 text-sm">Données synchronisées avec Google Sheets</p>
-            </div>
-            <button onclick="fetchResults()" class="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 flex items-center shadow-lg transition transform active:scale-95">
-                <i class="fas fa-sync-alt mr-2" id="loader"></i> Actualiser
-            </button>
-        </header>
+    <div class="sidebar shadow-sm">
+        <div class="logo-dragon shadow-lg shadow-sky-100"><i class="fas fa-dragon"></i></div>
+        <div class="text-slate-300 space-y-8 text-xl">
+            <div class="text-sky-500"><i class="fas fa-th-large"></i></div>
+            <div class="hover:text-sky-400 cursor-pointer"><i class="fas fa-book"></i></div>
+            <div class="hover:text-sky-400 cursor-pointer"><i class="fas fa-gamepad"></i></div>
+        </div>
+    </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                <p class="text-xs text-slate-400 uppercase font-black mb-1">Moyenne Classe</p>
-                <p class="text-3xl font-black text-indigo-600" id="avgDisp">--%</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                <p class="text-xs text-slate-400 uppercase font-black mb-1">Total Copies</p>
-                <p class="text-3xl font-black text-slate-800" id="countDisp">0</p>
+    <div class="main-container">
+        <div class="content-area">
+            <header class="mb-8">
+                <h1 class="text-3xl font-bold text-slate-800">Bonjour, Cavalier !</h1>
+                <p class="text-slate-500">Prêt pour ton entraînement quotidien ?</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div onclick="alert('Lien vers votre questionnaire')" class="glass-card bg-purple-50 flex items-center gap-4">
+                    <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-purple-600 shadow-sm text-xl"><i class="fas fa-lightbulb"></i></div>
+                    <div><h3 class="font-bold">Questionnaires</h3><p class="text-xs text-slate-400">Chapitres 1 & 2</p></div>
+                </div>
+
+                <div onclick="alert('Lien vers votre jeu du pendu')" class="glass-card bg-pink-50 flex items-center gap-4">
+                    <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-pink-600 shadow-sm text-xl"><i class="fas fa-font"></i></div>
+                    <div><h3 class="font-bold">Jeu du Pendu</h3><p class="text-xs text-slate-400">Vocabulaire</p></div>
+                </div>
+
+                <div onclick="openCroco()" class="glass-card col-span-2 bg-green-50 flex items-center gap-4">
+                    <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-green-600 shadow-sm text-xl"><i class="fas fa-tooth"></i></div>
+                    <div class="flex-1"><h3 class="font-bold">L'Épreuve des Crocs</h3><p class="text-xs text-slate-400">Ne touche pas à la mauvaise dent !</p></div>
+                    <button class="bg-green-600 text-white px-6 py-2 rounded-full font-bold text-sm">JOUER</button>
+                </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-            <table class="w-full text-left border-collapse">
-                <thead class="bg-slate-50 border-b border-slate-200">
-                    <tr>
-                        <th class="p-4 font-bold text-slate-600 text-sm">Élève</th>
-                        <th class="p-4 font-bold text-slate-600 text-sm">Sujet</th>
-                        <th class="p-4 font-bold text-slate-600 text-sm">Date</th>
-                        <th class="p-4 font-bold text-slate-600 text-sm text-right">Score</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <tr><td colspan="4" class="p-8 text-center text-slate-400 italic font-medium">Recherche des notes...</td></tr>
-                </tbody>
-            </table>
+        <div class="leaderboard-panel">
+            <h2 class="text-xl font-bold text-slate-800 mb-6 text-center"><i class="fas fa-crown text-yellow-500 mr-2"></i>Tableau d'Honneur</h2>
+            <div id="podium-ui" class="flex justify-center items-end gap-3 mb-8 h-44 border-b border-slate-100 pb-2">
+                </div>
+            <div id="ranking-list-ui" class="space-y-3 overflow-y-auto flex-1 pr-2">
+                </div>
+        </div>
+    </div>
+
+    <div id="modalCroco" class="modal">
+        <div class="modal-content text-center">
+            <span class="absolute top-5 right-5 text-2xl cursor-pointer text-slate-300" onclick="closeCroco()">&times;</span>
+            <h2 class="text-2xl font-bold text-green-700 mb-2">Le Crocodile Affamé</h2>
+            <p id="croco-status" class="text-slate-500 mb-8">Clique sur les dents une par une...</p>
+            
+            <div id="croco-mouth" class="flex justify-center gap-2 flex-wrap max-w-sm mx-auto p-4 bg-slate-100 rounded-3xl">
+                </div>
+
+            <button onclick="startCroco()" class="mt-8 bg-green-600 text-white px-8 py-3 rounded-full font-bold hover:bg-green-700 transition">Réinitialiser le Crocodile</button>
         </div>
     </div>
 
     <script>
-        // === CONFIGURATION (Ligne 58) ===
-        // Mettez UNIQUEMENT le code ici, entre les guillemets.
-        const API_ID = "fy656vkhiikd5"; 
+        // --- DONNÉES ÉLÈVES (Simulé de vos APIs) ---
+        const eleves = [
+            { nom: "Léa", score: 2850 },
+            { nom: "Arthur", score: 2420 },
+            { nom: "Yanis", score: 2100 },
+            { nom: "Chloé", score: 1850 },
+            { nom: "Thomas", score: 1600 }
+        ];
 
-        async function fetchResults() {
-            const tbody = document.getElementById('tableBody');
-            const loader = document.getElementById('loader');
+        // --- FONCTION TABLEAU D'HONNEUR ---
+        function updateLeaderboard() {
+            const sorted = [...eleves].sort((a, b) => b.score - a.score);
+            const podiumUI = document.getElementById('podium-ui');
+            const listUI = document.getElementById('ranking-list-ui');
+
+            // Podium (Argent, Or, Bronze)
+            const top3 = [sorted[1], sorted[0], sorted[2]];
+            const styles = ['silver', 'gold', 'bronze'];
+            const labels = ['2', '1', '3'];
+
+            podiumUI.innerHTML = top3.map((e, i) => e ? `
+                <div class="flex flex-col items-center">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${e.nom}" class="w-12 h-12 rounded-full border-2 border-white mb-2 bg-slate-50 shadow-sm">
+                    <div class="medal-col ${styles[i]} shadow-md">
+                        <span class="text-xs font-black">${labels[i]}</span>
+                        <span class="text-[9px] font-bold">${e.score}</span>
+                    </div>
+                    <span class="text-[10px] font-bold mt-2 text-slate-600">${e.nom}</span>
+                </div>
+            ` : '').join('');
+
+            // Liste reste
+            listUI.innerHTML = sorted.map((e, i) => `
+                <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl border border-white hover:bg-white transition">
+                    <span class="text-xs font-bold text-slate-300 w-4">#${i + 1}</span>
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${e.nom}" class="w-8 h-8 rounded-full bg-white">
+                    <div class="flex-1 text-left">
+                        <p class="text-xs font-bold text-slate-700">${e.nom}</p>
+                        <p class="text-[10px] text-sky-500 font-bold">${e.score} pts</p>
+                    </div>
+                    ${i < 3 ? '<i class="fas fa-medal text-yellow-500 text-xs"></i>' : ''}
+                </div>
+            `).join('');
+        }
+
+        // --- MOTEUR DU JEU CROCODILE ---
+        let trapToothIndex = -1;
+        let gameOver = false;
+
+        function openCroco() { document.getElementById('modalCroco').style.display = 'flex'; startCroco(); }
+        function closeCroco() { document.getElementById('modalCroco').style.display = 'none'; }
+
+        function startCroco() {
+            gameOver = false;
+            trapToothIndex = Math.floor(Math.random() * 10);
+            document.getElementById('croco-status').innerText = "Clique sur les dents une par une...";
+            document.getElementById('croco-status').className = "text-slate-500 mb-8";
             
-            if(API_ID === "VOTRE_ID_ICI" || API_ID === "") { 
-                tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-red-500 font-bold bg-red-50">⚠️ CONFIGURATION REQUISE : Remplacez "VOTRE_ID_ICI" par votre code SheetDB à la ligne 58.</td></tr>';
-                return; 
-            }
-            
-            loader.classList.add('fa-spin');
-
-            try {
-                // Construction de l'URL propre
-                const url = `https://sheetdb.io/api/v1/${API_ID}`;
-                const res = await fetch(url);
-                
-                if (!res.ok) {
-                    throw new Error(`Erreur ${res.status} : Impossible d'accéder à SheetDB. Vérifiez que l'ID est correct.`);
-                }
-                
-                const data = await res.json();
-                tbody.innerHTML = "";
-                
-                if(!data || data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-slate-400 italic">Aucune donnée trouvée. Vérifiez que votre Google Sheet n\'est pas vide.</td></tr>';
-                    document.getElementById('countDisp').innerText = "0";
-                    document.getElementById('avgDisp').innerText = "--%";
-                    return;
-                }
-
-                let total = 0;
-                // On affiche les derniers arrivés en haut
-                const sortedData = [...data].reverse();
-                
-                sortedData.forEach(row => {
-                    const scoreValue = parseInt(row.score) || 0;
-                    total += scoreValue;
-                    
-                    const tr = document.createElement('tr');
-                    tr.className = "border-b border-slate-50 hover:bg-slate-50 transition";
-                    tr.innerHTML = `
-                        <td class="p-4 font-bold text-slate-700">${row.nom || 'Anonyme'}</td>
-                        <td class="p-4 text-slate-500 text-xs">${row.sujet || 'Non précisé'}</td>
-                        <td class="p-4 text-slate-400 text-xs">${row.date || '--/--'}</td>
-                        <td class="p-4 text-right">
-                            <span class="px-3 py-1 rounded-full text-xs font-bold ${scoreValue >= 50 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}">
-                                ${scoreValue}%
-                            </span>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-
-                document.getElementById('countDisp').innerText = data.length;
-                document.getElementById('avgDisp').innerText = Math.round(total / data.length) + "%";
-
-            } catch (e) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-red-500 italic bg-red-50">Erreur : ${e.message}</td></tr>`;
-            } finally {
-                loader.classList.remove('fa-spin');
+            const mouth = document.getElementById('croco-mouth');
+            mouth.innerHTML = '';
+            for(let i=0; i<10; i++) {
+                const t = document.createElement('div');
+                t.className = "tooth";
+                t.onclick = () => pressTooth(t, i);
+                mouth.appendChild(t);
             }
         }
 
-        // Lancement initial
-        window.onload = fetchResults;
+        function pressTooth(element, index) {
+            if(gameOver || element.classList.contains('pressed')) return;
+            
+            if(index === trapToothIndex) {
+                gameOver = true;
+                element.classList.add('danger');
+                document.getElementById('croco-status').innerText = "AÏE ! LE CROCODILE T'A MORDU !";
+                document.getElementById('croco-status').className = "text-red-600 font-bold mb-8 animate-bounce";
+            } else {
+                element.classList.add('pressed');
+            }
+        }
+
+        // Init au chargement
+        window.onload = updateLeaderboard;
     </script>
 </body>
 </html>
-
