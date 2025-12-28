@@ -69,29 +69,40 @@
                     <i class="fas fa-fire text-4xl text-orange-500 mb-2"></i>
                     <p class="font-bold text-slate-700">Épreuve des Crocs</p>
                 </div>
-            </div> <div class="flex gap-4 mt-6">
-                <div class="flex-1 card bg-white border-l-8 border-purple-500 cursor-pointer hover:bg-purple-50 transition shadow-sm p-6" onclick="window.location.href='grammaire.html'">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600">
-                            <i class="fas fa-font text-xl"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-slate-800">Maître des Classes</h3>
-                            <p class="text-[10px] text-slate-500 uppercase tracking-widest">Grammaire</p>
-                        </div>
-                    </div>
-                </div>
+          const banquePhrases = [
+        {p: "Il a dévoré son livre.", s: "Figuré"}, {p: "Le lion dévore sa proie.", s: "Propre"},
+        {p: "J'ai un poids sur le cœur.", s: "Figuré"}, {p: "Le sac est lourd.", s: "Propre"},
+        {p: "Il a jeté l'argent par les fenêtres.", s: "Figuré"}, {p: "Il a jeté ses clés.", s: "Propre"},
+        {p: "Il se creuse la tête.", s: "Figuré"}, {p: "Il creuse un trou.", s: "Propre"},
+        {p: "Il brise le silence.", s: "Figuré"}, {p: "Il brise une assiette.", s: "Propre"},
+        {p: "Cette nouvelle m'a glacé.", s: "Figuré"}, {p: "L'eau a glacé.", s: "Propre"},
+        {p: "Il a une langue de vipère.", s: "Figuré"}, {p: "Le chat a une langue râpeuse.", s: "Propre"}
+    ];
 
-                <div class="flex-1 card bg-white border-l-8 border-orange-500 cursor-pointer hover:bg-orange-50 transition shadow-sm p-6" onclick="window.location.href='sens.html'">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-orange-600">
-                            <i class="fas fa-eye text-xl"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-slate-800">L'Œil du Dragon</h3>
-                            <p class="text-[10px] text-slate-500 uppercase tracking-widest">Sens Propre vs Figuré</p>
-                        </div>
-                    </div>
+    let score = 0, timeLeft = 60, active = false, pseudo = "";
+    let sacDeMots = [];
+
+    function startGame() {
+        pseudo = prompt("Entre ton Pseudo pour le podium :") || "Élève";
+        sacDeMots = [...banquePhrases].sort(() => Math.random() - 0.5);
+        next();
+    }
+
+    function next() {
+        if (sacDeMots.length === 0) sacDeMots = [...banquePhrases].sort(() => Math.random() - 0.5);
+        currentQ = sacDeMots.pop(); // On retire le mot du sac (plus de répétition possible !)
+        document.getElementById('phrase-display').innerText = `"${currentQ.p}"`;
+        document.querySelectorAll('.btn-choice').forEach(b => b.className = "btn-choice");
+        active = true;
+    }
+
+    // Dans la fonction qui gère la fin du temps (quand timeLeft <= 0) :
+    function saveScore() {
+        const record = JSON.parse(localStorage.getItem('recordSens')) || {score: 0};
+        if(score > record.score) {
+            localStorage.setItem('recordSens', JSON.stringify({pseudo: pseudo, score: score}));
+        }
+    }
                 </div>
             </div> <div class="flex gap-4 mt-auto">
                 <div class="class-img-card" onclick="window.location.href='brevet.html'">
@@ -172,5 +183,6 @@
     </script>
 </body>
 </html>
+
 
 
