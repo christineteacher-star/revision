@@ -129,51 +129,58 @@
         <div id="leader-list" class="overflow-y-auto flex-1 px-5 mt-4"></div>
     </aside>
 
-    <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqLheXqYNAzM3cDMNJTtM03MxUmKYZTfB4etoK5jmHFtWNlDjlc6zQDyZlE7gZnlyXqg/exec";
-        
-        async function updateApp() {
-            try {
-                const response = await fetch(SCRIPT_URL);
-                const data = await response.json();
-                const players = data.filter(i => i.sujet?.includes("Monte-Cristo")).sort((a,b) => b.score - a.score);
+   <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqLheXqYNAzM3cDMNJTtM03MxUmKYZTfB4etoK5jmHFtWNlDjlc6zQDyZlE7gZnlyXqg/exec";
+    
+    async function updateApp() {
+        try {
+            const response = await fetch(SCRIPT_URL);
+            const data = await response.json();
+            
+            // FILTRE : On garde seulement si le nom et le score existent pour éviter les plantages
+            const players = data.filter(i => i.nom && i.score !== undefined)
+                                .sort((a,b) => b.score - a.score);
 
-                if(players.length >= 3) {
-                    document.getElementById('podium-area').innerHTML = `
-                        <div class="podium-column">
-                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[1].nom}" class="podium-avatar w-14 h-14 mb-2 shadow-lg">
-                            <span class="text-xs font-bold text-slate-600 mb-1 capitalize">${players[1].nom.split(' ')[0]}</span>
-                            <div class="podium-bar bg-amber-400 h-[70px]">#2</div>
-                        </div>
-                        <div class="podium-column" style="margin: 0 15px; width: 110px;">
-                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[0].nom}" class="podium-avatar w-20 h-20 mb-2 shadow-xl border-4">
-                            <span class="text-sm font-black text-slate-800 mb-1 capitalize">${players[0].nom.split(' ')[0]}</span>
-                            <div class="podium-bar bg-green-400 h-[110px]">#1</div>
-                        </div>
-                        <div class="podium-column">
-                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[2].nom}" class="podium-avatar w-14 h-14 mb-2 shadow-lg">
-                            <span class="text-xs font-bold text-slate-600 mb-1 capitalize">${players[2].nom.split(' ')[0]}</span>
-                            <div class="podium-bar bg-red-400 h-[50px]">#3</div>
-                        </div>`;
-                }
-
-                const colors = ['#3b82f6', '#a855f7', '#10b981'];
-                document.getElementById('leader-list').innerHTML = players.slice(3).map((p, i) => {
-                    const c = colors[i % 3];
-                    return `
-                    <div class="leader-item" onmouseover="this.style.borderColor='${c}'" onmouseout="this.style.borderColor='#f8fafc'">
-                        <span style="color: ${c}; font-weight: 900; width: 35px; text-align: center;">#${i+4}</span>
-                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p.nom}" class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100">
-                        <div class="flex-1 truncate ml-2">
-                            <p class="font-bold text-slate-700 text-sm capitalize">${p.nom}</p>
-                            <p style="color: ${c}; font-size: 10px; font-weight: 800;">💎 ${p.score} PTS</p>
-                        </div>
+            if(players.length >= 3) {
+                document.getElementById('podium-area').innerHTML = `
+                    <div class="podium-column">
+                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[1].nom}" class="podium-avatar w-14 h-14 mb-2 shadow-lg">
+                        <span class="text-xs font-bold text-slate-600 mb-1 capitalize">${players[1].nom.split(' ')[0]}</span>
+                        <div class="podium-bar bg-amber-400 h-[70px]">#2</div>
+                    </div>
+                    <div class="podium-column" style="margin: 0 15px; width: 110px;">
+                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[0].nom}" class="podium-avatar w-20 h-20 mb-2 shadow-xl border-4">
+                        <span class="text-sm font-black text-slate-800 mb-1 capitalize">${players[0].nom.split(' ')[0]}</span>
+                        <div class="podium-bar bg-green-400 h-[110px]">#1</div>
+                    </div>
+                    <div class="podium-column">
+                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[2].nom}" class="podium-avatar w-14 h-14 mb-2 shadow-lg">
+                        <span class="text-xs font-bold text-slate-600 mb-1 capitalize">${players[2].nom.split(' ')[0]}</span>
+                        <div class="podium-bar bg-red-400 h-[50px]">#3</div>
                     </div>`;
-                }).join('');
-            } catch (e) { console.error(e); }
+            }
+
+            const colors = ['#3b82f6', '#a855f7', '#10b981'];
+            document.getElementById('leader-list').innerHTML = players.slice(3).map((p, i) => {
+                const c = colors[i % 3];
+                return `
+                <div class="leader-item" onmouseover="this.style.borderColor='${c}'" onmouseout="this.style.borderColor='#f8fafc'">
+                    <span style="color: ${c}; font-weight: 900; width: 35px; text-align: center;">#${i+4}</span>
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p.nom}" class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100">
+                    <div class="flex-1 truncate ml-2">
+                        <p class="font-bold text-slate-700 text-sm capitalize">${p.nom}</p>
+                        <p style="color: ${c}; font-size: 10px; font-weight: 800;">💎 ${p.score} PTS | <small>${p.sujet || ''}</small></p>
+                    </div>
+                </div>`;
+            }).join('');
+        } catch (e) { 
+            console.error("Erreur de lecture :", e);
+            document.getElementById('leader-list').innerHTML = "<p style='text-align:center; padding:20px;'>⚠️ Impossible de charger les scores. Vérifiez votre fichier Excel (pas de lignes vides).</p>";
         }
-        window.onload = updateApp;
-    </script>
+    }
+    window.onload = updateApp;
+</script>
 </body>
 </html>
+
 
