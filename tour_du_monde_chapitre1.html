@@ -21,7 +21,6 @@
         .btn-action { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.1em; }
         .btn-next { background: var(--success); color: white; display: none; }
         input.name-input { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 10px; margin: 20px 0; box-sizing: border-box; font-size: 1.1em; }
-        
         .flashcard { width: 100%; height: 200px; perspective: 1000px; cursor: pointer; margin-top: 20px; }
         .card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
         .flashcard.flipped .card-inner { transform: rotateY(180deg); }
@@ -35,14 +34,14 @@
 <div class="container">
     <div id="name-section">
         <h1>Explorateur du Monde</h1>
-        <p style="text-align:center">Inscris ton prénom pour commencer et enregistrer ton score :</p>
+        <p style="text-align:center">Inscris ton prénom pour commencer :</p>
         <input type="text" id="player-name" class="name-input" placeholder="Ton Prénom...">
         <button onclick="startQuiz()" class="btn-action" style="background:var(--primary); color:white;">Commencer le voyage</button>
     </div>
 
     <div id="quiz-section" style="display:none;">
         <div id="progress">Question 1 / 10</div>
-        <h1 id="chapter-title">Chapitre 1 : Fogg & Passepartout</h1>
+        <h1>Chapitre 1 : Fogg & Passepartout</h1>
         <div class="question" id="q-text"></div>
         <div class="options" id="options-box"></div>
         <div id="feedback" class="feedback"></div>
@@ -55,10 +54,6 @@
         <div class="stats-grid">
             <div class="stat-card"><div>Score</div><div id="res-score" style="font-size: 1.8em; font-weight: bold;"></div></div>
             <div class="stat-card"><div>Exactitude</div><div id="res-percent" style="font-size: 1.8em; font-weight: bold;"></div></div>
-        </div>
-        <div class="stat-card" style="width: 95%; margin-bottom: 20px;">
-            <div>Catégorie maîtrisée :</div>
-            <div id="res-strength" style="color:var(--success); font-weight:bold;"></div>
         </div>
         <button onclick="startFlashcards()" class="btn-action" style="background:var(--dark); color:white;">Réviser le Vocabulaire</button>
     </div>
@@ -80,4 +75,84 @@
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqLheXqYNAzM3cDMNJTtM03MxUmKYZTfB4etoK5jmHFtWNlDjlc6zQDyZlE7gZnlyXqg/exec";
 
     const quizData = [
-        { q: "Phileas Fogg est un homme ________ (qui garde son calme).", opts: ["expansif", "f
+        { q: "Phileas Fogg est un homme ________ (qui garde son calme).", opts: ["expansif", "flegmatique", "communicatif", "galant"], r: 1, cat: "Portrait", def: "FLEGMATIQUE : Calme, imperturbable." },
+        { q: "Passepartout a une force ________ (très grande).", opts: ["sédentaire", "soigneusement", "herculéenne", "superflue"], r: 2, cat: "Description", def: "HERCULÉENNE : Une force digne d'Hercule." },
+        { q: "Fogg est l'homme le plus ________ (qui ne bouge pas) de Londres.", opts: ["sédentaire", "expansif", "écuyer", "galant"], r: 0, cat: "Habitudes", def: "SÉDENTAIRE : Qui ne voyage pas, reste au même endroit." },
+        { q: "Passepartout a été ________ (acrobate à cheval).", opts: ["gentleman", "domestique", "écuyer", "pendule"], r: 2, cat: "Métier", def: "ÉCUYER : Artiste de cirque cavalier." },
+        { q: "Fogg ne fait aucun mouvement ________ (inutile).", opts: ["incontestablement", "superflu", "communicatif", "galant"], r: 1, cat: "Vocabulaire", def: "SUPERFLU : Ce qui est en trop, inutile." },
+        { q: "Il est ________ riche, mais discret.", opts: ["incontestablement", "soigneusement", "galant", "flegmatique"], r: 0, cat: "Vocabulaire", def: "INCONTESTABLEMENT : Sans aucun doute." },
+        { q: "Il observe ________ (avec attention) son maître.", opts: ["expansif", "soigneusement", "herculéen", "superflu"], r: 1, cat: "Vocabulaire", def: "SOIGNEUSEMENT : Avec beaucoup de soin." },
+        { q: "Le poste de ________ (serviteur) lui plaît.", opts: ["écuyer", "domestique", "gentleman", "pendule"], r: 1, cat: "Métier", def: "DOMESTIQUE : Employé de maison." },
+        { q: "Fogg est un ________ (homme distingué).", opts: ["écuyer", "domestique", "gentleman", "pendule"], r: 2, cat: "Portrait", def: "GENTLEMAN : Homme de la haute société." },
+        { q: "Il regarde la ________ (horloge) pour l'heure exacte.", opts: ["écuyer", "domestique", "gentleman", "pendule"], r: 3, cat: "Vocabulaire", def: "PENDULE : Horloge murale." }
+    ];
+
+    let current = 0; let score = 0; let playerName = "";
+    let fIdx = 0;
+
+    function startQuiz() {
+        playerName = document.getElementById('player-name').value.trim();
+        if(playerName === "") { alert("Inscris ton nom !"); return; }
+        document.getElementById('name-section').style.display = 'none';
+        document.getElementById('quiz-section').style.display = 'block';
+        showQ();
+    }
+
+    function showQ() {
+        const q = quizData[current];
+        document.getElementById('progress').innerText = `Question ${current+1}/10`;
+        document.getElementById('q-text').innerHTML = q.q;
+        const box = document.getElementById('options-box'); box.innerHTML = '';
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+        q.opts.forEach((o, i) => {
+            const b = document.createElement('button'); b.className = 'opt-btn'; b.innerHTML = o;
+            b.onclick = () => {
+                document.querySelectorAll('.opt-btn').forEach(btn => btn.disabled = true);
+                if(i === q.r) { 
+                    score++; 
+                    document.getElementById('feedback').className="feedback correct"; 
+                    document.getElementById('feedback').innerHTML=`<b>Correct !</b><br>${q.def}`; 
+                } else { 
+                    document.getElementById('feedback').className="feedback wrong"; 
+                    document.getElementById('feedback').innerHTML=`<b>Erreur.</b><br>${q.def}`; 
+                }
+                document.getElementById('feedback').style.display = 'block'; 
+                document.getElementById('next-btn').style.display = 'block';
+            };
+            box.appendChild(b);
+        });
+    }
+
+    document.getElementById('next-btn').onclick = () => {
+        current++;
+        if(current < 10) showQ();
+        else {
+            document.getElementById('quiz-section').style.display = 'none';
+            document.getElementById('end-section').style.display = 'block';
+            document.getElementById('res-score').innerText = `${score}/10`;
+            document.getElementById('res-percent').innerText = `${score*10}%`;
+            sendScoreToServer();
+        }
+    };
+
+    function sendScoreToServer() {
+        const data = { nom: playerName, score: score * 10, sujet: "Tour du Monde - Monte-Cristo" };
+        fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(data) })
+        .then(() => {
+            document.getElementById('status-msg').innerText = "✅ Score enregistré !";
+            document.getElementById('status-msg').style.color = "var(--success)";
+        });
+    }
+
+    function startFlashcards() { document.getElementById('end-section').style.display = 'none'; document.getElementById('flash-section').style.display = 'block'; showFlash(); }
+    function showFlash() { 
+        const c = quizData[fIdx]; 
+        document.querySelector('.flashcard').classList.remove('flipped'); 
+        document.getElementById('f-front').innerText = c.opts[c.r].toUpperCase(); 
+        document.getElementById('f-back').innerHTML = c.def; 
+    }
+    function nextFlashcard() { fIdx = (fIdx + 1) % 10; showFlash(); }
+</script>
+</body>
+</html>
