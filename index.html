@@ -12,60 +12,59 @@
         body { font-family: 'Quicksand', sans-serif; background-color: #ebf2f7; margin: 0; display: flex; height: 100vh; overflow: hidden; }
 
         /* --- SIDEBAR --- */
-        .sidebar { width: 80px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; align-items: center; padding: 25px 0 15px 0; flex-shrink: 0; justify-content: space-between; }
+        .sidebar { width: 85px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; align-items: center; padding: 25px 0; flex-shrink: 0; justify-content: space-between; }
         .nav-icon { width: 50px; height: 50px; border-radius: 18px; display: flex; align-items: center; justify-content: center; transition: 0.3s; cursor: pointer; color: #94a3b8; }
-        .nav-icon:hover { background-color: #f1f5f9; transform: scale(1.1); }
-        .social-fb:hover { color: #1877F2; }
-        .social-ig:hover { color: #E4405F; }
-        .social-wa:hover { color: #25D366; }
-        .gemini-tag { font-size: 9px; font-weight: 700; color: #cbd5e1; text-transform: uppercase; writing-mode: vertical-rl; transform: rotate(180deg); margin-top: 10px; letter-spacing: 1px; }
+        .nav-icon:hover { transform: scale(1.1); background-color: #f8fafc; }
+        .social-fb { color: #1877F2; }
+        .social-ig { color: #E4405F; }
+        .social-wa { color: #25D366; }
 
         /* --- CONTENU --- */
         .main-content { flex: 1; padding: 25px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
         .leaderboard-aside { width: 400px; background: white; border-left: 1px solid #e2e8f0; padding: 20px 0; display: flex; flex-direction: column; border-radius: 50px 0 0 50px; flex-shrink: 0; }
 
-        .exercise-card { background: white; border-radius: 35px; padding: 25px; text-align: center; transition: all 0.4s; border: 3px solid transparent; }
-        .exercise-card:hover { transform: translateY(-10px); }
-        .card-blue:hover { border-color: #3b82f6; box-shadow: 0 15px 30px rgba(59, 130, 246, 0.2); }
-        .card-purple:hover { border-color: #a855f7; box-shadow: 0 15px 30px rgba(168, 85, 247, 0.2); }
-        .card-emerald:hover { border-color: #10b981; box-shadow: 0 15px 30px rgba(16, 185, 129, 0.2); }
+        /* --- EFFETS DE MOUVEMENT ET GLOW --- */
+        .hover-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .hover-card:hover { transform: translateY(-10px); }
 
-        .battle-banner { background: white; border-radius: 40px; padding: 30px; display: flex; justify-content: space-between; align-items: center; }
+        .exercise-card { background: white; border-radius: 35px; padding: 25px; text-align: center; border: 3px solid transparent; }
+        .card-blue:hover { border-color: #3b82f6; box-shadow: 0 20px 30px rgba(59, 130, 246, 0.2); }
+        .card-purple:hover { border-color: #a855f7; box-shadow: 0 20px 30px rgba(168, 85, 247, 0.2); }
+        .card-emerald:hover { border-color: #10b981; box-shadow: 0 20px 30px rgba(16, 185, 129, 0.2); }
 
-        .level-card { position: relative; height: 110px; border-radius: 30px; overflow: hidden; flex: 1; cursor: pointer; transition: 0.4s; border: 3px solid transparent; }
-        .level-card:hover { transform: translateY(-5px); border-color: white; }
-        .level-brevet:hover { box-shadow: 0 12px 25px rgba(59, 130, 246, 0.4); }
-        .level-seconde:hover { box-shadow: 0 12px 25px rgba(168, 85, 247, 0.4); }
-        .level-terminale:hover { box-shadow: 0 12px 25px rgba(16, 185, 129, 0.4); }
-        .level-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); }
-        .level-card span { position: absolute; bottom: 15px; left: 20px; color: white; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; }
+        /* --- CASES DU BAS (GLOW RÉPARÉ) --- */
+        .level-card { position: relative; height: 110px; border-radius: 30px; overflow: hidden; flex: 1; border: 3px solid transparent; }
+        .level-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); transition: 0.4s; }
+        .level-card span { position: absolute; bottom: 15px; left: 20px; color: white; font-weight: 800; text-transform: uppercase; font-size: 0.9rem; z-index: 2; }
+        .level-card:hover img { filter: brightness(0.8) scale(1.1); }
+        .level-card:hover { border-color: white; box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
 
         /* --- PODIUM --- */
-        .podium-container { background-color: #f8fbff; border: 2px solid #e2efff; margin: 0 20px 20px 20px; border-radius: 35px; padding: 25px 10px 15px 10px; display: flex; justify-content: center; align-items: flex-end; gap: 8px; transition: 0.5s; height: 220px; }
+        .podium-container { background-color: #f8fbff; border: 2px solid #e2efff; margin: 0 20px 20px 20px; border-radius: 35px; padding: 25px 10px 15px 10px; display: flex; justify-content: center; align-items: flex-end; gap: 8px; height: 220px; transition: 0.4s; }
+        .podium-container:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(59, 130, 246, 0.15); }
         .podium-column { display: flex; flex-direction: column; align-items: center; width: 100px; }
         .podium-avatar { width: 65px; height: 65px; margin-bottom: 5px; }
         .podium-block { width: 100%; border-radius: 15px 15px 10px 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 18px; }
         
-        .block-1 { height: 110px !important; background-color: #4ade80; }
-        .block-2 { height: 85px !important; background-color: #fbbf24; }
-        .block-3 { height: 65px !important; background-color: #f87171; }
-        
-        .list-row { display: flex; align-items: center; gap: 15px; border-radius: 25px; padding: 12px 15px; margin: 0 20px 10px 20px; transition: 0.3s; cursor: pointer; border: 2px solid transparent; }
-        .list-row:hover { transform: translateX(8px); }
+        /* --- LISTE AVEC GLOW & COULEURS --- */
+        .list-row { display: flex; align-items: center; gap: 15px; border-radius: 25px; padding: 12px 15px; margin: 0 20px 10px 20px; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border: 2px solid transparent; }
+        .list-row:hover { transform: translateX(12px); border-color: white; }
+
+        .gemini-tag { font-size: 9px; font-weight: 700; color: #cbd5e1; text-transform: uppercase; writing-mode: vertical-rl; transform: rotate(180deg); margin-top: 10px; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
     <nav class="sidebar">
         <div class="flex flex-col items-center gap-6">
-            <div class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white mb-2 shadow-lg"><i class="fas fa-dragon text-2xl"></i></div>
-            <a href="mailto:christine.el.mabsout@gmail.com?subject=Contact%20Académie" class="nav-icon" style="background: #eff6ff; color: #3b82f6;"><i class="fas fa-compass text-2xl"></i></a>
-            <div class="nav-icon"><i class="fas fa-home text-xl"></i></div>
+            <div class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-dragon text-2xl"></i></div>
+            <a href="mailto:christine.el.mabsout@gmail.com" class="nav-icon" style="background: #eff6ff; color: #3b82f6;"><i class="fas fa-compass text-2xl"></i></a>
+            <div class="nav-icon" onclick="window.location.reload()"><i class="fas fa-home text-xl"></i></div>
         </div>
         <div class="flex flex-col items-center gap-4">
-            <a href="https://www.facebook.com/sharer/sharer.php?u=https://tonsite.com" target="_blank" class="nav-icon social-fb"><i class="fab fa-facebook-f text-xl"></i></a>
-            <a href="https://www.instagram.com" target="_blank" class="nav-icon social-ig"><i class="fab fa-instagram text-xl"></i></a>
-            <a href="https://api.whatsapp.com/send?text=Viens%20relever%20le%20défi%20!" target="_blank" class="nav-icon social-wa"><i class="fab fa-whatsapp text-xl"></i></a>
+            <a href="https://facebook.com" target="_blank" class="nav-icon social-fb"><i class="fab fa-facebook-f text-xl"></i></a>
+            <a href="https://instagram.com" target="_blank" class="nav-icon social-ig"><i class="fab fa-instagram text-xl"></i></a>
+            <a href="https://api.whatsapp.com/send?text=Rejoins-moi !" target="_blank" class="nav-icon social-wa"><i class="fab fa-whatsapp text-xl"></i></a>
             <div class="gemini-tag">Made with Gemini</div>
         </div>
     </nav>
@@ -74,35 +73,32 @@
         <h1 class="text-3xl font-black text-slate-800">Mon Académie</h1>
         
         <div class="grid grid-cols-3 gap-6">
-            <div class="exercise-card card-blue">
+            <div class="exercise-card card-blue hover-card">
                 <i class="fas fa-scroll text-5xl text-blue-500 mb-4 block"></i>
                 <h3 class="font-bold text-slate-700">Sens Propre / Figuré</h3>
                 <a href="sens.html" class="block w-full bg-blue-500 text-white font-black py-3 mt-4 rounded-xl uppercase text-center">Explorer</a>
             </div>
-            <div class="exercise-card card-purple">
+            <div class="exercise-card card-purple hover-card">
                 <i class="fas fa-shield-halved text-5xl text-purple-500 mb-4 block"></i>
                 <h3 class="font-bold text-slate-700">Grammaire / Classes</h3>
                 <a href="grammaire.html" class="block w-full bg-purple-500 text-white font-black py-3 mt-4 rounded-xl uppercase text-center">S'entraîner</a>
             </div>
-            <div class="exercise-card card-emerald">
+            <div class="exercise-card card-emerald hover-card">
                 <i class="fas fa-map-marked-alt text-5xl text-emerald-500 mb-4 block"></i>
                 <h3 class="font-bold text-slate-700">Conjugaison / Temps</h3>
                 <a href="conjugaison.html" class="block w-full bg-emerald-500 text-white font-black py-3 mt-4 rounded-xl uppercase text-center">Triompher</a>
             </div>
         </div>
 
-        <div class="battle-banner shadow-sm bg-white">
-            <div>
-                <h2 class="text-2xl font-black text-slate-800 uppercase">L'Épreuve de Monte-Cristo</h2>
-                <p class="text-slate-400 font-bold text-xs uppercase tracking-widest">Le défi ultime</p>
-            </div>
-            <a href="epreuve.html" class="bg-slate-800 text-white px-10 py-4 rounded-2xl font-black shadow-xl hover:bg-sky-500 transition-all text-center">AFFRONTER</a>
+        <div class="bg-white rounded-[40px] p-8 flex justify-between items-center shadow-sm border-2 border-transparent hover:border-slate-800 transition-all cursor-pointer">
+            <div><h2 class="text-2xl font-black text-slate-800 uppercase">L'Épreuve de Monte-Cristo</h2><p class="text-slate-400 font-bold text-xs uppercase tracking-widest">Le défi ultime</p></div>
+            <a href="epreuve.html" class="bg-slate-800 text-white px-10 py-4 rounded-2xl font-black shadow-xl hover:bg-sky-500 transition-all">AFFRONTER</a>
         </div>
 
         <div class="flex gap-4">
-            <div class="level-card level-brevet"><img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400"><span>Quête du Brevet</span></div>
-            <div class="level-card level-seconde"><img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400"><span>Seconde Zone</span></div>
-            <div class="level-card level-terminale"><img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400"><span>Épreuve Terminale</span></div>
+            <div class="level-card hover-card"><img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400"><span>Quête du Brevet</span></div>
+            <div class="level-card hover-card"><img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400"><span>Seconde Zone</span></div>
+            <div class="level-card hover-card"><img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400"><span>Épreuve Terminale</span></div>
         </div>
     </main>
 
@@ -114,10 +110,13 @@
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqLheXqYNAzM3cDMNJTtM03MxUmKYZTfB4etoK5jmHFtWNlDjlc6zQDyZlE7gZnlyXqg/exec";
-        const playerStyles = [
-            { bg: "#f5f3ff", border: "#ede9fe", badge: "#8b5cf6", glow: "rgba(139, 92, 246, 0.3)" },
-            { bg: "#ecfdf5", border: "#d1fae5", badge: "#10b981", glow: "rgba(16, 185, 129, 0.3)" },
-            { bg: "#fff7ed", border: "#ffedd5", badge: "#f97316", glow: "rgba(249, 115, 22, 0.3)" }
+        
+        // Styles des Squircels (Couleurs et Glows)
+        const rowStyles = [
+            { bg: "#f5f3ff", color: "#8b5cf6", glow: "rgba(139, 92, 246, 0.25)" },
+            { bg: "#ecfdf5", color: "#10b981", glow: "rgba(16, 185, 129, 0.25)" },
+            { bg: "#fff7ed", color: "#f97316", glow: "rgba(249, 115, 22, 0.25)" },
+            { bg: "#eff6ff", color: "#3b82f6", glow: "rgba(59, 130, 246, 0.25)" }
         ];
 
         async function updateApp() {
@@ -125,34 +124,29 @@
                 const response = await fetch(SCRIPT_URL);
                 const data = await response.json();
                 const players = data.filter(i => i.sujet?.includes("Monte-Cristo")).sort((a,b) => b.score - a.score);
-                const podium = document.getElementById('podium-area');
+                
+                // PODIUM XXL
                 if(players.length >= 3) {
-                    const p1 = players[0], p2 = players[1], p3 = players[2];
-                    podium.innerHTML = `
-                        <div class="podium-column">
-                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(p2.nom)}" class="podium-avatar">
-                            <span class="text-[10px] font-bold text-slate-500 mb-1">${p2.nom.split(' ')[0]}</span>
-                            <div class="podium-block block-2">#2</div>
-                        </div>
-                        <div class="podium-column">
-                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(p1.nom)}" class="podium-avatar">
-                            <span class="text-[10px] font-bold text-slate-500 mb-1">${p1.nom.split(' ')[0]}</span>
-                            <div class="podium-block block-1">#1</div>
-                        </div>
-                        <div class="podium-column">
-                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(p3.nom)}" class="podium-avatar">
-                            <span class="text-[10px] font-bold text-slate-500 mb-1">${p3.nom.split(' ')[0]}</span>
-                            <div class="podium-block block-3">#3</div>
-                        </div>
-                    `;
+                    document.getElementById('podium-area').innerHTML = `
+                        <div class="podium-column"><img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[1].nom}" class="podium-avatar"><span class="text-[10px] font-bold text-slate-500">${players[1].nom.split(' ')[0]}</span><div class="podium-block bg-amber-400 h-[85px]">#2</div></div>
+                        <div class="podium-column"><img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[0].nom}" class="podium-avatar"><span class="text-[10px] font-bold text-slate-500">${players[0].nom.split(' ')[0]}</span><div class="podium-block bg-green-400 h-[110px]">#1</div></div>
+                        <div class="podium-column"><img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[2].nom}" class="podium-avatar"><span class="text-[10px] font-bold text-slate-500">${players[2].nom.split(' ')[0]}</span><div class="podium-block bg-red-400 h-[65px]">#3</div></div>`;
                 }
-                const list = document.getElementById('leader-list');
-                list.innerHTML = players.slice(3).map((p, i) => {
-                    const style = playerStyles[i % playerStyles.length];
-                    return `<div class="list-row shadow-sm" style="background-color: ${style.bg}; border-color: ${style.border};" onmouseover="this.style.boxShadow='0 8px 20px ${style.glow}'; this.style.borderColor='${style.badge}'" onmouseout="this.style.boxShadow='none'; this.style.borderColor='transparent'">
-                        <div class="w-8 flex justify-center font-black text-slate-300">#${i+4}</div>
-                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(p.nom)}" class="w-12 h-12 rounded-xl bg-white border-2 border-white">
-                        <div class="flex-1 min-w-0"><p class="font-bold text-slate-700 text-sm truncate">${p.nom}</p><div class="text-[10px] font-black uppercase" style="color: ${style.badge};">💎 ${p.score} Points</div></div>
+
+                // LISTE AVEC COULEURS ET GLOW
+                document.getElementById('leader-list').innerHTML = players.slice(3).map((p, i) => {
+                    const style = rowStyles[i % rowStyles.length];
+                    return `
+                    <div class="list-row shadow-sm" 
+                         style="background-color: ${style.bg}; color: ${style.color};"
+                         onmouseover="this.style.boxShadow='0 10px 20px ${style.glow}'" 
+                         onmouseout="this.style.boxShadow='none'">
+                        <div class="w-8 font-black opacity-30">#${i+4}</div>
+                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p.nom}" class="w-10 h-10 rounded-xl bg-white border-2 border-white shadow-sm">
+                        <div class="flex-1 truncate">
+                            <p class="font-bold text-slate-700 text-sm">${p.nom}</p>
+                            <div class="text-[10px] font-black uppercase">💎 ${p.score} pts</div>
+                        </div>
                     </div>`;
                 }).join('');
             } catch (e) { console.error(e); }
