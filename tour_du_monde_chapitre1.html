@@ -34,14 +34,14 @@
 <div class="container">
     <div id="name-section">
         <h1>Explorateur du Monde</h1>
-        <p style="text-align:center">Inscris ton prénom pour commencer :</p>
+        <p style="text-align:center">Inscris ton prénom pour commencer et enregistrer ton score :</p>
         <input type="text" id="player-name" class="name-input" placeholder="Ton Prénom...">
         <button onclick="startQuiz()" class="btn-action" style="background:var(--primary); color:white;">Commencer le voyage</button>
     </div>
 
     <div id="quiz-section" style="display:none;">
         <div id="progress">Question 1 / 10</div>
-        <h1>Chapitre 1 : Fogg & Passepartout</h1>
+        <h1 id="chapter-title">Chapitre 1 : Fogg & Passepartout</h1>
         <div class="question" id="q-text"></div>
         <div class="options" id="options-box"></div>
         <div id="feedback" class="feedback"></div>
@@ -87,8 +87,7 @@
         { q: "Il regarde la ________ (horloge) pour l'heure exacte.", opts: ["écuyer", "domestique", "gentleman", "pendule"], r: 3, cat: "Vocabulaire", def: "PENDULE : Horloge murale." }
     ];
 
-    let current = 0; let score = 0; let playerName = "";
-    let fIdx = 0;
+    let current = 0; let score = 0; let playerName = ""; let fIdx = 0;
 
     function startQuiz() {
         playerName = document.getElementById('player-name').value.trim();
@@ -100,22 +99,26 @@
 
     function showQ() {
         const q = quizData[current];
-        document.getElementById('progress').innerText = `Question ${current+1}/10`;
+        document.getElementById('progress').innerText = "Question " + (current + 1) + " / 10";
         document.getElementById('q-text').innerHTML = q.q;
-        const box = document.getElementById('options-box'); box.innerHTML = '';
+        const box = document.getElementById('options-box'); 
+        box.innerHTML = '';
         document.getElementById('feedback').style.display = 'none';
         document.getElementById('next-btn').style.display = 'none';
+        
         q.opts.forEach((o, i) => {
-            const b = document.createElement('button'); b.className = 'opt-btn'; b.innerHTML = o;
-            b.onclick = () => {
+            const b = document.createElement('button'); 
+            b.className = 'opt-btn'; 
+            b.innerHTML = o;
+            b.onclick = function() {
                 document.querySelectorAll('.opt-btn').forEach(btn => btn.disabled = true);
                 if(i === q.r) { 
                     score++; 
                     document.getElementById('feedback').className="feedback correct"; 
-                    document.getElementById('feedback').innerHTML=`<b>Correct !</b><br>${q.def}`; 
+                    document.getElementById('feedback').innerHTML="<b>Correct !</b><br>" + q.def; 
                 } else { 
                     document.getElementById('feedback').className="feedback wrong"; 
-                    document.getElementById('feedback').innerHTML=`<b>Erreur.</b><br>${q.def}`; 
+                    document.getElementById('feedback').innerHTML="<b>Erreur.</b><br>" + q.def; 
                 }
                 document.getElementById('feedback').style.display = 'block'; 
                 document.getElementById('next-btn').style.display = 'block';
@@ -124,14 +127,15 @@
         });
     }
 
-    document.getElementById('next-btn').onclick = () => {
+    document.getElementById('next-btn').onclick = function() {
         current++;
-        if(current < 10) showQ();
-        else {
+        if(current < 10) {
+            showQ();
+        } else {
             document.getElementById('quiz-section').style.display = 'none';
             document.getElementById('end-section').style.display = 'block';
-            document.getElementById('res-score').innerText = `${score}/10`;
-            document.getElementById('res-percent').innerText = `${score*10}%`;
+            document.getElementById('res-score').innerText = score + "/10";
+            document.getElementById('res-percent').innerText = (score * 10) + "%";
             sendScoreToServer();
         }
     };
@@ -139,20 +143,29 @@
     function sendScoreToServer() {
         const data = { nom: playerName, score: score * 10, sujet: "Tour du Monde - Monte-Cristo" };
         fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(data) })
-        .then(() => {
+        .then(function() {
             document.getElementById('status-msg').innerText = "✅ Score enregistré !";
             document.getElementById('status-msg').style.color = "var(--success)";
         });
     }
 
-    function startFlashcards() { document.getElementById('end-section').style.display = 'none'; document.getElementById('flash-section').style.display = 'block'; showFlash(); }
+    function startFlashcards() { 
+        document.getElementById('end-section').style.display = 'none'; 
+        document.getElementById('flash-section').style.display = 'block'; 
+        showFlash(); 
+    }
+
     function showFlash() { 
         const c = quizData[fIdx]; 
         document.querySelector('.flashcard').classList.remove('flipped'); 
         document.getElementById('f-front').innerText = c.opts[c.r].toUpperCase(); 
         document.getElementById('f-back').innerHTML = c.def; 
     }
-    function nextFlashcard() { fIdx = (fIdx + 1) % 10; showFlash(); }
+
+    function nextFlashcard() { 
+        fIdx = (fIdx + 1) % 10; 
+        showFlash(); 
+    }
 </script>
 </body>
 </html>
