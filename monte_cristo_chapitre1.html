@@ -86,6 +86,9 @@
 </div>
 
 <script>
+    // 1. UTILISEZ VOTRE LIEN UNIQUE ICI (celui de votre Index)
+    const SCRIPT_URL = "https://script.google.com/macros/s/VOTRE_ID_ICI/exec";
+
     const quizData = [
         { q: "Edmond semble ________ par la mort du capitaine.", opts: ["accablé", "hostile", "prospère", "ambitieux"], r: 0, cat: "Vocabulaire", def: "ACCABLÉ : Très triste, comme si l'on portait un poids trop lourd." },
         { q: "Morrel est un marchand _________ (affaires rentables).", opts: ["ambitieux", "accablé", "prospère", "hostile"], r: 2, cat: "Vocabulaire", def: "PROSPÈRE : Qui réussit financièrement." },
@@ -145,25 +148,27 @@
         envoyerDonnees(nom, score * 10);
     }
 
-    async function envoyerDonnees(nom, pourcentage) {
+    function envoyerDonnees(nom, pourcentage) {
         const status = document.getElementById('sync-status');
         status.innerText = "⏳ Transmission de la note...";
         
-        // Remplacer "VOTRE_ID_ICI" par votre identifiant SheetDB
-        const API_URL = "https://sheetdb.io/api/v1/fy656vkhiikd5";
+        const data = { 
+            nom: nom, 
+            score: pourcentage, 
+            sujet: "Monte-Cristo Ch.1" 
+        };
 
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    data: [{ "nom": nom, "score": pourcentage, "date": new Date().toLocaleDateString('fr-FR'), "sujet": "Monte-Cristo Ch.1" }]
-                })
-            });
-            status.innerHTML = response.ok ? "✅ Note enregistrée." : "⚠️ Erreur d'enregistrement.";
-        } catch (e) {
-            status.innerHTML = "❌ Connexion impossible.";
-        }
+        fetch(SCRIPT_URL, { 
+            method: "POST", 
+            mode: "no-cors", 
+            body: JSON.stringify(data) 
+        })
+        .then(() => {
+            status.innerHTML = "✅ Note enregistrée.";
+        })
+        .catch(() => {
+            status.innerHTML = "❌ Erreur de connexion.";
+        });
     }
 
     function startFlashcards() { 
@@ -185,4 +190,5 @@
 </script>
 </body>
 </html>
+
 
