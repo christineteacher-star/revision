@@ -136,17 +136,13 @@
         try {
             const response = await fetch(SCRIPT_URL);
             const data = await response.json();
-            
             let uniquePlayers = {};
 
             data.forEach(item => {
-                // On nettoie le nom (enlever les espaces inutiles)
                 const nomNettoye = item.nom ? item.nom.trim().toLowerCase() : null;
-                
                 if (nomNettoye && item.score !== undefined && item.score !== "") {
                     const scoreNum = parseInt(item.score);
-                    
-                    // On ne garde que le meilleur score par nom
+                    // On ne garde que le meilleur score par élève pour éviter les doublons sur le podium
                     if (!uniquePlayers[nomNettoye] || scoreNum > uniquePlayers[nomNettoye].score) {
                         uniquePlayers[nomNettoye] = {
                             nom: item.nom.trim(),
@@ -157,53 +153,33 @@
                 }
             });
 
-            // On transforme en liste et on trie par score décroissant
             const players = Object.values(uniquePlayers).sort((a,b) => b.score - a.score);
 
-            // AFFICHAGE DU PODIUM
             if(players.length >= 3) {
                 document.getElementById('podium-area').innerHTML = `
                     <div class="podium-column">
-                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[1].nom}" class="podium-avatar w-14 h-14 mb-2 shadow-lg">
+                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[1].nom}" class="podium-avatar w-14 h-14 mb-2 shadow-lg" style="border-radius: 50%; background: white;">
                         <span class="text-xs font-bold text-slate-600 mb-1 capitalize">${players[1].nom.split(' ')[0]}</span>
-                        <div class="podium-bar bg-amber-400 h-[70px]">#2</div>
+                        <div class="podium-bar bg-amber-400 h-[70px]" style="display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; border-radius:10px 10px 0 0;">#2</div>
                     </div>
                     <div class="podium-column" style="margin: 0 15px; width: 110px;">
-                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[0].nom}" class="podium-avatar w-20 h-20 mb-2 shadow-xl border-4">
+                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[0].nom}" class="podium-avatar w-20 h-20 mb-2 shadow-xl border-4" style="border-radius: 50%; background: white; border-color: #10b981;">
                         <span class="text-sm font-black text-slate-800 mb-1 capitalize">${players[0].nom.split(' ')[0]}</span>
-                        <div class="podium-bar bg-green-400 h-[110px]">#1</div>
+                        <div class="podium-bar bg-green-400 h-[110px]" style="display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; border-radius:10px 10px 0 0;">#1</div>
                     </div>
                     <div class="podium-column">
-                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[2].nom}" class="podium-avatar w-14 h-14 mb-2 shadow-lg">
+                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[2].nom}" class="podium-avatar w-14 h-14 mb-2 shadow-lg" style="border-radius: 50%; background: white;">
                         <span class="text-xs font-bold text-slate-600 mb-1 capitalize">${players[2].nom.split(' ')[0]}</span>
-                        <div class="podium-bar bg-red-400 h-[50px]">#3</div>
+                        <div class="podium-bar bg-red-400 h-[50px]" style="display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; border-radius:10px 10px 0 0;">#3</div>
                     </div>`;
             }
-
-            // AFFICHAGE DE LA LISTE
-            const colors = ['#3b82f6', '#a855f7', '#10b981'];
-            document.getElementById('leader-list').innerHTML = players.slice(3).map((p, i) => {
-                const c = colors[i % 3];
-                return `
-                <div class="leader-item">
-                    <span style="color: ${c}; font-weight: 900; width: 35px; text-align: center;">#${i+4}</span>
-                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p.nom}" class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100">
-                    <div class="flex-1 truncate ml-2">
-                        <p class="font-bold text-slate-700 text-sm capitalize">${p.nom}</p>
-                        <p style="color: ${c}; font-size: 10px; font-weight: 800;">💎 ${p.score} PTS | <small>${p.sujet}</small></p>
-                    </div>
-                </div>`;
-            }).join('');
-            
-        } catch (e) { 
-            console.error(e); 
-            document.getElementById('leader-list').innerHTML = "Erreur de chargement des données.";
-        }
+        } catch (e) { console.error(e); }
     }
     window.onload = updateApp;
 </script>
 </body>
 </html>
+
 
 
 
