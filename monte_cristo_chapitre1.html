@@ -86,8 +86,8 @@
 </div>
 
 <script>
-    // 1. UTILISEZ VOTRE LIEN UNIQUE ICI (celui de votre Index)
-    const SCRIPT_URL = "https://script.google.com/macros/s/VOTRE_ID_ICI/exec";
+    // 1. UTILISEZ VOTRE LIEN UNIQUE ICI
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqLheXqYNAzM3cDMNJTtM03MxUmKYZTfB4etoK5jmHFtWNlDjlc6zQDyZlE7gZnlyXqg/exec";
 
     const quizData = [
         { q: "Edmond semble ________ par la mort du capitaine.", opts: ["accablé", "hostile", "prospère", "ambitieux"], r: 0, cat: "Vocabulaire", def: "ACCABLÉ : Très triste, comme si l'on portait un poids trop lourd." },
@@ -106,7 +106,7 @@
 
     function showQ() {
         const q = quizData[current];
-        document.getElementById('progress').innerText = `Question ${current+1} / 10`;
+        document.getElementById('progress').innerText = "Question " + (current + 1) + " / 10";
         document.getElementById('q-text').innerHTML = q.q;
         const box = document.getElementById('options-box'); box.innerHTML = '';
         document.getElementById('feedback').style.display = 'none';
@@ -118,10 +118,10 @@
                 if(i === q.r) {
                     score++; cats[q.cat]++;
                     document.getElementById('feedback').className = "feedback correct";
-                    document.getElementById('feedback').innerHTML = `<b>Correct !</b><br>${q.def}`;
+                    document.getElementById('feedback').innerHTML = "<b>Correct !</b><br>" + q.def;
                 } else {
                     document.getElementById('feedback').className = "feedback wrong";
-                    document.getElementById('feedback').innerHTML = `<b>Erreur.</b><br>${q.def}`;
+                    document.getElementById('feedback').innerHTML = "<b>Erreur.</b><br>" + q.def;
                 }
                 document.getElementById('feedback').style.display = 'block';
                 document.getElementById('next-btn').style.display = 'block';
@@ -139,8 +139,8 @@
     function finishQuiz() {
         document.getElementById('quiz-section').style.display = 'none'; 
         document.getElementById('end-section').style.display = 'block';
-        document.getElementById('res-score').innerText = `${score}/10`;
-        document.getElementById('res-percent').innerText = `${score*10}%`;
+        document.getElementById('res-score').innerText = score + "/10";
+        document.getElementById('res-percent').innerText = (score * 10) + "%";
         let best = Object.keys(cats).reduce((a, b) => cats[a] > cats[b] ? a : b);
         document.getElementById('res-strength').innerText = best;
 
@@ -190,5 +190,6 @@
 </script>
 </body>
 </html>
+
 
 
