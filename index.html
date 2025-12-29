@@ -20,35 +20,35 @@
 
         .main-content { flex: 1; padding: 40px; display: flex; flex-direction: column; gap: 25px; overflow-y: auto; }
 
-        /* --- TOP CARDS : GLOW PUISSANT --- */
-        .exercise-card { background: white; border-radius: 35px; padding: 25px; text-align: center; border: 3px solid transparent; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; position: relative; }
+        /* --- TOP CARDS (SQUIRCLES FIXES) --- */
+        .exercise-card { background: white; border-radius: 35px; padding: 30px 25px; text-align: center; border: 3px solid transparent; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+        
         .exercise-card:hover { transform: translateY(-15px); }
         
-        /* Glows avec intensité augmentée */
-        .card-blue:hover { border-color: #3b82f6; box-shadow: 0 25px 50px rgba(59, 130, 246, 0.4); }
-        .card-purple:hover { border-color: #a855f7; box-shadow: 0 25px 50px rgba(168, 85, 247, 0.4); }
-        .card-emerald:hover { border-color: #10b981; box-shadow: 0 25px 50px rgba(16, 185, 129, 0.4); }
+        /* Glows sur mesure */
+        .card-blue:hover { border-color: #3b82f6; box-shadow: 0 25px 50px rgba(59, 130, 246, 0.35); }
+        .card-purple:hover { border-color: #a855f7; box-shadow: 0 25px 50px rgba(168, 85, 247, 0.35); }
+        .card-emerald:hover { border-color: #10b981; box-shadow: 0 25px 50px rgba(16, 185, 129, 0.35); }
 
-        .avatar-box { width: 80px; height: 80px; margin: 0 auto 15px auto; transition: 0.3s; }
-        .exercise-card:hover .avatar-box { transform: scale(1.1); }
+        .icon-circle { width: 80px; height: 80px; margin: 0 auto 20px auto; border-radius: 25px; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .exercise-card:hover .icon-circle { transform: scale(1.1) rotate(5deg); }
 
-        .btn-game { display: block; width: 100%; color: white; font-weight: 900; padding: 12px 0; margin-top: 20px; border-radius: 15px; text-transform: uppercase; font-size: 11px; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .btn-game:hover { filter: brightness(1.1); transform: translateY(-2px); }
+        .btn-game { display: block; width: 100%; color: white; font-weight: 900; padding: 12px 0; margin-top: 20px; border-radius: 15px; text-transform: uppercase; font-size: 11px; transition: 0.3s; }
+        .btn-game:hover { filter: brightness(1.1); }
 
         /* --- LEADERBOARD --- */
         .leaderboard-aside { width: 400px; background: white; border-left: 1px solid #e2e8f0; border-radius: 50px 0 0 50px; padding: 20px 0; display: flex; flex-direction: column; }
-        .podium-box { position: relative; margin: 0 20px 20px 20px; background: #f8fbff; border-radius: 35px; height: 240px; overflow: hidden; display: flex; align-items: flex-end; justify-content: center; border: 2px solid #e2efff; }
+        .podium-box { margin: 0 20px 20px 20px; background: #f8fbff; border-radius: 35px; height: 240px; display: flex; align-items: flex-end; justify-content: center; border: 2px solid #e2efff; overflow: hidden; }
         .podium-column { display: flex; flex-direction: column; align-items: center; width: 90px; transition: 0.3s; }
-        .podium-column:hover { transform: translateY(-10px); filter: drop-shadow(0 15px 20px rgba(0,0,0,0.1)); }
+        .podium-column:hover { transform: translateY(-10px); }
         .podium-bar { width: 100%; border-radius: 15px 15px 10px 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 1.2rem; }
 
-        /* --- LISTE MOUVEMENT --- */
         .leader-item { display: flex; align-items: center; gap: 12px; padding: 12px 15px; border-radius: 22px; margin-bottom: 8px; transition: 0.3s; cursor: pointer; background: white; border: 2px solid #f8fafc; }
         .leader-item:hover { transform: translateX(20px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
 
-        /* --- CARTES DU BAS --- */
+        /* --- BAS --- */
         .level-card { position: relative; height: 110px; border-radius: 30px; overflow: hidden; flex: 1; transition: 0.4s; cursor: pointer; border: 3px solid transparent; }
-        .level-card:hover { transform: translateY(-8px); border-color: #3b82f6; box-shadow: 0 20px 40px rgba(59, 130, 246, 0.5); }
+        .level-card:hover { transform: translateY(-8px); border-color: #3b82f6; box-shadow: 0 20px 40px rgba(59, 130, 246, 0.4); }
         .level-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); }
         .level-card span { position: absolute; bottom: 15px; left: 20px; color: white; font-weight: 800; text-transform: uppercase; font-size: 11px; }
     </style>
@@ -69,40 +69,34 @@
     </nav>
 
     <main class="main-content">
-        <h1 class="text-3xl font-black text-slate-800">Mon Académie</h1>
+        <h1 class="text-3xl font-black text-slate-800 uppercase tracking-tight">Mon Académie</h1>
         
         <div class="grid grid-cols-3 gap-6">
             <div class="exercise-card card-blue">
-                <div class="avatar-box" id="icon-Sens">
-                    <div class="w-full h-full flex items-center justify-center bg-blue-50 rounded-3xl shadow-inner">
-                        <i class="fas fa-scroll text-4xl text-blue-300"></i>
-                    </div>
+                <div class="icon-circle bg-blue-50 text-blue-500 text-4xl">
+                    <i class="fas fa-scroll"></i>
                 </div>
-                <div class="text-slate-400 font-bold text-[10px] uppercase mb-1 tracking-widest">Sens Propre / Figuré</div>
-                <div class="text-slate-800 font-black text-lg" id="name-Sens">...</div>
-                <a href="sens.html" class="btn-game bg-blue-500">EXPLORER</a>
+                <h3 class="text-slate-800 font-black text-lg uppercase tracking-wide">Sens Propre</h3>
+                <p class="text-slate-400 font-bold text-[10px] uppercase">Exploration</p>
+                <a href="sens.html" class="btn-game bg-blue-500 shadow-blue-200 shadow-lg">EXPLORER</a>
             </div>
 
             <div class="exercise-card card-purple">
-                <div class="avatar-box" id="icon-Grammaire">
-                    <div class="w-full h-full flex items-center justify-center bg-purple-50 rounded-3xl shadow-inner">
-                        <i class="fas fa-shield-halved text-4xl text-purple-300"></i>
-                    </div>
+                <div class="icon-circle bg-purple-50 text-purple-500 text-4xl">
+                    <i class="fas fa-shield-halved"></i>
                 </div>
-                <div class="text-slate-400 font-bold text-[10px] uppercase mb-1 tracking-widest">Grammaire / Classes</div>
-                <div class="text-slate-800 font-black text-lg" id="name-Grammaire">...</div>
-                <a href="grammaire.html" class="btn-game bg-purple-500">S'ENTRAÎNER</a>
+                <h3 class="text-slate-800 font-black text-lg uppercase tracking-wide">Grammaire</h3>
+                <p class="text-slate-400 font-bold text-[10px] uppercase">Maîtrise</p>
+                <a href="grammaire.html" class="btn-game bg-purple-500 shadow-purple-200 shadow-lg">S'ENTRAÎNER</a>
             </div>
 
             <div class="exercise-card card-emerald">
-                <div class="avatar-box" id="icon-Conjugaison">
-                    <div class="w-full h-full flex items-center justify-center bg-emerald-50 rounded-3xl shadow-inner">
-                        <i class="fas fa-map-marked-alt text-4xl text-emerald-300"></i>
-                    </div>
+                <div class="icon-circle bg-emerald-50 text-emerald-500 text-4xl">
+                    <i class="fas fa-map-marked-alt"></i>
                 </div>
-                <div class="text-slate-400 font-bold text-[10px] uppercase mb-1 tracking-widest">Conjugaison / Temps</div>
-                <div class="text-slate-800 font-black text-lg" id="name-Conjugaison">...</div>
-                <a href="conjugaison.html" class="btn-game bg-emerald-500">VAINCRE</a>
+                <h3 class="text-slate-800 font-black text-lg uppercase tracking-wide">Conjugaison</h3>
+                <p class="text-slate-400 font-bold text-[10px] uppercase">Aventure</p>
+                <a href="conjugaison.html" class="btn-game bg-emerald-500 shadow-emerald-200 shadow-lg">VAINCRE</a>
             </div>
         </div>
 
@@ -120,9 +114,7 @@
 
     <aside class="leaderboard-aside">
         <h2 class="text-2xl font-black text-slate-800 text-center mb-6">Top Aventuriers</h2>
-        <div class="podium-box">
-            <div id="podium-area" class="flex items-end gap-3 pb-6 relative z-10"></div>
-        </div>
+        <div class="podium-box" id="podium-area"></div>
         <div id="leader-list" class="overflow-y-auto flex-1 px-5 mt-4"></div>
     </aside>
 
@@ -133,16 +125,9 @@
             try {
                 const response = await fetch(SCRIPT_URL);
                 const data = await response.json();
-                
-                ['Sens', 'Grammaire', 'Conjugaison'].forEach(key => {
-                    const best = data.filter(i => i.sujet?.includes(key)).sort((a,b) => b.score - a.score)[0];
-                    if(best) {
-                        document.getElementById(`name-${key}`).innerText = best.nom.split(' ')[0];
-                        document.getElementById(`icon-${key}`).innerHTML = `<img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${best.nom}" class="w-full h-full rounded-2xl shadow-sm">`;
-                    }
-                });
-
                 const players = data.filter(i => i.sujet?.includes("Monte-Cristo")).sort((a,b) => b.score - a.score);
+
+                // Podium Monte-Cristo uniquement
                 if(players.length >= 3) {
                     document.getElementById('podium-area').innerHTML = `
                         <div class="podium-column"><span class="text-[10px] font-bold text-slate-500 mb-1">${players[1].nom.split(' ')[0]}</span><img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[1].nom}" class="w-14 h-14 rounded-2xl bg-white border-2 border-white shadow-md mb-2"><div class="podium-bar bg-amber-400 h-[70px]">#2</div></div>
