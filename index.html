@@ -12,58 +12,30 @@
         body { font-family: 'Quicksand', sans-serif; background-color: #ebf2f7; margin: 0; display: flex; height: 100vh; overflow: hidden; }
 
         /* --- SIDEBAR --- */
-        .sidebar { width: 85px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; align-items: center; padding: 25px 0; flex-shrink: 0; justify-content: space-between; z-index: 100; }
+        .sidebar { width: 85px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; align-items: center; padding: 25px 0; flex-shrink: 0; justify-content: space-between; }
         .nav-icon { width: 50px; height: 50px; border-radius: 18px; display: flex; align-items: center; justify-content: center; transition: 0.3s; cursor: pointer; color: #94a3b8; }
-        .icon-fb:hover { color: #1877F2; transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(24, 119, 242, 0.8)); }
-        .icon-ig:hover { color: #E4405F; transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(228, 64, 95, 0.8)); }
-        .icon-wa:hover { color: #25D366; transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(37, 211, 102, 0.8)); }
+        .nav-icon:hover { transform: scale(1.1); background-color: #f8fafc; }
 
+        /* --- CONTENU (ALIGNEMENT RÉPARÉ) --- */
         .main-content { flex: 1; padding: 40px; display: flex; flex-direction: column; gap: 25px; overflow-y: auto; }
+        .leaderboard-aside { width: 400px; background: white; border-left: 1px solid #e2e8f0; padding: 20px 0; display: flex; flex-direction: column; border-radius: 50px 0 0 50px; flex-shrink: 0; }
 
-        /* --- TOP CARDS --- */
-        .exercise-card { background: white; border-radius: 35px; padding: 30px 25px; text-align: center; border: 3px solid transparent; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
-        .exercise-card:hover { transform: translateY(-15px); }
-        .card-blue:hover { border-color: #3b82f6; box-shadow: 0 25px 50px rgba(59, 130, 246, 0.35); }
-        .card-purple:hover { border-color: #a855f7; box-shadow: 0 25px 50px rgba(168, 85, 247, 0.35); }
-        .card-emerald:hover { border-color: #10b981; box-shadow: 0 25px 50px rgba(16, 185, 129, 0.35); }
-
-        .icon-circle { width: 80px; height: 80px; margin: 0 auto 20px auto; border-radius: 25px; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
-        .btn-game { display: block; width: 100%; color: white; font-weight: 900; padding: 12px 0; margin-top: 20px; border-radius: 15px; text-transform: uppercase; font-size: 11px; transition: 0.3s; }
-
-        /* --- LEADERBOARD & PODIUM (RETOUR AU STYLE DYNAMIQUE) --- */
-        .leaderboard-aside { width: 400px; background: white; border-left: 1px solid #e2e8f0; border-radius: 50px 0 0 50px; padding: 20px 0; display: flex; flex-direction: column; flex-shrink: 0; }
+        /* --- SQUIRCLES --- */
+        .exercise-card { background: white; border-radius: 35px; padding: 25px; text-align: center; border: 3px solid transparent; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
-        .podium-box { 
-            margin: 0 20px 20px 20px; 
-            background: white; 
-            border-radius: 35px; 
-            height: 260px; 
-            display: flex; 
-            align-items: flex-end; 
-            justify-content: center; 
-            border: 2px solid #e2efff; 
-            overflow: hidden; 
-            position: relative; 
-            background-image: repeating-conic-gradient(from 0deg, #f0f9ff 0deg 15deg, #ffffff 15deg 30deg);
-        }
+        /* --- CASES DU BAS --- */
+        .level-card { position: relative; height: 115px; border-radius: 30px; overflow: hidden; flex: 1; border: 3px solid transparent; transition: 0.4s; }
+        .level-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); transition: 0.4s; }
+        .level-card span { position: absolute; bottom: 15px; left: 20px; color: white; font-weight: 800; text-transform: uppercase; font-size: 0.9rem; z-index: 10; }
+        .level-card:hover { transform: translateY(-8px); border-color: white; box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
 
-        .podium-column { display: flex; flex-direction: column; align-items: center; width: 90px; transition: all 0.4s ease; z-index: 10; position: relative; cursor: pointer; }
-        .podium-column:hover { transform: translateY(-10px); }
+        /* --- PODIUM --- */
+        .podium-container { background-color: #f8fbff; border: 2px solid #e2efff; margin: 0 20px 20px 20px; border-radius: 35px; padding: 25px 10px 15px 10px; display: flex; justify-content: center; align-items: flex-end; gap: 8px; height: 230px; }
+        .podium-block { width: 100%; border-radius: 15px 15px 10px 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 18px; }
         
-        /* Effet Glow sur les avatars du podium */
-        .podium-avatar { border-radius: 25px; background: white; border: 4px solid white; shadow: 0 10px 25px rgba(0,0,0,0.1); transition: 0.3s; }
-        .podium-column:hover .podium-avatar { box-shadow: 0 15px 30px rgba(59, 130, 246, 0.3); }
-
-        .podium-bar { width: 100%; border-radius: 20px 20px 10px 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 1.2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-
-        .leader-item { display: flex; align-items: center; gap: 12px; padding: 12px 15px; border-radius: 22px; margin-bottom: 8px; transition: all 0.3s ease; cursor: pointer; background: white; border: 2px solid #f8fafc; }
-        .leader-item:hover { transform: translateX(20px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-
-        /* --- CARTES BAS --- */
-        .level-card { position: relative; height: 110px; border-radius: 30px; overflow: hidden; flex: 1; transition: 0.4s; cursor: pointer; border: 3px solid transparent; }
-        .level-card:hover { transform: translateY(-8px); border-color: #3b82f6; box-shadow: 0 20px 40px rgba(59, 130, 246, 0.5); }
-        .level-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); }
-        .level-card span { position: absolute; bottom: 15px; left: 20px; color: white; font-weight: 800; text-transform: uppercase; font-size: 11px; }
+        /* --- LISTE --- */
+        .list-row { display: flex; align-items: center; gap: 15px; border-radius: 25px; padding: 12px 15px; margin: 0 20px 10px 20px; transition: 0.3s; background: white; border: 2px solid transparent; }
+        .gemini-tag { font-size: 9px; font-weight: 700; color: #cbd5e1; text-transform: uppercase; writing-mode: vertical-rl; transform: rotate(180deg); margin-top: 10px; letter-spacing: 1px; }
     </style>
 </head>
 <body>
@@ -71,48 +43,51 @@
     <nav class="sidebar">
         <div class="flex flex-col items-center gap-6">
             <div class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-dragon text-2xl"></i></div>
-            <a href="#" class="nav-icon" style="color: #3b82f6;"><i class="fas fa-compass text-2xl"></i></a>
+            <a href="mailto:christine.el.mabsout@gmail.com" class="nav-icon" style="background: #eff6ff; color: #3b82f6;"><i class="fas fa-compass text-2xl"></i></a>
             <div class="nav-icon" onclick="window.location.reload()"><i class="fas fa-home text-xl"></i></div>
         </div>
-        
         <div class="flex flex-col items-center gap-4">
-            <a href="https://www.facebook.com/sharer/sharer.php?u=https://votre-site.com" target="_blank" class="nav-icon icon-fb"><i class="fab fa-facebook-f text-xl"></i></a>
-            <a href="https://www.instagram.com/" target="_blank" class="nav-icon icon-ig"><i class="fab fa-instagram text-xl"></i></a>
-            <a href="https://api.whatsapp.com/send?text=Regarde mon score ! https://votre-site.com" target="_blank" class="nav-icon icon-wa"><i class="fab fa-whatsapp text-xl"></i></a>
-            <a href="mailto:christine.el.mabsout@gmail.com" class="nav-icon" title="Contactez-nous">
-                <i class="fas fa-envelope text-xl text-slate-400 hover:text-sky-500 transition-colors"></i>
-            </a>
+            <a href="https://facebook.com" target="_blank" class="nav-icon text-[#1877F2] hover:scale-110 transition-transform"><i class="fab fa-facebook-f text-xl"></i></a>
+            <a href="https://instagram.com" target="_blank" class="nav-icon text-[#E4405F] hover:scale-110 transition-transform"><i class="fab fa-instagram text-xl"></i></a>
+            <a href="https://api.whatsapp.com/send?text=Rejoins-moi !" target="_blank" class="nav-icon text-[#25D366] hover:scale-110 transition-transform"><i class="fab fa-whatsapp text-xl"></i></a>
+            <div class="gemini-tag">Made with Gemini</div>
         </div>
     </nav>
 
     <main class="main-content">
-        <h1 class="text-3xl font-black text-slate-800 uppercase tracking-tight">Mon Académie</h1>
+        <h1 class="text-3xl font-black text-slate-800">Mon Académie</h1>
         
         <div class="grid grid-cols-3 gap-6">
-            <div class="exercise-card card-blue">
-                <div class="icon-circle bg-blue-50 text-blue-500 text-4xl"><i class="fas fa-scroll"></i></div>
-                <h3 class="text-slate-800 font-black text-lg uppercase tracking-wide">Sens Propre</h3>
-                <p class="text-slate-400 font-bold text-[10px] uppercase">Exploration</p>
-                <a href="sens.html" class="btn-game bg-blue-500 shadow-lg">EXPLORER</a>
+            <div class="exercise-card shadow-sm" 
+                 onmouseover="this.style.transform='translateY(-12px)'; this.style.borderColor='#3b82f6'; this.style.boxShadow='0 20px 30px rgba(59, 130, 246, 0.25)'" 
+                 onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='transparent'; this.style.boxShadow='none'">
+                <i class="fas fa-scroll text-5xl text-blue-500 mb-4 block"></i>
+                <h3 class="font-bold text-slate-700">Sens Propre / Figuré</h3>
+                <a href="sens.html" class="block w-full bg-blue-500 text-white font-black py-3 mt-4 rounded-xl uppercase shadow-md">Explorer</a>
             </div>
 
-            <div class="exercise-card card-purple">
-                <div class="icon-circle bg-purple-50 text-purple-500 text-4xl"><i class="fas fa-shield-halved"></i></div>
-                <h3 class="text-slate-800 font-black text-lg uppercase tracking-wide">Grammaire</h3>
-                <p class="text-slate-400 font-bold text-[10px] uppercase">Maîtrise</p>
-                <a href="grammaire.html" class="btn-game bg-purple-500 shadow-lg">S'ENTRAÎNER</a>
+            <div class="exercise-card shadow-sm" 
+                 onmouseover="this.style.transform='translateY(-12px)'; this.style.borderColor='#a855f7'; this.style.boxShadow='0 20px 30px rgba(168, 85, 247, 0.25)'" 
+                 onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='transparent'; this.style.boxShadow='none'">
+                <i class="fas fa-shield-halved text-5xl text-purple-500 mb-4 block"></i>
+                <h3 class="font-bold text-slate-700">Grammaire / Classes</h3>
+                <a href="grammaire.html" class="block w-full bg-purple-500 text-white font-black py-3 mt-4 rounded-xl uppercase shadow-md">S'entraîner</a>
             </div>
 
-            <div class="exercise-card card-emerald">
-                <div class="icon-circle bg-emerald-50 text-emerald-500 text-4xl"><i class="fas fa-map-marked-alt"></i></div>
-                <h3 class="text-slate-800 font-black text-lg uppercase tracking-wide">Conjugaison</h3>
-                <p class="text-slate-400 font-bold text-[10px] uppercase">Aventure</p>
-                <a href="conjugaison.html" class="btn-game bg-emerald-500 shadow-lg">VAINCRE</a>
+            <div class="exercise-card shadow-sm" 
+                 onmouseover="this.style.transform='translateY(-12px)'; this.style.borderColor='#10b981'; this.style.boxShadow='0 20px 30px rgba(16, 185, 129, 0.25)'" 
+                 onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='transparent'; this.style.boxShadow='none'">
+                <i class="fas fa-map-marked-alt text-5xl text-emerald-500 mb-4 block"></i>
+                <h3 class="font-bold text-slate-700">Conjugaison / Temps</h3>
+                <a href="conjugaison.html" class="block w-full bg-emerald-500 text-white font-black py-3 mt-4 rounded-xl uppercase shadow-md">Triompher</a>
             </div>
         </div>
 
-        <div class="bg-white rounded-[40px] p-8 flex justify-between items-center shadow-sm border-2 border-transparent hover:border-slate-800 transition-all group">
-            <div><h2 class="text-2xl font-black text-slate-800 uppercase">L'Épreuve de Monte-Cristo</h2><p class="text-slate-400 font-bold text-xs uppercase tracking-widest">Le défi ultime</p></div>
+        <div class="bg-white rounded-[40px] p-8 flex justify-between items-center shadow-sm border-2 border-transparent hover:border-slate-800 transition-all cursor-pointer group">
+            <div>
+                <h2 class="text-2xl font-black text-slate-800 uppercase">L'Épreuve de Monte-Cristo</h2>
+                <p class="text-slate-400 font-bold text-xs uppercase tracking-widest">Le défi ultime</p>
+            </div>
             <a href="epreuve.html" class="bg-slate-800 text-white px-10 py-4 rounded-2xl font-black shadow-xl group-hover:bg-sky-500 transition-all">AFFRONTER</a>
         </div>
 
@@ -125,48 +100,56 @@
 
     <aside class="leaderboard-aside">
         <h2 class="text-2xl font-black text-slate-800 text-center mb-6">Top Aventuriers</h2>
-        <div class="podium-box" id="podium-area"></div>
-        <div id="leader-list" class="overflow-y-auto flex-1 px-5 mt-4"></div>
+        <div id="podium-area" class="podium-container"></div>
+        <div id="leader-list" class="overflow-y-auto flex-1"></div>
     </aside>
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqLheXqYNAzM3cDMNJTtM03MxUmKYZTfB4etoK5jmHFtWNlDjlc6zQDyZlE7gZnlyXqg/exec";
         
+        const rowStyles = [
+            { bg: "#f5f3ff", color: "#8b5cf6", glow: "rgba(139, 92, 246, 0.3)" },
+            { bg: "#ecfdf5", color: "#10b981", glow: "rgba(16, 185, 129, 0.3)" },
+            { bg: "#fff7ed", color: "#f97316", glow: "rgba(249, 115, 22, 0.3)" },
+            { bg: "#eff6ff", color: "#3b82f6", glow: "rgba(59, 130, 246, 0.3)" }
+        ];
+
         async function updateApp() {
             try {
                 const response = await fetch(SCRIPT_URL);
                 const data = await response.json();
                 const players = data.filter(i => i.sujet?.includes("Monte-Cristo")).sort((a,b) => b.score - a.score);
-
+                
                 if(players.length >= 3) {
                     document.getElementById('podium-area').innerHTML = `
-                        <div class="podium-column">
-                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[1].nom}" class="podium-avatar w-14 h-14 mb-2 shadow-lg">
-                            <span class="text-xs font-bold text-slate-600 mb-1 capitalize">${players[1].nom.split(' ')[0]}</span>
-                            <div class="podium-bar bg-amber-400 h-[70px]">#2</div>
+                        <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
+                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[1].nom}" class="w-16 h-16 mb-2">
+                            <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">${players[1].nom.split(' ')[0]}</span>
+                            <div class="podium-block bg-amber-400 h-[85px]">#2</div>
                         </div>
-                        <div class="podium-column" style="margin: 0 15px; width: 110px;">
-                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[0].nom}" class="podium-avatar w-20 h-20 mb-2 shadow-xl border-4">
-                            <span class="text-sm font-black text-slate-800 mb-1 capitalize">${players[0].nom.split(' ')[0]}</span>
-                            <div class="podium-bar bg-green-400 h-[110px]">#1</div>
+                        <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
+                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[0].nom}" class="w-20 h-20 mb-2">
+                            <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">${players[0].nom.split(' ')[0]}</span>
+                            <div class="podium-block bg-green-400 h-[115px]">#1</div>
                         </div>
-                        <div class="podium-column">
-                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[2].nom}" class="podium-avatar w-14 h-14 mb-2 shadow-lg">
-                            <span class="text-xs font-bold text-slate-600 mb-1 capitalize">${players[2].nom.split(' ')[0]}</span>
-                            <div class="podium-bar bg-red-400 h-[50px]">#3</div>
+                        <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
+                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[2].nom}" class="w-16 h-16 mb-2">
+                            <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">${players[2].nom.split(' ')[0]}</span>
+                            <div class="podium-block bg-red-400 h-[65px]">#3</div>
                         </div>`;
                 }
 
-                const colors = ['#3b82f6', '#a855f7', '#10b981'];
                 document.getElementById('leader-list').innerHTML = players.slice(3).map((p, i) => {
-                    const c = colors[i % 3];
+                    const s = rowStyles[i % rowStyles.length];
                     return `
-                    <div class="leader-item" onmouseover="this.style.borderColor='${c}'" onmouseout="this.style.borderColor='#f8fafc'">
-                        <span style="color: ${c}; font-weight: 900; width: 35px; text-align: center;">#${i+4}</span>
-                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p.nom}" class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100">
+                    <div class="list-row shadow-sm" style="background-color: ${s.bg}; color: ${s.color}" 
+                         onmouseover="this.style.transform='translateX(10px)'; this.style.boxShadow='0 10px 20px ${s.glow}'; this.style.borderColor='white'" 
+                         onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='none'; this.style.borderColor='transparent'">
+                        <div class="w-8 font-black opacity-30">#${i+4}</div>
+                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p.nom}" class="w-11 h-11 rounded-2xl bg-white border-2 border-white">
                         <div class="flex-1 truncate ml-2">
-                            <p class="font-bold text-slate-700 text-sm capitalize">${p.nom}</p>
-                            <p style="color: ${c}; font-size: 10px; font-weight: 800;">💎 ${p.score} PTS</p>
+                            <p class="font-bold text-slate-700 text-[13px]">${p.nom}</p>
+                            <div class="text-[10px] font-black uppercase tracking-widest opacity-70">💎 ${p.score} PTS</div>
                         </div>
                     </div>`;
                 }).join('');
@@ -176,4 +159,3 @@
     </script>
 </body>
 </html>
-
