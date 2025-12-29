@@ -24,7 +24,7 @@
         .main-content { flex: 1; padding: 25px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
         .leaderboard-aside { width: 400px; background: white; border-left: 1px solid #e2e8f0; padding: 20px 0; display: flex; flex-direction: column; border-radius: 50px 0 0 50px; flex-shrink: 0; }
 
-        .exercise-card { background: white; border-radius: 35px; padding: 25px; text-align: center; transition: all 0.4s; border: 3px solid transparent; cursor: pointer; }
+        .exercise-card { background: white; border-radius: 35px; padding: 25px; text-align: center; transition: all 0.4s; border: 3px solid transparent; }
         .exercise-card:hover { transform: translateY(-10px); }
         .card-blue:hover { border-color: #3b82f6; box-shadow: 0 15px 30px rgba(59, 130, 246, 0.2); }
         .card-purple:hover { border-color: #a855f7; box-shadow: 0 15px 30px rgba(168, 85, 247, 0.2); }
@@ -40,13 +40,12 @@
         .level-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); }
         .level-card span { position: absolute; bottom: 15px; left: 20px; color: white; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; }
 
-        /* --- PODIUM CORRIGÉ (TAILLES RÉTABLIES) --- */
-        .podium-container { background-color: #f8fbff; border: 2px solid #e2efff; margin: 0 20px 20px 20px; border-radius: 35px; padding: 25px 10px 15px 10px; display: flex; justify-content: center; align-items: flex-end; gap: 8px; transition: 0.5s; cursor: pointer; height: 220px; }
+        /* --- PODIUM --- */
+        .podium-container { background-color: #f8fbff; border: 2px solid #e2efff; margin: 0 20px 20px 20px; border-radius: 35px; padding: 25px 10px 15px 10px; display: flex; justify-content: center; align-items: flex-end; gap: 8px; transition: 0.5s; height: 220px; }
         .podium-column { display: flex; flex-direction: column; align-items: center; width: 100px; }
         .podium-avatar { width: 65px; height: 65px; margin-bottom: 5px; }
         .podium-block { width: 100%; border-radius: 15px 15px 10px 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 18px; }
         
-        /* Hauteurs fixes pour le podium */
         .block-1 { height: 110px !important; background-color: #4ade80; }
         .block-2 { height: 85px !important; background-color: #fbbf24; }
         .block-3 { height: 65px !important; background-color: #f87171; }
@@ -73,15 +72,31 @@
 
     <main class="main-content">
         <h1 class="text-3xl font-black text-slate-800">Mon Académie</h1>
+        
         <div class="grid grid-cols-3 gap-6">
-            <div class="exercise-card card-blue"><i class="fas fa-scroll text-5xl text-blue-500 mb-4 block"></i><h3 class="font-bold text-slate-700">Sens Propre / Figuré</h3><button class="w-full bg-blue-500 text-white font-black py-3 mt-4 rounded-xl uppercase">Explorer</button></div>
-            <div class="exercise-card card-purple"><i class="fas fa-shield-halved text-5xl text-purple-500 mb-4 block"></i><h3 class="font-bold text-slate-700">Grammaire / Classes</h3><button class="w-full bg-purple-500 text-white font-black py-3 mt-4 rounded-xl uppercase">S'entraîner</button></div>
-            <div class="exercise-card card-emerald"><i class="fas fa-map-marked-alt text-5xl text-emerald-500 mb-4 block"></i><h3 class="font-bold text-slate-700">Conjugaison / Temps</h3><button class="w-full bg-emerald-500 text-white font-black py-3 mt-4 rounded-xl uppercase">Triompher</button></div>
+            <div class="exercise-card card-blue">
+                <i class="fas fa-scroll text-5xl text-blue-500 mb-4 block"></i>
+                <h3 class="font-bold text-slate-700">Sens Propre / Figuré</h3>
+                <a href="sens.html" class="block w-full bg-blue-500 text-white font-black py-3 mt-4 rounded-xl uppercase text-center">Explorer</a>
+            </div>
+            <div class="exercise-card card-purple">
+                <i class="fas fa-shield-halved text-5xl text-purple-500 mb-4 block"></i>
+                <h3 class="font-bold text-slate-700">Grammaire / Classes</h3>
+                <a href="grammaire.html" class="block w-full bg-purple-500 text-white font-black py-3 mt-4 rounded-xl uppercase text-center">S'entraîner</a>
+            </div>
+            <div class="exercise-card card-emerald">
+                <i class="fas fa-map-marked-alt text-5xl text-emerald-500 mb-4 block"></i>
+                <h3 class="font-bold text-slate-700">Conjugaison / Temps</h3>
+                <a href="conjugaison.html" class="block w-full bg-emerald-500 text-white font-black py-3 mt-4 rounded-xl uppercase text-center">Triompher</a>
+            </div>
         </div>
 
         <div class="battle-banner shadow-sm bg-white">
-            <div><h2 class="text-2xl font-black text-slate-800 uppercase">L'Épreuve de Monte-Cristo</h2><p class="text-slate-400 font-bold text-xs uppercase tracking-widest">Le défi ultime</p></div>
-            <button class="bg-slate-800 text-white px-10 py-4 rounded-2xl font-black shadow-xl hover:bg-sky-500 transition-all">AFFRONTER</button>
+            <div>
+                <h2 class="text-2xl font-black text-slate-800 uppercase">L'Épreuve de Monte-Cristo</h2>
+                <p class="text-slate-400 font-bold text-xs uppercase tracking-widest">Le défi ultime</p>
+            </div>
+            <a href="epreuve.html" class="bg-slate-800 text-white px-10 py-4 rounded-2xl font-black shadow-xl hover:bg-sky-500 transition-all text-center">AFFRONTER</a>
         </div>
 
         <div class="flex gap-4">
