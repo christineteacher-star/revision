@@ -129,7 +129,7 @@
         <div id="leader-list" class="overflow-y-auto flex-1 px-5 mt-4"></div>
     </aside>
 
-   <script>
+   script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqLheXqYNAzM3cDMNJTtM03MxUmKYZTfB4etoK5jmHFtWNlDjlc6zQDyZlE7gZnlyXqg/exec";
     
     async function updateApp() {
@@ -137,10 +137,30 @@
             const response = await fetch(SCRIPT_URL);
             const data = await response.json();
             
-            // FILTRE : On garde seulement si le nom et le score existent pour éviter les plantages
-            const players = data.filter(i => i.nom && i.score !== undefined)
-                                .sort((a,b) => b.score - a.score);
+            let uniquePlayers = {};
 
+            data.forEach(item => {
+                // On nettoie le nom (enlever les espaces inutiles)
+                const nomNettoye = item.nom ? item.nom.trim().toLowerCase() : null;
+                
+                if (nomNettoye && item.score !== undefined && item.score !== "") {
+                    const scoreNum = parseInt(item.score);
+                    
+                    // On ne garde que le meilleur score par nom
+                    if (!uniquePlayers[nomNettoye] || scoreNum > uniquePlayers[nomNettoye].score) {
+                        uniquePlayers[nomNettoye] = {
+                            nom: item.nom.trim(),
+                            score: scoreNum,
+                            sujet: item.sujet || "Quiz"
+                        };
+                    }
+                }
+            });
+
+            // On transforme en liste et on trie par score décroissant
+            const players = Object.values(uniquePlayers).sort((a,b) => b.score - a.score);
+
+            // AFFICHAGE DU PODIUM
             if(players.length >= 3) {
                 document.getElementById('podium-area').innerHTML = `
                     <div class="podium-column">
@@ -160,27 +180,30 @@
                     </div>`;
             }
 
+            // AFFICHAGE DE LA LISTE
             const colors = ['#3b82f6', '#a855f7', '#10b981'];
             document.getElementById('leader-list').innerHTML = players.slice(3).map((p, i) => {
                 const c = colors[i % 3];
                 return `
-                <div class="leader-item" onmouseover="this.style.borderColor='${c}'" onmouseout="this.style.borderColor='#f8fafc'">
+                <div class="leader-item">
                     <span style="color: ${c}; font-weight: 900; width: 35px; text-align: center;">#${i+4}</span>
                     <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p.nom}" class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100">
                     <div class="flex-1 truncate ml-2">
                         <p class="font-bold text-slate-700 text-sm capitalize">${p.nom}</p>
-                        <p style="color: ${c}; font-size: 10px; font-weight: 800;">💎 ${p.score} PTS | <small>${p.sujet || ''}</small></p>
+                        <p style="color: ${c}; font-size: 10px; font-weight: 800;">💎 ${p.score} PTS | <small>${p.sujet}</small></p>
                     </div>
                 </div>`;
             }).join('');
+            
         } catch (e) { 
-            console.error("Erreur de lecture :", e);
-            document.getElementById('leader-list').innerHTML = "<p style='text-align:center; padding:20px;'>⚠️ Impossible de charger les scores. Vérifiez votre fichier Excel (pas de lignes vides).</p>";
+            console.error(e); 
+            document.getElementById('leader-list').innerHTML = "Erreur de chargement des données.";
         }
     }
     window.onload = updateApp;
 </script>
 </body>
 </html>
+
 
 
