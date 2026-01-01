@@ -105,82 +105,39 @@
     </aside>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys_uz58mt03TDr5gthhtJIeZJqqJDTuikaHwUa60o2rp3S4jIOeuABIrjWyfUDuhEdLg/exec?v=555";
-   
-        const rowStyles = [
-            { bg: "#f5f3ff", color: "#8b5cf6", glow: "rgba(139, 92, 246, 0.3)" },
-            { bg: "#ecfdf5", color: "#10b981", glow: "rgba(16, 185, 129, 0.3)" },
-            { bg: "#fff7ed", color: "#f97316", glow: "rgba(249, 115, 22, 0.3)" },
-            { bg: "#eff6ff", color: "#3b82f6", glow: "rgba(59, 130, 246, 0.3)" }
-        ];
+    // Ajoute ?v=9999 à la fin pour forcer le site à se mettre à jour
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqLheXqYNAzM3cDMNJTtM03MxUmKYZTfB4etoK5jmHFtWNlDjlc6zQDyZlE7gZnlyXqg/exec?v=9999";
+    
+    async function updateApp() {
+        try {
+            const response = await fetch(SCRIPT_URL);
+            const data = await response.json();
+            
+            // On prend TOUS les quiz sans exception
+            const players = data.sort((a, b) => {
+                // 1. D'abord le score (100 vs 90)
+                let sA = Number(a.score) || 0;
+                let sB = Number(b.score) || 0;
+                if (sB !== sA) return sB - sA;
 
-        async function updateApp() {
-            try {
-                const response = await fetch(SCRIPT_URL);
-                const data = await response.json();
-               const players = data
-    .filter(i => i.nom && i.score)
-    .sort((a, b) => {
-    // 1. On compare les scores (100 est mieux que 90)
-    let scoreA = Number(a.score) || 0;
-    let scoreB = Number(b.score) || 0;
-    if (scoreB !== scoreA) return scoreB - scoreA;
-
-    // 2. Si les scores sont égaux, on compare les dates anglaises
-    // JavaScript comprend le format "1/1/2026 16:23:40"
-    let tempsA = a.date ? new Date(a.date).getTime() : 0;
-    let tempsB = b.date ? new Date(b.date).getTime() : 0;
-
-    // 3. Le plus récent (Karim) passe devant
-    return tempsB - tempsA;
-})
-.slice(0, 10);
-                
-                if(players.length >= 3) {
-                   document.getElementById('podium-area').innerHTML = `
-    <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
-        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[1].nom}" class="w-16 h-16 mb-2">
-        <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">
-            ${players[1].nom.split(' ')[0]}<br><small class="opacity-70">(${players[1].sujet})</small>
-        </span>
-        <div class="podium-block bg-amber-400 h-[85px]">#2</div>
-    </div>
-    <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
-        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[0].nom}" class="w-20 h-20 mb-2">
-        <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">
-            ${players[0].nom.split(' ')[0]}<br><small class="text-green-600">(${players[0].sujet})</small>
-        </span>
-        <div class="podium-block bg-green-400 h-[115px]">#1</div>
-    </div>
-    <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
-        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[2].nom}" class="w-16 h-16 mb-2">
-        <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">
-            ${players[2].nom.split(' ')[0]}<br><small class="opacity-70">(${players[2].sujet})</small>
-        </span>
-        <div class="podium-block bg-red-400 h-[65px]">#3</div>
-    </div>`;
-                }
-
-                document.getElementById('leader-list').innerHTML = players.slice(3).map((p, i) => {
-                    const s = rowStyles[i % rowStyles.length];
-                    return `
-                    <div class="list-row shadow-sm" style="background-color: ${s.bg}; color: ${s.color}" 
-                         onmouseover="this.style.transform='translateX(10px)'; this.style.boxShadow='0 10px 20px ${s.glow}'; this.style.borderColor='white'" 
-                         onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='none'; this.style.borderColor='transparent'">
-                        <div class="w-8 font-black opacity-30">#${i+4}</div>
-                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p.nom}" class="w-11 h-11 rounded-2xl bg-white border-2 border-white">
-                        <div class="flex-1 truncate ml-2">
-                           <p class="font-bold text-slate-700 text-[13px]">${p.nom} <span class="font-normal opacity-50 text-[11px]">(${p.sujet})</span></p>
-                            <div class="text-[10px] font-black uppercase tracking-widest opacity-70">💎 ${p.score} PTS</div>
-                        </div>
-                    </div>`;
-                }).join('');
-            } catch (e) { console.error(e); }
-        }
-        window.onload = updateApp;
-    </script>
+                // 2. Si égalité, on compare l'heure exacte
+                let dA = new Date(a.date).getTime() || 0;
+                let dB = new Date(b.date).getTime() || 0;
+                return dB - dA; // Le plus récent (Karim 16:30) gagne
+            });
+            
+            // Affichage du podium (le code reste le même que ton ancien pour le style)
+            if(players.length >= 3) {
+                renderPodium(players); // Utilise ta fonction habituelle
+                renderList(players.slice(3));
+            }
+        } catch (e) { console.error(e); }
+    }
+    window.onload = updateApp;
+</script>
 </body>
 </html>
+
 
 
 
