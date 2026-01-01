@@ -121,31 +121,39 @@
                const players = data
     .filter(i => i.nom && i.score)
     .sort((a, b) => {
-    // 1. On trie par score
+    // 1. On trie par score (priorité n°1)
     let scoreA = Number(a.score) || 0;
     let scoreB = Number(b.score) || 0;
     if (scoreB !== scoreA) return scoreB - scoreA;
 
-    // 2. Fonction pour transformer "JJ/MM/AAAA HH:MM:SS" en date lisible
-    const parseFrenchDate = (dateStr) => {
-        if (!dateStr) return 0;
-        // Si la date est déjà un objet ou un chiffre
-        if (typeof dateStr !== 'string') return new Date(dateStr).getTime();
+    // 2. Fonction magique pour lire tes dates mélangées
+    const getTimestamp = (val) => {
+        if (!val) return 0;
+        let s = String(val).trim();
         
-        // On sépare le jour, le mois, l'année et l'heure
-        const parts = dateStr.split(/[\/\s:]/);
-        if (parts.length < 3) return 0;
-        
-        // Format JS : Mois (0-11), Jour, Année, Heure, Min, Sec
-        // On retire 1 au mois car en JS Janvier = 0
-        return new Date(parts[2], parts[1] - 1, parts[0], parts[3] || 0, parts[4] || 0, parts[5] || 0).getTime();
+        // Si c'est au format JJ/MM/AAAA ou MM/JJ/AAAA
+        if (s.includes('/')) {
+            let [datePart, timePart] = s.split(' ');
+            let [p1, p2, p3] = datePart.split('/');
+            
+            // On teste si c'est du Français (JJ/MM/AAAA)
+            // Si p1 > 12, c'est forcément le jour (Français)
+            if (Number(p1) > 12) {
+                return new Date(`${p2}/${p1}/${p3} ${timePart || ''}`).getTime();
+            }
+            // Sinon on essaie de construire la date normalement
+            return new Date(s).getTime() || new Date(`${p2}/${p1}/${p3} ${timePart || ''}`).getTime();
+        }
+        return new Date(s).getTime() || 0;
     };
 
-    let tempsA = parseFrenchDate(a.date || a.Date);
-    let tempsB = parseFrenchDate(b.date || b.Date);
+    let tempsA = getTimestamp(a.date || a.Date);
+    let tempsB = getTimestamp(b.date || b.Date);
 
-    return tempsB - tempsA; // Le plus récent en haut
+    // 3. Le plus récent (tempsB) passe devant
+    return tempsB - tempsA;
 })
+.slice(0, 10);
                 
                 if(players.length >= 3) {
                    document.getElementById('podium-area').innerHTML = `
@@ -192,6 +200,7 @@
     </script>
 </body>
 </html>
+
 
 
 
