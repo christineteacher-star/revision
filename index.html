@@ -14,24 +14,23 @@
         .leaderboard-aside { width: 400px; background: white; border-left: 1px solid #e2e8f0; padding: 20px 0; display: flex; flex-direction: column; border-radius: 50px 0 0 50px; flex-shrink: 0; }
         .podium-container { background-color: #f8fbff; border: 2px solid #e2efff; margin: 0 20px 20px 20px; border-radius: 35px; padding: 25px 10px 15px 10px; display: flex; justify-content: center; align-items: flex-end; gap: 8px; height: 230px; }
         .podium-block { width: 100%; border-radius: 15px 15px 10px 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 18px; }
-        .list-row { display: flex; align-items: center; gap: 15px; border-radius: 25px; padding: 12px 15px; margin: 0 20px 10px 20px; background: white; border: 2px solid transparent; transition: 0.3s; }
+        .list-row { display: flex; align-items: center; gap: 15px; border-radius: 25px; padding: 12px 15px; margin: 0 20px 10px 20px; background: white; transition: 0.3s; border: 2px solid transparent; }
     </style>
 </head>
 <body>
     <nav class="sidebar">
         <div class="flex flex-col items-center gap-6">
             <div class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-dragon text-2xl"></i></div>
-            <div class="nav-icon" onclick="window.location.reload()"><i class="fas fa-home text-xl"></i></div>
+            <div class="p-3 bg-blue-50 text-blue-500 rounded-2xl" onclick="window.location.reload()"><i class="fas fa-home text-xl"></i></div>
         </div>
     </nav>
 
     <main class="main-content">
         <h1 class="text-3xl font-black text-slate-800">Mon Académie</h1>
         <div class="grid grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-[35px] shadow-sm text-center border-2 border-transparent hover:border-blue-500 transition-all">
-                <i class="fas fa-scroll text-4xl text-blue-500 mb-2"></i>
-                <h3 class="font-bold text-slate-700">Monte-Cristo</h3>
-                <a href="epreuve.html" class="block bg-blue-500 text-white py-2 mt-3 rounded-xl font-bold">Jouer</a>
+            <div class="bg-white p-8 rounded-[40px] shadow-sm border-2 border-transparent hover:border-slate-800 transition-all cursor-pointer">
+                <h2 class="text-xl font-black text-slate-800 uppercase">Quiz en cours</h2>
+                <p class="text-slate-400 font-bold text-xs uppercase mt-2">Tous les sujets mélangés</p>
             </div>
         </div>
     </main>
@@ -50,12 +49,13 @@
                 const response = await fetch(SCRIPT_URL);
                 const data = await response.json();
                 
-                // LE TRI : Score (100) puis Date (16:30 > 16:00)
+                // LE TRI QUI MARCHE : Score puis Date
                 const players = data.sort((a, b) => {
-                    let scoreA = Number(a.score) || 0;
-                    let scoreB = Number(b.score) || 0;
-                    if (scoreB !== scoreA) return scoreB - scoreA;
+                    let sA = Number(a.score) || 0;
+                    let sB = Number(b.score) || 0;
+                    if (sB !== sA) return sB - sA;
                     
+                    // On compare les dates anglaises de ton Excel
                     return new Date(b.date).getTime() - new Date(a.date).getTime();
                 });
 
@@ -80,16 +80,7 @@
 
                 document.getElementById('leader-list').innerHTML = players.slice(3).map((p, i) => `
                     <div class="list-row shadow-sm bg-slate-50">
-                        <div class="w-6 font-black opacity-20 text-xs">#${i+4}</div>
+                        <div class="w-8 font-black opacity-30 text-xs">#${i+4}</div>
                         <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p.nom}" class="w-10 h-10 rounded-xl bg-white">
                         <div class="flex-1 truncate">
-                            <p class="font-bold text-slate-700 text-[12px]">${p.nom}</p>
-                            <p class="text-[9px] text-slate-400 uppercase font-black">${p.score} PTS - ${p.sujet}</p>
-                        </div>
-                    </div>`).join('');
-            } catch (e) { console.error("Erreur de chargement", e); }
-        }
-        window.onload = updateApp;
-    </script>
-</body>
-</html>
+                            <p class="font-bold
