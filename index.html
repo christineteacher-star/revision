@@ -131,22 +131,28 @@
     .slice(0, 10); // On garde seulement les 10 meilleurs
                 
                 if(players.length >= 3) {
-                    document.getElementById('podium-area').innerHTML = `
-                        <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
-                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[1].nom}" class="w-16 h-16 mb-2">
-                            <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">${players[1].nom.split(' ')[0]}</span>
-                            <div class="podium-block bg-amber-400 h-[85px]">#2</div>
-                        </div>
-                        <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
-                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[0].nom}" class="w-20 h-20 mb-2">
-                            <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">${players[0].nom.split(' ')[0]}</span>
-                            <div class="podium-block bg-green-400 h-[115px]">#1</div>
-                        </div>
-                        <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
-                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[2].nom}" class="w-16 h-16 mb-2">
-                            <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">${players[2].nom.split(' ')[0]}</span>
-                            <div class="podium-block bg-red-400 h-[65px]">#3</div>
-                        </div>`;
+                   document.getElementById('podium-area').innerHTML = `
+    <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
+        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[1].nom}" class="w-16 h-16 mb-2">
+        <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">
+            ${players[1].nom.split(' ')[0]}<br><small class="opacity-70">(${players[1].sujet})</small>
+        </span>
+        <div class="podium-block bg-amber-400 h-[85px]">#2</div>
+    </div>
+    <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
+        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[0].nom}" class="w-20 h-20 mb-2">
+        <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">
+            ${players[0].nom.split(' ')[0]}<br><small class="text-green-600">(${players[0].sujet})</small>
+        </span>
+        <div class="podium-block bg-green-400 h-[115px]">#1</div>
+    </div>
+    <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
+        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[2].nom}" class="w-16 h-16 mb-2">
+        <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">
+            ${players[2].nom.split(' ')[0]}<br><small class="opacity-70">(${players[2].sujet})</small>
+        </span>
+        <div class="podium-block bg-red-400 h-[65px]">#3</div>
+    </div>`;
                 }
 
                 document.getElementById('leader-list').innerHTML = players.slice(3).map((p, i) => {
@@ -158,7 +164,7 @@
                         <div class="w-8 font-black opacity-30">#${i+4}</div>
                         <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p.nom}" class="w-11 h-11 rounded-2xl bg-white border-2 border-white">
                         <div class="flex-1 truncate ml-2">
-                            <p class="font-bold text-slate-700 text-[13px]">${p.nom}</p>
+                           <p class="font-bold text-slate-700 text-[13px]">${p.nom} <span class="font-normal opacity-50 text-[11px]">(${p.sujet})</span></p>
                             <div class="text-[10px] font-black uppercase tracking-widest opacity-70">💎 ${p.score} PTS</div>
                         </div>
                     </div>`;
@@ -169,5 +175,6 @@
     </script>
 </body>
 </html>
+
 
 
