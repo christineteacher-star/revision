@@ -121,36 +121,45 @@
                const players = data
     .filter(i => i.nom && i.score)
     .sort((a, b) => {
-    // 1. On trie par score (priorité n°1)
+    // 1. On trie par score
     let scoreA = Number(a.score) || 0;
     let scoreB = Number(b.score) || 0;
     if (scoreB !== scoreA) return scoreB - scoreA;
 
-    // 2. Fonction magique pour lire tes dates mélangées
-    const getTimestamp = (val) => {
-        if (!val) return 0;
-        let s = String(val).trim();
+    // 2. Nettoyage et lecture de la date (Format FR et US)
+    const parseDate = (str) => {
+        if (!str) return 0;
+        let s = String(str).trim();
         
-        // Si c'est au format JJ/MM/AAAA ou MM/JJ/AAAA
-        if (s.includes('/')) {
-            let [datePart, timePart] = s.split(' ');
-            let [p1, p2, p3] = datePart.split('/');
+        // On sépare la date et l'heure
+        let parts = s.split(/[\/\s:]/);
+        // parts[0]=jour/mois, parts[1]=mois/jour, parts[2]=année
+        // parts[3]=heures, parts[4]=minutes, parts[5]=secondes
+
+        if (parts.length >= 3) {
+            let j, m, a, hh, mm, ss;
             
-            // On teste si c'est du Français (JJ/MM/AAAA)
-            // Si p1 > 12, c'est forcément le jour (Français)
-            if (Number(p1) > 12) {
-                return new Date(`${p2}/${p1}/${p3} ${timePart || ''}`).getTime();
+            // Si le premier chiffre est > 12, c'est forcément le JOUR (Format FR)
+            if (Number(parts[0]) > 12) {
+                j = Number(parts[0]); m = Number(parts[1]) - 1; a = Number(parts[2]);
+            } else {
+                // Sinon on tente le format US (Mois en premier)
+                m = Number(parts[0]) - 1; j = Number(parts[1]); a = Number(parts[2]);
             }
-            // Sinon on essaie de construire la date normalement
-            return new Date(s).getTime() || new Date(`${p2}/${p1}/${p3} ${timePart || ''}`).getTime();
+            
+            hh = Number(parts[3]) || 0;
+            mm = Number(parts[4]) || 0;
+            ss = Number(parts[5]) || 0;
+
+            return new Date(a, m, j, hh, mm, ss).getTime();
         }
         return new Date(s).getTime() || 0;
     };
 
-    let tempsA = getTimestamp(a.date || a.Date);
-    let tempsB = getTimestamp(b.date || b.Date);
+    let tempsA = parseDate(a.date);
+    let tempsB = parseDate(b.date);
 
-    // 3. Le plus récent (tempsB) passe devant
+    // 3. Comparaison : le plus grand chiffre (le plus récent) gagne
     return tempsB - tempsA;
 })
 .slice(0, 10);
@@ -200,6 +209,7 @@
     </script>
 </body>
 </html>
+
 
 
 
