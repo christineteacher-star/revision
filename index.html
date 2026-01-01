@@ -121,15 +121,21 @@
                const players = data
     .filter(i => i.nom && i.score)
     .sort((a, b) => {
-    // On trie par score (100 avant 90)
-    if (Number(b.score) !== Number(a.score)) {
-        return Number(b.score) - Number(a.score);
+    // 1. On trie par score
+    let scoreA = Number(a.score) || 0;
+    let scoreB = Number(b.score) || 0;
+    if (scoreB !== scoreA) {
+        return scoreB - scoreA;
     }
-    // Si les scores sont égaux, le plus récent (b) passe devant
-    // Utiliser Date.parse est plus précis pour comparer Julia et Marwa
-    return Date.parse(b.date) - Date.parse(a.date);
+    
+    // 2. Si égalité, on compare les dates
+    // On utilise Date.parse et on gère le cas où la date serait vide
+    let tempsA = a.date ? Date.parse(a.date) : 0;
+    let tempsB = b.date ? Date.parse(b.date) : 0;
+    
+    return tempsB - tempsA; // Julia (la plus récente) montera en haut
 })
-.slice(0, 10); // On garde seulement les 10 meilleurs
+.slice(0, 10);
                 
                 if(players.length >= 3) {
                    document.getElementById('podium-area').innerHTML = `
@@ -176,6 +182,7 @@
     </script>
 </body>
 </html>
+
 
 
 
