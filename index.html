@@ -121,44 +121,32 @@
                const players = data
     .filter(i => i.nom && i.score)
     .sort((a, b) => {
-    // 1. Tri par score (Priorité 1)
+    // 1. Priorité au score
     let scoreA = Number(a.score) || 0;
     let scoreB = Number(b.score) || 0;
     if (scoreB !== scoreA) return scoreB - scoreA;
 
-    // 2. Découpage manuel de la date pour éviter les bugs de format
-    const extraireTemps = (valeur) => {
-        if (!valeur) return 0;
-        let s = String(valeur).trim();
-        
-        // On sépare les chiffres (Jour, Mois, Année, Heure, Min, Sec)
-        let p = s.split(/[\/\s:]+/); 
-        if (p.length < 3) return 0;
-
-        let jour, mois, annee, hh, mm, ss;
-
-        // Détection format FR (27/12) ou US (12/27)
-        if (Number(p[0]) > 12) {
-            jour = Number(p[0]); mois = Number(p[1]) - 1; annee = Number(p[2]);
-        } else {
-            mois = Number(p[0]) - 1; jour = Number(p[1]); annee = Number(p[2]);
+    // 2. Conversion robuste des dates
+    const toTimestamp = (val) => {
+        if (!val) return 0;
+        let d = new Date(val);
+        // Si le format classique échoue, on essaie de nettoyer
+        if (isNaN(d.getTime())) {
+            let s = String(val).split(/[\/\s:]/);
+            if (s.length >= 3) {
+                // On tente de reconstruire (Mois/Jour/Année)
+                d = new Date(s[2], s[0] - 1, s[1], s[3] || 0, s[4] || 0, s[5] || 0);
+            }
         }
-
-        // On récupère les heures, minutes, secondes si elles existent
-        hh = Number(p[3]) || 0;
-        mm = Number(p[4]) || 0;
-        ss = Number(p[5]) || 0;
-
-        return new Date(annee, mois, jour, hh, mm, ss).getTime();
+        return d.getTime() || 0;
     };
 
-    let tempsA = extraireTemps(a.date);
-    let tempsB = extraireTemps(b.date);
+    let tA = toTimestamp(a.date);
+    let tB = toTimestamp(b.date);
 
-    // 3. Le plus récent (chiffre le plus grand) monte en haut
-    return tempsB - tempsA;
+    // 3. Le plus récent (plus grand timestamp) en haut
+    return tB - tA;
 })
-.slice(0, 10);
                 
                 if(players.length >= 3) {
                    document.getElementById('podium-area').innerHTML = `
@@ -205,6 +193,7 @@
     </script>
 </body>
 </html>
+
 
 
 
