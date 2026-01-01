@@ -121,32 +121,20 @@
                const players = data
     .filter(i => i.nom && i.score)
     .sort((a, b) => {
-    // 1. Priorité au score
+    // 1. On compare les scores (100 est mieux que 90)
     let scoreA = Number(a.score) || 0;
     let scoreB = Number(b.score) || 0;
     if (scoreB !== scoreA) return scoreB - scoreA;
 
-    // 2. Conversion robuste des dates
-    const toTimestamp = (val) => {
-        if (!val) return 0;
-        let d = new Date(val);
-        // Si le format classique échoue, on essaie de nettoyer
-        if (isNaN(d.getTime())) {
-            let s = String(val).split(/[\/\s:]/);
-            if (s.length >= 3) {
-                // On tente de reconstruire (Mois/Jour/Année)
-                d = new Date(s[2], s[0] - 1, s[1], s[3] || 0, s[4] || 0, s[5] || 0);
-            }
-        }
-        return d.getTime() || 0;
-    };
+    // 2. Si les scores sont égaux, on compare les dates anglaises
+    // JavaScript comprend le format "1/1/2026 16:23:40"
+    let tempsA = a.date ? new Date(a.date).getTime() : 0;
+    let tempsB = b.date ? new Date(b.date).getTime() : 0;
 
-    let tA = toTimestamp(a.date);
-    let tB = toTimestamp(b.date);
-
-    // 3. Le plus récent (plus grand timestamp) en haut
-    return tB - tA;
+    // 3. Le plus récent (Karim) passe devant
+    return tempsB - tempsA;
 })
+.slice(0, 10);
                 
                 if(players.length >= 3) {
                    document.getElementById('podium-area').innerHTML = `
@@ -193,6 +181,7 @@
     </script>
 </body>
 </html>
+
 
 
 
