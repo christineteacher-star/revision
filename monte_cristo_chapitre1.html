@@ -3,193 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bilan : Le Comte de Monte-Cristo</title>
+    <title>Mon Académie | Monte-Cristo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root { --primary: #3498db; --success: #27ae60; --error: #e74c3c; --dark: #2c3e50; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f4f7f9; display: flex; justify-content: center; padding: 20px; color: var(--dark); }
-        .container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 600px; width: 100%; }
-        h1 { text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 10px; margin-top: 0; }
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        body { font-family: 'Quicksand', sans-serif; background-color: #ebf2f7; margin: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .game-card { width: 100%; max-width: 480px; background: white; height: 95vh; display: flex; flex-direction: column; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; }
         
-        /* Section Nom de l'élève */
-        .name-box { background: #ebf5fb; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 2px dashed var(--primary); }
-        .name-box label { display: block; font-weight: bold; margin-bottom: 8px; }
-        .name-box input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #bdc3c7; box-sizing: border-box; font-size: 1rem; }
+        .header-nav-btn { cursor: pointer; transition: all 0.2s; padding: 4px 8px; border-radius: 8px; }
+        .header-nav-btn:hover { background-color: #f0f9ff; }
 
-        .question { font-size: 1.2em; font-weight: bold; margin: 20px 0; min-height: 60px; }
-        .options { display: grid; gap: 10px; }
-        button.opt-btn { padding: 15px; border: 2px solid #eee; border-radius: 10px; background: white; cursor: pointer; text-align: left; font-size: 1em; transition: all 0.2s; }
-        button.opt-btn:hover:not(:disabled) { border-color: var(--primary); background: #f0f8ff; }
+        .img-box { width: 100%; height: 25vh; background: #2c3e50; display: flex; align-items: center; justify-content: center; overflow: hidden; border-bottom: 1px solid #f1f5f9; position: relative; }
+        .img-box i { color: rgba(255,255,255,0.2); font-size: 5rem; }
         
-        .feedback { margin: 15px 0; padding: 15px; border-radius: 10px; display: none; line-height: 1.4; }
-        .correct { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .wrong { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .quiz-body { padding: 20px; flex: 1; display: flex; flex-direction: column; text-align: center; }
+        .question-text { font-size: 1.15rem; font-weight: 800; color: #1e293b; margin: 10px 0; min-height: 3.5rem; line-height: 1.3; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+        .opt-btn { background: #fdfdfd; border: 2px solid #e2e8f0; padding: 14px 8px; border-radius: 16px; font-weight: 700; color: #475569; cursor: pointer; transition: all 0.2s; min-height: 60px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; }
+        
+        .animate-error { animation: shake 0.4s ease-in-out; border-color: #ef4444 !important; background: #fef2f2 !important; color: #b91c1c !important; }
+        .animate-correct { animation: pop 0.4s ease-in-out; border-color: #22c55e !important; background: #f0fdf4 !important; color: #15803d !important; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-8px); } 60% { transform: translateX(8px); } }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-        .stat-card { background: #f8f9fa; padding: 15px; border-radius: 10px; text-align: center; border-top: 4px solid var(--primary); }
-        
-        .flashcard { width: 100%; height: 220px; perspective: 1000px; cursor: pointer; margin-top: 20px; }
-        .card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
-        .flashcard.flipped .card-inner { transform: rotateY(180deg); }
-        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 15px; padding: 25px; box-sizing: border-box; border: 2px solid var(--primary); }
-        .card-front { font-size: 1.6em; font-weight: bold; background: white; }
-        .card-back { background: var(--primary); color: white; transform: rotateY(180deg); font-size: 1.1em; }
-
-        .btn-action { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.1em; }
-        .btn-next { background: var(--success); color: white; display: none; }
-        
-        #sync-status { text-align: center; margin-top: 15px; font-weight: bold; color: var(--primary); min-height: 1.2em; }
+        .feedback-box { display: none; margin-top: 15px; padding: 12px; border-radius: 15px; font-size: 0.85rem; line-height: 1.4; font-weight: 600; text-align: left; }
+        .is-correct { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+        .is-wrong { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+        .btn-next { background: #0ea5e9; color: white; width: 100%; padding: 16px; border-radius: 18px; font-weight: 800; text-transform: uppercase; margin-top: auto; box-shadow: 0 4px 0 #0284c7; display: none; cursor: pointer; text-align: center; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div id="quiz-section">
-        <div class="name-box">
-            <label for="student-name">Votre Nom et Prénom :</label>
-            <input type="text" id="student-name" placeholder="Ex: Edmond Dantès" required>
-        </div>
+    <div class="game-card">
+        <header class="p-4 flex justify-between items-center border-b border-slate-100">
+            <div onclick="window.location.href='index.html'" class="header-nav-btn flex items-center gap-2 text-sky-600 font-black text-sm uppercase">
+                <i class="fas fa-ship"></i> Mon Académie
+            </div>
+            <span id="lvl-display" class="bg-sky-50 text-sky-600 text-[10px] font-bold px-3 py-1 rounded-full border border-sky-100 uppercase">Chapitre 1</span>
+        </header>
 
-        <div id="progress" style="font-weight:bold; color:#7f8c8d;">Question 1 / 10</div>
-        <h1>Quiz : Chapitre 1</h1>
-        <div class="question" id="q-text"></div>
-        <div class="options" id="options-box"></div>
-        <div id="feedback" class="feedback"></div>
-        <button id="next-btn" class="btn-action btn-next">Suivant &rarr;</button>
-    </div>
-
-    <div id="end-section" style="display:none;">
-        <h1>Bilan de l'Apprenti Marin</h1>
-        <div class="stats-grid">
-            <div class="stat-card"><div>Score</div><div id="res-score" style="font-size: 1.8em; font-weight: bold;"></div></div>
-            <div class="stat-card"><div>Exactitude</div><div id="res-percent" style="font-size: 1.8em; font-weight: bold;"></div></div>
-        </div>
-        <div class="stat-card" style="width: 100%; margin-bottom: 20px; box-sizing: border-box;">
-            <div>Point fort :</div>
-            <div id="res-strength" style="color:var(--success); font-weight:bold;"></div>
-        </div>
+        <div class="h-1.5 bg-slate-100"><div id="progress-bar" class="h-full bg-sky-500 w-0 transition-all duration-500"></div></div>
         
-        <div id="sync-status"></div>
-
-        <button onclick="startFlashcards()" class="btn-action" style="background:var(--dark); color:white;">Continuer avec les Flashcards</button>
-    </div>
-
-    <div id="flash-section" style="display:none; text-align: center;">
-        <h1>Révision : Flashcards</h1>
-        <div class="flashcard" onclick="this.classList.toggle('flipped')">
-            <div class="card-inner">
-                <div class="card-front" id="f-front"></div>
-                <div class="card-back" id="f-back"></div>
+        <div class="img-box">
+            <i class="fas fa-anchor"></i>
+            <div class="absolute inset-0 flex items-center justify-center text-white font-black text-xl bg-black/20 uppercase tracking-widest">
+                Le Pharaon
             </div>
         </div>
-        <button onclick="nextFlashcard()" class="btn-action" style="margin-top:30px; background:var(--primary); color: white;">Carte Suivante</button>
+
+        <div class="quiz-body" id="quiz-ui">
+            <div id="q-counter" class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Question 1 / 10</div>
+            <h2 id="q-text" class="question-text">Chargement...</h2>
+            <div id="grid" class="options-grid"></div>
+            <div id="feedback" class="feedback-box"></div>
+            <div id="next-btn" onclick="goToNext()" class="btn-next">Continuer <i class="fas fa-arrow-right ml-2"></i></div>
+        </div>
     </div>
-</div>
 
 <script>
-    // 1. UTILISEZ VOTRE LIEN UNIQUE ICI
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqLheXqYNAzM3cDMNJTtM03MxUmKYZTfB4etoK5jmHFtWNlDjlc6zQDyZlE7gZnlyXqg/exec";
-
     const quizData = [
-        { q: "Edmond semble ________ par la mort du capitaine.", opts: ["accablé", "hostile", "prospère", "ambitieux"], r: 0, cat: "Vocabulaire", def: "ACCABLÉ : Très triste, comme si l'on portait un poids trop lourd." },
-        { q: "Morrel est un marchand _________ (affaires rentables).", opts: ["ambitieux", "accablé", "prospère", "hostile"], r: 2, cat: "Vocabulaire", def: "PROSPÈRE : Qui réussit financièrement." },
-        { q: "Danglars lance un regard _________ à Edmond.", opts: ["hostile", "prospère", "ambitieux", "accablé"], r: 0, cat: "Vocabulaire", def: "HOSTILE : Qui se comporte comme un ennemi." },
-        { q: "Edmond est un jeune marin doué et _________.", opts: ["accablé", "ambitieux", "hostile", "prospère"], r: 1, cat: "Vocabulaire", def: "AMBITIEUX : Qui veut réussir socialement." },
-        { q: "Monsieur Morrel (dit) __________ la mort du capitaine.", opts: ["s'enquiert", "déplore", "souligne", "rassure"], r: 1, cat: "Verbes", def: "DÉPLORER : Regretter très vivement." },
-        { q: "L'armateur (dit) __________ de l'état des marchandises.", opts: ["déplore", "rassure", "s'enquiert", "souligne"], r: 2, cat: "Verbes", def: "S'ENQUÉRIR : Se renseigner, poser des questions." },
-        { q: "Edmond (dit) __________ Morrel pour le calmer.", opts: ["rassure", "déplore", "souligne", "s'enquiert"], r: 0, cat: "Verbes", def: "RASSURER : Redonner confiance à quelqu'un." },
-        { q: "Danglars (dit) __________ l'escale suspecte.", opts: ["rassure", "souligne", "déplore", "s'enquiert"], r: 1, cat: "Verbes", def: "SOULIGNER : Mettre en évidence un point précis." },
-        { q: "Intrus : Gouvernail - Boussole - Charrue - Ancre.", opts: ["Gouvernail", "Boussole", "Charrue", "Ancre"], r: 2, cat: "Marine", def: "La CHARRUE est pour la terre, pas pour la mer." },
-        { q: "Intrus : Matelot - Cordonnier - Capitaine - Second.", opts: ["Matelot", "Cordonnier", "Capitaine", "Second"], r: 1, cat: "Marine", def: "Le CORDONNIER travaille en ville, pas sur un bateau." }
+        { q: "Edmond semble ________ par la mort du capitaine.", opts: ["Accablé", "Hostile", "Prospère", "Ambitieux"], r: "Accablé", def: "ACCABLÉ : Très triste, comme si l'on portait un poids trop lourd." },
+        { q: "Morrel est un marchand _________ (ses affaires sont rentables).", opts: ["Ambitieux", "Accablé", "Prospère", "Hostile"], r: "Prospère", def: "PROSPÈRE : Qui réussit financièrement." },
+        { q: "Danglars lance un regard _________ à Edmond.", opts: ["Hostile", "Prospère", "Ambitieux", "Accablé"], r: "Hostile", def: "HOSTILE : Qui se comporte comme un ennemi." },
+        { q: "Edmond est un jeune marin doué et _________.", opts: ["Accablé", "Ambitieux", "Hostile", "Prospère"], r: "Ambitieux", def: "AMBITIEUX : Qui veut réussir socialement." },
+        { q: "Monsieur Morrel __________ la mort du capitaine (il la regrette).", opts: ["S'enquiert", "Déplore", "Souligne", "Rassure"], r: "Déplore", def: "DÉPLORER : Regretter très vivement." },
+        { q: "L'armateur __________ de l'état des marchandises (il se renseigne).", opts: ["Déplore", "Rassure", "S'enquiert", "Souligne"], r: "S'enquiert", def: "S'ENQUÉRIR : Se renseigner, poser des questions." },
+        { q: "Edmond __________ Morrel pour le calmer.", opts: ["Rassure", "Déplore", "Souligne", "S'enquiert"], r: "Rassure", def: "RASSURER : Redonner confiance à quelqu'un." },
+        { q: "Danglars __________ l'escale suspecte (il attire l'attention dessus).", opts: ["Rassure", "Souligne", "Déplore", "S'enquiert"], r: "Souligne", def: "SOULIGNER : Mettre en évidence un point précis." },
+        { q: "Trouvez l'intrus dans cette liste marine :", opts: ["Gouvernail", "Boussole", "Charrue", "Ancre"], r: "Charrue", def: "La CHARRUE est pour la terre (champs), pas pour la mer." },
+        { q: "Trouvez l'intrus parmi les métiers du port :", opts: ["Matelot", "Cordonnier", "Capitaine", "Second"], r: "Cordonnier", def: "Le CORDONNIER travaille en ville, pas sur un bateau." }
     ];
 
-    let current = 0; let score = 0; let cats = {Vocabulaire:0, Verbes:0, Marine:0}; let fIdx = 0;
+    let currentQ = 0;
+    let score = 0;
 
-    function showQ() {
-        const q = quizData[current];
-        document.getElementById('progress').innerText = "Question " + (current + 1) + " / 10";
-        document.getElementById('q-text').innerHTML = q.q;
-        const box = document.getElementById('options-box'); box.innerHTML = '';
+    window.onload = () => loadQuestion();
+
+    function loadQuestion() {
+        const data = quizData[currentQ];
+        document.getElementById('q-text').innerText = data.q;
+        document.getElementById('q-counter').innerText = `Question ${currentQ + 1} / 10`;
+        document.getElementById('progress-bar').style.width = ((currentQ / 10) * 100) + "%";
+        
+        const grid = document.getElementById('grid');
+        grid.innerHTML = "";
+        
+        data.opts.forEach(choice => {
+            const btn = document.createElement('div');
+            btn.className = "opt-btn";
+            btn.innerText = choice;
+            btn.onclick = () => verify(btn, choice, data.r, data.def);
+            grid.appendChild(btn);
+        });
+
         document.getElementById('feedback').style.display = 'none';
         document.getElementById('next-btn').style.display = 'none';
-        q.opts.forEach((o, i) => {
-            const b = document.createElement('button'); b.className = 'opt-btn'; b.innerHTML = o;
-            b.onclick = () => {
-                document.querySelectorAll('.opt-btn').forEach(btn => btn.disabled = true);
-                if(i === q.r) {
-                    score++; cats[q.cat]++;
-                    document.getElementById('feedback').className = "feedback correct";
-                    document.getElementById('feedback').innerHTML = "<b>Correct !</b><br>" + q.def;
-                } else {
-                    document.getElementById('feedback').className = "feedback wrong";
-                    document.getElementById('feedback').innerHTML = "<b>Erreur.</b><br>" + q.def;
-                }
-                document.getElementById('feedback').style.display = 'block';
-                document.getElementById('next-btn').style.display = 'block';
-            };
-            box.appendChild(b);
-        });
     }
 
-    document.getElementById('next-btn').onclick = () => {
-        current++; 
-        if(current < 10) showQ();
-        else finishQuiz();
+    function verify(el, choice, correct, definition) {
+        const fb = document.getElementById('feedback');
+        document.querySelectorAll('.opt-btn').forEach(b => b.onclick = null);
+        fb.style.display = 'block';
+
+        if (choice === correct) {
+            el.classList.add('animate-correct');
+            fb.className = "feedback-box is-correct";
+            fb.innerHTML = `✅ CORRECT ! <br> ${definition}`;
+            score++;
+        } else {
+            el.classList.add('animate-error');
+            fb.className = "feedback-box is-wrong";
+            fb.innerHTML = `❌ ERREUR <br> ${definition}`;
+            document.querySelectorAll('.opt-btn').forEach(b => {
+                if(b.innerText === correct) b.style.borderColor = "#22c55e";
+            });
+        }
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function goToNext() {
+        currentQ++;
+        if (currentQ < quizData.length) {
+            loadQuestion();
+        } else {
+            showEnd();
+        }
+    }
+
+function showEnd() {
+    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+    
+    // On demande le nom à la fin
+    const pseudo = prompt("Bravo ! Ton nom pour le classement :") || "Anonyme";
+    
+    // On lance l'envoi vers Google Sheets
+    envoyerResultat(pseudo, score);
+
+    document.getElementById('quiz-ui').innerHTML = `
+        <div class="py-10">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="text-2xl font-black text-slate-700 uppercase">Terminé !</h2>
+            <p class="text-lg font-bold text-sky-600 mt-2">Score : ${score} / 10</p>
+            <button onclick="window.location.href='index.html'" class="mt-8 bg-sky-500 text-white px-10 py-4 rounded-2xl font-black w-full">
+                VOIR LE CLASSEMENT
+            </button>
+        </div>`;
+}
+// 1. Cette fonction est le "moteur" qui envoie les données à Google
+function envoyerResultat(nomJoueur, scoreFinal) {
+    const url = "https://script.google.com/macros/s/AKfycbys_uz58mt03TDr5gthhtJIeZJqqJDTuikaHwUa60o2rp3S4jIOeuABIrjWyfUDuhEdLg/exec"; // <--- Remplacez par votre lien qui finit par /exec
+    
+    const data = {
+        nom: nomJoueur,
+        score: scoreFinal,
+        sujet: "Monte-Cristo Chapitre 1" // <--- Changez ce nom pour chaque nouveau quiz
     };
 
-    function finishQuiz() {
-        document.getElementById('quiz-section').style.display = 'none'; 
-        document.getElementById('end-section').style.display = 'block';
-        document.getElementById('res-score').innerText = score + "/10";
-        document.getElementById('res-percent').innerText = (score * 10) + "%";
-        let best = Object.keys(cats).reduce((a, b) => cats[a] > cats[b] ? a : b);
-        document.getElementById('res-strength').innerText = best;
-
-        const nom = document.getElementById('student-name').value.trim() || "Anonyme";
-        envoyerDonnees(nom, score * 10);
-    }
-
-    function envoyerDonnees(nom, pourcentage) {
-        const status = document.getElementById('sync-status');
-        status.innerText = "⏳ Transmission de la note...";
-        
-        const data = { 
-            nom: nom, 
-            score: pourcentage, 
-            sujet: "Monte-Cristo Ch.1" 
-        };
-
-        fetch(SCRIPT_URL, { 
-            method: "POST", 
-            mode: "no-cors", 
-            body: JSON.stringify(data) 
-        })
-        .then(() => {
-            status.innerHTML = "✅ Note enregistrée.";
-        })
-        .catch(() => {
-            status.innerHTML = "❌ Erreur de connexion.";
-        });
-    }
-
-    function startFlashcards() { 
-        document.getElementById('end-section').style.display = 'none'; 
-        document.getElementById('flash-section').style.display = 'block'; 
-        showFlash(); 
-    }
-    
-    function showFlash() { 
-        const c = quizData[fIdx]; 
-        document.querySelector('.flashcard').classList.remove('flipped'); 
-        document.getElementById('f-front').innerText = c.opts[c.r].toUpperCase(); 
-        document.getElementById('f-back').innerHTML = c.def; 
-    }
-    
-    function nextFlashcard() { fIdx = (fIdx + 1) % 10; showFlash(); }
-
-    showQ();
+    fetch(url, {
+        method: "POST",
+        mode: "no-cors", 
+        cache: "no-cache",
+        body: JSON.stringify(data)
+    });
+}
 </script>
 </body>
 </html>
-
-
-
