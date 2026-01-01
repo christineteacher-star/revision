@@ -121,26 +121,31 @@
                const players = data
     .filter(i => i.nom && i.score)
     .sort((a, b) => {
-    // 1. Priorité au score
+    // 1. On trie par score
     let scoreA = Number(a.score) || 0;
     let scoreB = Number(b.score) || 0;
     if (scoreB !== scoreA) return scoreB - scoreA;
 
-    // 2. Détection de la date (on teste TOUTES les possibilités)
-    // On cherche 'date', 'Date', 'horodatage', 'timestamp'
-    let rawA = a.date || a.Date || a.horodatage || a.Horodatage || 0;
-    let rawB = b.date || b.Date || b.horodatage || b.Horodatage || 0;
+    // 2. Fonction pour transformer "JJ/MM/AAAA HH:MM:SS" en date lisible
+    const parseFrenchDate = (dateStr) => {
+        if (!dateStr) return 0;
+        // Si la date est déjà un objet ou un chiffre
+        if (typeof dateStr !== 'string') return new Date(dateStr).getTime();
+        
+        // On sépare le jour, le mois, l'année et l'heure
+        const parts = dateStr.split(/[\/\s:]/);
+        if (parts.length < 3) return 0;
+        
+        // Format JS : Mois (0-11), Jour, Année, Heure, Min, Sec
+        // On retire 1 au mois car en JS Janvier = 0
+        return new Date(parts[2], parts[1] - 1, parts[0], parts[3] || 0, parts[4] || 0, parts[5] || 0).getTime();
+    };
 
-    let tempsA = rawA ? new Date(rawA).getTime() : 0;
-    let tempsB = rawB ? new Date(rawB).getTime() : 0;
+    let tempsA = parseFrenchDate(a.date || a.Date);
+    let tempsB = parseFrenchDate(b.date || b.Date);
 
-    // Si les dates sont identiques ou introuvables, on ne change rien
-    if (tempsA === tempsB) return 0;
-
-    // Le plus récent (tempsB) doit être en haut
-    return tempsB - tempsA;
+    return tempsB - tempsA; // Le plus récent en haut
 })
-.slice(0, 10);
                 
                 if(players.length >= 3) {
                    document.getElementById('podium-area').innerHTML = `
@@ -187,6 +192,7 @@
     </script>
 </body>
 </html>
+
 
 
 
