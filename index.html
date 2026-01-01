@@ -118,7 +118,7 @@
             try {
                 const response = await fetch(SCRIPT_URL);
                 const data = await response.json();
-                const players = data.filter(i => i.sujet?.includes("Monte-Cristo")).sort((a,b) => b.score - a.score);
+                const players = data.filter(i => i.nom).sort((a,b) => Number(b.score) - Number(a.score));
                 
                 if(players.length >= 3) {
                     document.getElementById('podium-area').innerHTML = `
@@ -159,3 +159,4 @@
     </script>
 </body>
 </html>
+
