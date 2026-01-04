@@ -13,7 +13,8 @@
         .logo-dragon { width: 48px; height: 48px; background: #f97316; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; margin-bottom: 40px; cursor:pointer; }
         .main-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .game-card { background: white; border-radius: 35px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 650px; text-align: center; }
-        .btn-choice { background: #f8fafc; padding: 25px; border-radius: 25px; font-weight: 800; cursor: pointer; border: 2px solid #e2e8f0; color: #475569; font-size: 1.2rem; }
+        .btn-choice { background: #f8fafc; padding: 25px; border-radius: 25px; font-weight: 800; cursor: pointer; border: 2px solid #e2e8f0; color: #475569; font-size: 1.2rem; transition: 0.2s; }
+        .btn-choice:hover { transform: translateY(-3px); border-color: #f97316; }
         .correct { background: #10b981 !important; color: white !important; border-color: #10b981 !important; }
         .wrong { background: #ef4444 !important; color: white !important; border-color: #ef4444 !important; animation: shake 0.3s; }
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
@@ -26,7 +27,15 @@
     </nav>
     <main class="main-content">
         <div class="game-card">
-            <div id="game-zone">
+            <div id="start-zone">
+                <i class="fas fa-eye text-5xl text-orange-500 mb-6"></i>
+                <h2 class="text-2xl font-black text-slate-800 mb-4">L'Œil du Dragon</h2>
+                <p class="text-slate-500 mb-6 italic text-sm">Saisis ton prénom pour enregistrer ton exploit</p>
+                <input type="text" id="playerName" placeholder="Ton Prénom" class="w-full p-4 rounded-2xl border-2 border-slate-100 mb-4 text-center font-bold outline-none focus:border-orange-500">
+                <button onclick="preStart()" class="w-full bg-orange-500 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-orange-600 transition">OUVRIR L'ŒIL</button>
+            </div>
+
+            <div id="game-zone" class="hidden">
                 <div class="flex justify-between items-center mb-10">
                     <div class="text-left"><p class="text-slate-400 text-xs font-bold uppercase">Points</p><p class="text-4xl font-black text-slate-800" id="score">0</p></div>
                     <div class="w-1/2 h-3 bg-slate-100 rounded-full overflow-hidden"><div id="timer" class="h-full bg-orange-500" style="width: 100%"></div></div>
@@ -37,15 +46,19 @@
                     <div class="btn-choice" onclick="check('Figuré')">FIGURÉ</div>
                 </div>
             </div>
+
             <div id="result-zone" class="hidden">
                 <h2 class="text-4xl font-black text-slate-800 mb-2">Temps fini !</h2>
-                <p class="text-slate-500 mb-8 text-xl">Score : <span id="final-score" class="text-orange-600 font-bold">0</span></p>
-                <button onclick="location.reload()" class="w-full bg-orange-500 text-white py-4 rounded-2xl font-bold">REJOUER</button>
+                <p class="text-slate-500 mb-8 text-xl">Score envoyé au Leaderboard : <span id="final-score" class="text-orange-600 font-bold">0</span></p>
+                <button onclick="window.location.href='index.html'" class="w-full bg-slate-800 text-white py-4 rounded-2xl font-bold mb-3">RETOUR ACCUEIL</button>
+                <button onclick="location.reload()" class="w-full bg-slate-200 text-slate-600 py-3 rounded-2xl font-bold">REJOUER</button>
             </div>
         </div>
     </main>
 
     <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys_uz58mt03TDr5gthhtJIeZJqqJDTuikaHwUa60o2rp3S4jIOeuABIrjWyfUDuhEdLg/exec";
+
         const banque = [
             {p: "Il dévore son livre.", s: "Figuré"}, {p: "Le lion dévore sa proie.", s: "Propre"},
             {p: "Il a jeté l'argent par les fenêtres.", s: "Figuré"}, {p: "Il a jeté ses clés.", s: "Propre"},
@@ -56,6 +69,17 @@
         ];
 
         let score = 0, timeLeft = 60, active = false, pseudo = "", sac = [];
+        let currentQ = null;
+
+        function preStart() {
+            const input = document.getElementById('playerName');
+            if(input.value.trim().length < 2) return alert("Prénom requis !");
+            pseudo = input.value.trim();
+            document.getElementById('start-zone').classList.add('hidden');
+            document.getElementById('game-zone').classList.remove('hidden');
+            startTimer();
+            next();
+        }
 
         function next() {
             if (sac.length === 0) sac = [...banque].sort(() => Math.random() - 0.5);
@@ -67,7 +91,9 @@
 
         function check(choice) {
             if(!active) return; active = false;
-            const btn = Array.from(document.querySelectorAll('.btn-choice')).find(b => b.innerText === choice.toUpperCase());
+            const btns = document.querySelectorAll('.btn-choice');
+            const btn = Array.from(btns).find(b => b.innerText === choice.toUpperCase());
+            
             if(choice === currentQ.s) {
                 btn.classList.add('correct'); score += 20;
                 document.getElementById('score').innerText = score;
@@ -78,26 +104,36 @@
             }
         }
 
-        const timer = setInterval(() => {
-            if(!active && timeLeft === 60) return;
-            timeLeft -= 0.1;
-            document.getElementById('timer').style.width = (timeLeft/60*100) + "%";
-            if(timeLeft <= 0) { clearInterval(timer); endGame(); }
-        }, 100);
+        function startTimer() {
+            const timerObj = setInterval(() => {
+                timeLeft -= 0.1;
+                document.getElementById('timer').style.width = (timeLeft/60*100) + "%";
+                if(timeLeft <= 0) { 
+                    clearInterval(timerObj); 
+                    endGame(); 
+                }
+            }, 100);
+        }
 
-        function endGame() {
-            const record = JSON.parse(localStorage.getItem('recordSens')) || {score: 0};
-            if(score > record.score) {
-                localStorage.setItem('recordSens', JSON.stringify({pseudo: pseudo, score: score}));
-            }
+        async function endGame() {
+            active = false;
             document.getElementById('game-zone').classList.add('hidden');
             document.getElementById('result-zone').classList.remove('hidden');
             document.getElementById('final-score').innerText = score;
-        }
 
-        window.onload = () => {
-            pseudo = prompt("Ton Pseudo :") || "Élève";
-            next();
+            // ENVOI AU LEADERBOARD (Correction de tri automatique)
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    body: JSON.stringify({
+                        nom: pseudo,
+                        score: score,
+                        quiz: "Sens Propre/Figuré"
+                    })
+                });
+            } catch (e) { console.error("Erreur envoi:", e); }
         }
     </script>
 </body>
