@@ -3,68 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lecteur DELF - Correction Phonétique</title>
+    <title>Lecteur DELF/DALF Progressif</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap');
-        body { font-family: 'Quicksand', sans-serif; background: #f8fafc; }
-        .word { font-size: 1.8rem; margin: 0 5px; color: #cbd5e1; transition: all 0.3s; display: inline-block; cursor: pointer; border-radius: 8px; padding: 2px 4px; }
-        .word.current { color: #3b82f6; font-weight: 700; background: #eff6ff; border-bottom: 4px solid #3b82f6; }
-        .word.read { color: #10b981 !important; font-weight: 700; }
-        .word.skipped { color: #ef4444 !important; text-decoration: line-through; } /* ROUGE SI PASSÉ */
+        body { font-family: 'Quicksand', sans-serif; background: #f1f5f9; }
+        .word { font-size: 1.5rem; margin: 0 4px; color: #94a3b8; transition: all 0.2s; display: inline-block; border-radius: 6px; padding: 0 2px; }
+        .word.current { color: #3b82f6; font-weight: 700; background: #dbeafe; border-bottom: 3px solid #3b82f6; }
+        .word.read { color: #10b981 !important; font-weight: 600; }
+        .word.skipped { color: #ef4444 !important; text-decoration: line-through; opacity: 0.6; }
+        #text-zone { max-height: 500px; overflow-y: auto; scroll-behavior: smooth; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-4">
 
-    <div class="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl p-6 border border-slate-200">
+    <div class="max-w-6xl mx-auto bg-white rounded-3xl shadow-xl p-6 border border-slate-200">
         <header class="text-center mb-6">
-            <h1 class="text-3xl font-black text-slate-800">LECTEUR INTERACTIF</h1>
-            <p id="status-msg" class="text-slate-500">Dites "Ils mangent". Après 3 clics sur le 🔊, le mot devient rouge et passe.</p>
+            <h1 class="text-3xl font-black text-slate-800">ENTRAÎNEMENT DELF / DALF</h1>
+            <p class="text-slate-500">Lecture fluide : 3 échecs au 🔊 = passage en rouge.</p>
         </header>
 
-        <div id="text-zone" class="bg-slate-50 rounded-2xl p-10 flex flex-wrap justify-center items-center text-center leading-[3.5rem] min-h-[250px]"></div>
+        <div class="flex flex-wrap justify-center gap-2 mb-8">
+            <button onclick="loadLevel('A1')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-500 hover:text-white transition">A1</button>
+            <button onclick="loadLevel('A2')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-500 hover:text-white transition">A2</button>
+            <button onclick="loadLevel('B1')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-500 hover:text-white transition">B1</button>
+            <button onclick="loadLevel('B2')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-500 hover:text-white transition">B2</button>
+            <button onclick="loadLevel('C1')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-500 hover:text-white transition">C1</button>
+            <button onclick="loadLevel('C2')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-500 hover:text-white transition">C2</button>
+        </div>
 
-        <div class="mt-4 flex flex-col items-center gap-4">
+        <div id="text-zone" class="bg-slate-50 rounded-2xl p-8 text-justify leading-[3rem] min-h-[350px]"></div>
+
+        <div class="mt-8 flex flex-col items-center gap-4">
             <div id="attempts-badge" class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-bold">Essais : 0/3</div>
-            <div class="flex gap-4">
-                <button id="mic-toggle" onclick="toggleSpeech()" class="w-20 h-20 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center text-3xl">
+            <div class="flex gap-6">
+                <button id="mic-toggle" onclick="toggleSpeech()" class="w-16 h-16 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center text-2xl hover:scale-110 transition">
                     <i class="fas fa-microphone" id="mic-icon"></i>
                 </button>
-                <button onclick="handleManualHelp()" class="w-16 h-16 bg-slate-800 text-white rounded-full shadow-lg flex items-center justify-center text-2xl">
+                <button onclick="handleManualHelp()" class="w-16 h-16 bg-slate-800 text-white rounded-full shadow-lg flex items-center justify-center text-2xl hover:scale-110 transition">
                     <i class="fas fa-volume-up"></i>
                 </button>
             </div>
+            <p id="status" class="text-xs font-bold uppercase text-slate-400 tracking-widest">Choisissez un niveau pour commencer</p>
         </div>
     </div>
 
     <script>
-        const textToRead = "Ils mangent du pain.";
-        let words = textToRead.split(/\s+/);
+        const texts = {
+            'A1': "Bonjour ! Je m'appelle Thomas. J'habite à Paris avec ma famille. J'aime beaucoup le sport et la musique. Le samedi, je vais au marché. J'achète des pommes, du pain et du fromage. Le soir, nous mangeons ensemble dans la cuisine. Ils mangent souvent de la soupe. Le chat attend sous la table. C'est une belle journée ensoleillée.",
+            'A2': "Hier, je suis allé au cinéma avec mes amis. Nous avons vu un film d'aventure très intéressant. Après le film, nous avons mangé dans un petit restaurant italien. J'ai pris des pâtes et une glace au chocolat. Il faisait un peu froid dehors, mais nous étions heureux. Demain, j'irai rendre visite à mes grands-parents à la campagne. Ils habitent dans une ancienne ferme avec un grand jardin fleuri.",
+            'B1': "Le télétravail est devenu très populaire ces dernières années. De nombreux employés apprécient la flexibilité que cela offre. Ils travaillent depuis chez eux et évitent les embouteillages quotidiens. Cependant, certains trouvent difficile de séparer la vie professionnelle de la vie privée. Il est important de garder un rythme régulier et de faire des pauses. Les entreprises doivent s'adapter à cette nouvelle organisation pour maintenir la cohésion des équipes.",
+            'B2': "La protection de l'environnement est l'un des enjeux majeurs de notre siècle. Face au changement climatique, les citoyens adoptent des comportements plus responsables. On observe une réduction de la consommation de plastique et un engouement pour les énergies renouvelables. Les gouvernements signent des accords internationaux pour limiter les émissions de gaz à effet de serre. Malgré ces efforts, la transition écologique reste lente et complexe à mettre en œuvre globalement.",
+            'C1': "L'intelligence artificielle suscite autant de fascination que d'inquiétudes au sein de la société contemporaine. Ses partisans soulignent son potentiel révolutionnaire dans le domaine médical ou technologique. À l'inverse, ses détracteurs craignent une déshumanisation du travail et des dérives éthiques incontrôlables. Il convient donc d'établir un cadre juridique rigoureux pour encadrer ces algorithmes. La réflexion philosophique doit accompagner chaque innovation technique pour garantir le respect des libertés individuelles.",
+            'C2': "L'herméneutique de la traduction repose sur une dialectique complexe entre fidélité au texte source et adaptation aux paradigmes de la langue cible. Traduire n'est point un simple exercice de transposition lexicale, mais une véritable réécriture ancrée dans une altérité culturelle. Le traducteur se doit d'appréhender les non-dits, les subtilités stylistiques et la charge émotionnelle inhérente à l'œuvre originale. Cette quête d'équivalence dynamique exige une érudition profonde et une sensibilité littéraire hors du commun, afin de ne pas trahir l'âme du texte."
+        };
+
+        let words = [];
         let currentIdx = 0;
-        let attempts = 0; // COMPTEUR D'ESSAIS
+        let attempts = 0;
         let isActive = false;
         let recognition;
         const synth = window.speechSynthesis;
 
-        // 1. Initialisation de la reconnaissance
         const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (Speech) {
             recognition = new Speech();
             recognition.lang = 'fr-FR';
             recognition.continuous = true;
             recognition.interimResults = true;
-
             recognition.onresult = (e) => {
-                let heard = Array.from(e.results).slice(e.resultIndex)
-                                 .map(res => res[0].transcript).join('').toLowerCase();
+                let heard = Array.from(e.results).slice(e.resultIndex).map(res => res[0].transcript).join('').toLowerCase();
                 evaluate(heard);
             };
+            recognition.onend = () => { if(isActive) recognition.start(); };
         }
 
-        // 2. Affichage des mots
-        function init() {
+        function loadLevel(lvl) {
+            words = texts[lvl].split(/\s+/);
+            currentIdx = 0;
+            attempts = 0;
             const zone = document.getElementById('text-zone');
+            zone.innerHTML = '';
             words.forEach((w, i) => {
                 const s = document.createElement('span');
                 s.id = 'wd-' + i;
@@ -78,25 +98,29 @@
         function updateFocus() {
             document.querySelectorAll('.word').forEach(s => s.classList.remove('current'));
             const c = document.getElementById('wd-' + currentIdx);
-            if (c) c.classList.add('current');
+            if (c) {
+                c.classList.add('current');
+                c.scrollIntoView({behavior: "smooth", block: "center"});
+            }
             document.getElementById('attempts-badge').innerText = `Essais : ${attempts}/3`;
         }
 
-        // 3. Logique de validation (avec correction pour les muettes)
         function evaluate(said) {
             if (currentIdx >= words.length) return;
+            let target = words[currentIdx].toLowerCase().replace(/[.,!?;:]/g, "").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            let heard = said.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-            let target = words[currentIdx].toLowerCase().replace(/[.,!?;:]/g, "");
-            let heard = said.toLowerCase();
-
-            // TOLÉRANCE : On accepte "il" pour "ils" et "mange" pour "mangent"
             let isMatch = heard.includes(target);
             
-            // Si le mot est "ils", on accepte si l'IA entend "il"
-            if (!isMatch && target === "ils" && heard.includes("il")) isMatch = true;
-            
-            // Si le mot est "mangent", on accepte si l'IA entend "mange"
-            if (!isMatch && target === "mangent" && heard.includes("mange")) isMatch = true;
+            // Correction pour pronoms et verbes muets
+            if (!isMatch) {
+                if ((target === "ils" || target === "il") && (heard.includes("il") || heard.includes("ils"))) isMatch = true;
+                if ((target === "elles" || target === "elle") && (heard.includes("elle") || heard.includes("elles"))) isMatch = true;
+                if (target.endsWith("ent")) {
+                    let radical = target.slice(0, -3);
+                    if (heard.includes(radical)) isMatch = true;
+                }
+            }
 
             if (isMatch) {
                 document.getElementById('wd-' + currentIdx).classList.add('read');
@@ -104,27 +128,18 @@
             }
         }
 
-        // 4. Gestion du bouton d'aide (3 clics = Rouge + Passage)
         function handleManualHelp() {
             if (currentIdx >= words.length) return;
-
-            // Faire prononcer le mot
             const utterance = new SpeechSynthesisUtterance(words[currentIdx]);
             utterance.lang = 'fr-FR';
+            utterance.rate = 0.8;
             synth.speak(utterance);
 
-            // Augmenter les essais
             attempts++;
-
             if (attempts >= 3) {
-                // Marquer en ROUGE
                 const el = document.getElementById('wd-' + currentIdx);
-                el.classList.add('skipped'); 
-                
-                // Petit délai avant de passer
-                setTimeout(() => {
-                    moveToNext();
-                }, 800);
+                el.classList.add('skipped');
+                setTimeout(() => { moveToNext(); }, 800);
             } else {
                 updateFocus();
             }
@@ -134,9 +149,7 @@
             attempts = 0;
             currentIdx++;
             updateFocus();
-            if (currentIdx === words.length) {
-                document.getElementById('status-msg').innerText = "Félicitations ! Lecture terminée.";
-            }
+            if (currentIdx === words.length) document.getElementById('status').innerText = "Excellent ! Niveau terminé.";
         }
 
         function toggleSpeech() {
@@ -144,14 +157,16 @@
                 recognition.start();
                 isActive = true;
                 document.getElementById('mic-toggle').classList.replace('bg-blue-600', 'bg-red-500');
+                document.getElementById('status').innerText = "Je vous écoute...";
             } else {
                 recognition.stop();
                 isActive = false;
                 document.getElementById('mic-toggle').classList.replace('bg-red-500', 'bg-blue-600');
+                document.getElementById('status').innerText = "Pause";
             }
         }
 
-        init();
+        loadLevel('A1');
     </script>
 </body>
 </html>
