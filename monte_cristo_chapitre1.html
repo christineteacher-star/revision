@@ -152,25 +152,33 @@ function showEnd() {
         </div>`;
 }
 // 1. Cette fonction est le "moteur" qui envoie les données à Google
-function envoyerResultat(nomJoueur, scoreFinal) {
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys_uz58mt03TDr5gthhtJIeZJqqJDTuikaHwUa60o2rp3S4jIOeuABIrjWyfUDuhEdLg/exec"; // <--- Remplacez par votre lien qui finit par /exec
+function envoyerResultat(pseudoJoueur, scoreFinal) {
+    // L'URL unique qui centralise tout
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys_uz58mt03TDr5gthhtJIeZJqqJDTuikaHwUa60o2rp3S4jIOeuABIrjWyfUDuhEdLg/exec";
     
     const data = {
-        nom: nomJoueur,
-        score: scoreFinal * 10,
-        sujet: "Monte-Cristo Chapitre 1" // <--- Changez ce nom pour chaque nouveau quiz
+        nom: pseudoJoueur,   // On utilise "nom" car c'est ce que votre index et script attendent
+        score: scoreFinal * 10, 
+        sujet: document.title // Récupère automatiquement le titre de la page (ex: Monte Cristo)
     };
 
-    fetch(url, {
+    fetch(SCRIPT_URL, {
         method: "POST",
         mode: "no-cors", 
         cache: "no-cache",
         body: JSON.stringify(data)
+    })
+    .then(() => {
+        console.log("Données envoyées !");
+    })
+    .catch((error) => {
+        console.error("Erreur :", error);
     });
 }
 </script>
 </body>
 </html>
+
 
 
 
