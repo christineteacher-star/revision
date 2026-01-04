@@ -105,58 +105,58 @@
     </aside>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqLheXqYNAzM3cDMNJTtM03MxUmKYZTfB4etoK5jmHFtWNlDjlc6zQDyZlE7gZnlyXqg/exec";
-        
-        const rowStyles = [
-            { bg: "#f5f3ff", color: "#8b5cf6", glow: "rgba(139, 92, 246, 0.3)" },
-            { bg: "#ecfdf5", color: "#10b981", glow: "rgba(16, 185, 129, 0.3)" },
-            { bg: "#fff7ed", color: "#f97316", glow: "rgba(249, 115, 22, 0.3)" },
-            { bg: "#eff6ff", color: "#3b82f6", glow: "rgba(59, 130, 246, 0.3)" }
-        ];
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys_uz58mt03TDr5gthhtJIeZJqqJDTuikaHwUa60o2rp3S4jIOeuABIrjWyfUDuhEdLg/exec";
+    
+    async function updateApp() {
+        try {
+            const response = await fetch(SCRIPT_URL);
+            const data = await response.json();
+            
+            // On nettoie les noms (enlève les espaces) et on convertit les scores
+            const players = data.map(p => ({
+                nom: (p.nom || p.Nom || "Anonyme").trim(),
+                score: parseInt(p.score) || 0
+            })).sort((a, b) => b.score - a.score);
 
-        async function updateApp() {
-            try {
-                const response = await fetch(SCRIPT_URL);
-                const data = await response.json();
-                const players = data.sort((a,b) => b.score - a.score);
-                
-                if(players.length >= 3) {
-                    document.getElementById('podium-area').innerHTML = `
-                        <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
-                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[1].nom}" class="w-16 h-16 mb-2">
-                            <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">${players[1].nom.split(' ')[0]}</span>
-                            <div class="podium-block bg-amber-400 h-[85px]">#2</div>
-                        </div>
-                        <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
-                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[0].nom}" class="w-20 h-20 mb-2">
-                            <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">${players[0].nom.split(' ')[0]}</span>
-                            <div class="podium-block bg-green-400 h-[115px]">#1</div>
-                        </div>
-                        <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
-                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${players[2].nom}" class="w-16 h-16 mb-2">
-                            <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">${players[2].nom.split(' ')[0]}</span>
-                            <div class="podium-block bg-red-400 h-[65px]">#3</div>
-                        </div>`;
-                }
+            if (players.length > 0) {
+                // Affichage du podium (Gestion si moins de 3 joueurs)
+                const p1 = players[0] || {nom: "-", score: 0};
+                const p2 = players[1] || {nom: "-", score: 0};
+                const p3 = players[2] || {nom: "-", score: 0};
 
-                document.getElementById('leader-list').innerHTML = players.slice(3).map((p, i) => {
-                    const s = rowStyles[i % rowStyles.length];
-                    return `
-                    <div class="list-row shadow-sm" style="background-color: ${s.bg}; color: ${s.color}" 
-                         onmouseover="this.style.transform='translateX(10px)'; this.style.boxShadow='0 10px 20px ${s.glow}'; this.style.borderColor='white'" 
-                         onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='none'; this.style.borderColor='transparent'">
+                document.getElementById('podium-area').innerHTML = `
+                    <div class="flex flex-col items-center w-[100px]">
+                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(p2.nom)}" class="w-16 h-16 mb-2">
+                        <span class="text-[13px] font-bold text-slate-700 truncate w-full text-center">${p2.nom}</span>
+                        <div class="podium-block bg-amber-400 h-[85px]">#2</div>
+                    </div>
+                    <div class="flex flex-col items-center w-[100px]">
+                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(p1.nom)}" class="w-20 h-20 mb-2">
+                        <span class="text-[13px] font-bold text-slate-700 truncate w-full text-center">${p1.nom}</span>
+                        <div class="podium-block bg-green-400 h-[115px]">#1</div>
+                    </div>
+                    <div class="flex flex-col items-center w-[100px]">
+                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(p3.nom)}" class="w-16 h-16 mb-2">
+                        <span class="text-[13px] font-bold text-slate-700 truncate w-full text-center">${p3.nom}</span>
+                        <div class="podium-block bg-red-400 h-[65px]">#3</div>
+                    </div>`;
+
+                // Liste pour les autres (à partir du 4ème)
+                const listHTML = players.slice(3).map((p, i) => `
+                    <div class="list-row shadow-sm">
                         <div class="w-8 font-black opacity-30">#${i+4}</div>
-                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p.nom}" class="w-11 h-11 rounded-2xl bg-white border-2 border-white">
                         <div class="flex-1 truncate ml-2">
                             <p class="font-bold text-slate-700 text-[13px]">${p.nom}</p>
-                            <div class="text-[10px] font-black uppercase tracking-widest opacity-70">💎 ${p.score} PTS</div>
+                            <div class="text-[10px] font-black uppercase opacity-70">💎 ${p.score} PTS</div>
                         </div>
-                    </div>`;
-                }).join('');
-            } catch (e) { console.error(e); }
-        }
-        window.onload = updateApp;
-    </script>
+                    </div>`).join('');
+                document.getElementById('leader-list').innerHTML = listHTML;
+            }
+        } catch (e) { console.error("Erreur de lecture :", e); }
+    }
+    window.onload = updateApp;
+</script>
 </body>
 </html>
+
 
