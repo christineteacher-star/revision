@@ -11,8 +11,8 @@
         body { font-family: 'Quicksand', sans-serif; background: #f8fafc; }
         .word { font-size: 1.8rem; margin: 0 5px; color: #cbd5e1; transition: all 0.3s; display: inline-block; cursor: pointer; border-radius: 8px; padding: 2px 4px; }
         .word.current { color: #3b82f6; font-weight: 700; background: #eff6ff; border-bottom: 4px solid #3b82f6; }
-        .word.read { color: #10b981; font-weight: 700; } /* Vert: Succès */
-        .word.skipped { color: #ef4444; font-weight: 700; text-decoration: underline; } /* Rouge: Échec/Passé */
+        .word.read { color: #10b981 !important; font-weight: 700; } 
+        .word.skipped { color: #ef4444 !important; text-decoration: line-through; opacity: 0.6; }
         .word.blocked { color: #f59e0b; animation: pulse 1s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
@@ -22,7 +22,7 @@
     <div class="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl p-6 border border-slate-200">
         <header class="text-center mb-6">
             <h1 class="text-3xl font-black text-slate-800 tracking-tight">LECTEUR INTERACTIF EXPERT</h1>
-            <p class="text-slate-500">Gérez les terminaisons muettes. Après 3 essais, le système vous montre l'exemple.</p>
+            <p class="text-slate-500">Gérez les muettes. Si vous bloquez, cliquez 3 fois sur le bouton noir pour passer.</p>
         </header>
 
         <div class="flex flex-wrap justify-center gap-2 mb-8">
@@ -38,29 +38,29 @@
         </div>
 
         <div class="mt-4 flex flex-col items-center gap-4">
+            <div id="attempts-display" class="text-sm font-bold text-blue-500">Essais sur ce mot : 0/3</div>
             <div class="flex gap-4">
                 <button id="mic-toggle" onclick="toggleSpeech()" class="w-20 h-20 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center text-3xl hover:bg-blue-700 transition-all">
                     <i class="fas fa-microphone" id="mic-icon"></i>
                 </button>
-                <button onclick="listenToWord()" class="w-16 h-16 bg-slate-800 text-white rounded-full shadow-lg flex items-center justify-center text-2xl hover:bg-slate-900 transition-all">
+                <button onclick="listenAndCount()" class="w-16 h-16 bg-slate-800 text-white rounded-full shadow-lg flex items-center justify-center text-2xl hover:bg-slate-900 transition-all">
                     <i class="fas fa-volume-up"></i>
                 </button>
             </div>
-            <div id="status" class="text-xs font-bold uppercase text-slate-400">Cliquez sur le micro (Utilisez Chrome/Edge)</div>
-            <div id="attempts" class="text-sm font-bold text-blue-500">Essais : 0/3</div>
+            <div id="status" class="text-xs font-bold uppercase text-slate-400">Activez le micro (Chrome recommandé)</div>
         </div>
     </div>
 
     <script>
         const texts = {
             'A1': "Ils mangent du pain. Le chat attend sous le petit lit blanc. Ils parlent beaucoup.",
-            'B1': "Les touristes arrivent souvent tard. Ils achètent des vêtements mais ils ne comprennent pas tout.",
+            'B1': "Les touristes arrivent souvent tard. Ils achètent des vêtements.",
             'C1': "Les scientifiques soutiennent que ces phénomènes surviennent brusquement."
         };
 
         const grammarRules = [
-            { regex: /ent$/, help: "💡 Règle : Le '-ent' final des verbes au pluriel est MUET !" },
-            { regex: /[stdx]$/, help: "💡 Aide : La consonne finale (-s, -t, -d, -x) est souvent muette." }
+            { regex: /ent$/, help: "💡 Aide : Le '-ent' final des verbes au pluriel est MUET." },
+            { regex: /[stdx]$/, help: "💡 Aide : La consonne finale est souvent muette en français." }
         ];
 
         let currentIdx = 0;
@@ -70,7 +70,6 @@
         let attempts = 0;
         const synth = window.speechSynthesis;
 
-        // Initialisation Reconnaissance Vocale
         const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
         if(Speech) {
             recognition = new Speech();
@@ -83,12 +82,6 @@
                                  .map(res => res[0].transcript).join('').toLowerCase();
                 evaluate(heard);
             };
-
-            recognition.onerror = (e) => {
-                console.log("Erreur reconnaissance:", e.error);
-                if(e.error === 'not-allowed') alert("Veuillez autoriser le micro et utiliser HTTPS.");
-            };
-
             recognition.onend = () => { if(isActive) recognition.start(); };
         }
 
@@ -96,7 +89,6 @@
             words = texts[lvl].split(/\s+/);
             currentIdx = 0;
             attempts = 0;
-            updateAttemptsUI();
             const zone = document.getElementById('text-zone');
             zone.innerHTML = '';
             words.forEach((w, i) => {
@@ -110,8 +102,9 @@
         }
 
         function updateFocus() {
-            document.getElementById('help-message').classList.add('hidden');
             document.querySelectorAll('.word').forEach(s => s.classList.remove('current', 'blocked'));
+            document.getElementById('help-message').classList.add('hidden');
+            document.getElementById('attempts-display').innerText = `Essais sur ce mot : ${attempts}/3`;
             
             const c = document.getElementById('wd-' + currentIdx);
             if(c) {
@@ -124,79 +117,53 @@
             if(currentIdx >= words.length) return;
 
             let target = words[currentIdx].toLowerCase().replace(/[.,!?;:]/g, "").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            let cleanSaid = said.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            
-            // On vérifie si le mot cible est présent dans la phrase entendue
-            if(cleanSaid.includes(target)) {
+            let cleanSaid = said.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+            // TOLÉRANCE PHONÉTIQUE (Ils/Il)
+            let isMatch = cleanSaid.includes(target);
+            if (!isMatch && target === "ils" && cleanSaid.includes("il")) isMatch = true;
+            if (!isMatch && target === "elles" && cleanSaid.includes("elle")) isMatch = true;
+
+            if(isMatch) {
                 document.getElementById('wd-' + currentIdx).classList.add('read');
-                moveToNext();
-            } else {
-                // On incrémente les tentatives si on détecte une fin de mot (espace ou pause)
-                // Note : La reconnaissance vocale peut être capricieuse ici.
+                currentIdx++;
+                attempts = 0;
+                updateFocus();
             }
         }
 
-        function moveToNext() {
-            attempts = 0;
-            updateAttemptsUI();
-            currentIdx++;
-            if(currentIdx < words.length) updateFocus();
-            else {
-                document.getElementById('status').innerText = "Terminé ! Bravo.";
-                toggleSpeech();
-            }
-        }
+        function listenAndCount() {
+            if(currentIdx >= words.length) return;
 
-        function skipWord() {
-            const el = document.getElementById('wd-' + currentIdx);
-            el.classList.add('skipped'); // Devient rouge
+            // Lecture audio
+            const utterance = new SpeechSynthesisUtterance(words[currentIdx]);
+            utterance.lang = 'fr-FR';
+            utterance.rate = 0.8;
+            synth.speak(utterance);
+
+            attempts++;
             
-            // Bloquer la reconnaissance pendant la lecture audio
-            if(isActive) recognition.stop();
-            
-            listenToWord(); // Prononciation correcte forcée
-
-            setTimeout(() => {
-                moveToNext();
-                if(isActive) recognition.start();
-            }, 1500);
-        }
-
-        function listenToWord() {
-            if(currentIdx < words.length) {
-                const utterance = new SpeechSynthesisUtterance(words[currentIdx]);
-                utterance.lang = 'fr-FR';
-                utterance.rate = 0.7;
-                synth.speak(utterance);
-                
-                // Si on utilise le bouton manuellement, on compte ça comme un essai aidé
-                attempts++;
-                updateAttemptsUI();
-                checkAttempts();
-            }
-        }
-
-        function updateAttemptsUI() {
-            document.getElementById('attempts').innerText = `Essais : ${attempts}/3`;
-        }
-
-        function checkAttempts() {
             if(attempts >= 3) {
+                // PASSAGE EN ROUGE AUTOMATIQUE
                 showHelp(words[currentIdx]);
+                const el = document.getElementById('wd-' + currentIdx);
+                el.classList.add('skipped');
+                
                 setTimeout(() => {
-                    skipWord();
-                }, 2000);
+                    currentIdx++;
+                    attempts = 0;
+                    updateFocus();
+                }, 1500);
+            } else {
+                updateFocus();
             }
         }
 
         function showHelp(word) {
             const cleanWord = word.toLowerCase().replace(/[.,!?;]/g, "");
-            let message = "👂 Écoute bien la prononciation correcte...";
+            let message = "Écoute bien la prononciation correcte.";
             for (let rule of grammarRules) {
-                if (rule.regex.test(cleanWord)) {
-                    message = rule.help;
-                    break;
-                }
+                if (rule.regex.test(cleanWord)) { message = rule.help; break; }
             }
             const helpEl = document.getElementById('help-message');
             helpEl.innerHTML = message;
@@ -208,7 +175,7 @@
                 recognition.start();
                 isActive = true;
                 document.getElementById('mic-toggle').classList.replace('bg-blue-600', 'bg-red-500');
-                document.getElementById('status').innerText = "Je vous écoute...";
+                document.getElementById('status').innerText = "Lecture en cours...";
             } else {
                 recognition.stop();
                 isActive = false;
