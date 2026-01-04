@@ -3,380 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grand Quiz Terminale : Les Fondamentaux du Récit</title>
+    <title>Fondamentaux du Récit | Académie</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-        }
-        .quiz-container {
-            max-width: 800px;
-            margin: auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #4CAF50;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .question-card {
-            margin-bottom: 25px;
-            padding: 20px;
-            border: 1px solid #ddd;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            display: none; /* Toutes les questions sont cachées par défaut */
-        }
-        .question-card.active {
-            display: block; /* Sauf la question active */
-        }
-        .question-card p {
-            font-weight: bold;
-            margin-top: 0;
-            font-size: 1.1em;
-            color: #007bff;
-        }
-        .progress {
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: 0.9em;
-            color: #666;
-        }
-        label {
-            display: block;
-            margin: 10px 0;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        label:hover {
-            background-color: #e9e9e9;
-        }
-        input[type="radio"] {
-            margin-right: 10px;
-        }
-        .nav-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-        .nav-buttons button, #submit-quiz {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .nav-buttons button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-        #submit-quiz {
-            width: 100%;
-            margin-top: 20px;
-            background-color: #4CAF50;
-        }
-        #submit-quiz:hover {
-            background-color: #45a049;
-        }
-        #results {
-            margin-top: 30px;
-            padding: 20px;
-            border-top: 2px solid #ccc;
-            font-size: 1.2em;
-            text-align: center;
-            font-weight: bold;
-            color: #333;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        body { font-family: 'Quicksand', sans-serif; background-color: #f0f7ff; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 85px; background: white; display: flex; flex-direction: column; align-items: center; padding: 25px 0; border-right: 1px solid #eef2f6; }
+        .logo-dragon { width: 48px; height: 48px; background: #10b981; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; margin-bottom: 40px; cursor:pointer; }
+        .main-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+        .game-card { background: white; border-radius: 35px; padding: 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 700px; }
+        
+        .opt-btn { width: 100%; padding: 15px; margin-bottom: 10px; border: 2px solid #f1f5f9; border-radius: 18px; text-align: left; font-weight: 600; transition: 0.2s; cursor: pointer; color: #475569; }
+        .opt-btn:hover:not(:disabled) { background: #f0fdf4; border-color: #10b981; transform: translateX(5px); }
+        
+        .correct { background: #d1fae5 !important; color: #065f46 !important; border-color: #10b981 !important; }
+        .wrong { background: #fee2e2 !important; color: #991b1b !important; border-color: #ef4444 !important; }
+        
+        #playerNameInput { background-color: #f1f5f9 !important; border: 2px solid #cbd5e1 !important; }
     </style>
 </head>
 <body>
+    <nav class="sidebar">
+        <div class="logo-dragon" onclick="window.location.href='index.html'"><i class="fas fa-dragon"></i></div>
+        <div class="text-slate-300 hover:text-green-500 cursor-pointer" onclick="window.location.href='index.html'"><i class="fas fa-home text-2xl"></i></div>
+    </nav>
 
-<div class="quiz-container">
-    <h1>Grand Quiz Terminale : Les Fondamentaux du Récit (20 Q.)</h1>
-    <div class="progress" id="progress-indicator">Question 1 / 20</div>
-
-    <form id="narrativeQuiz">
-
-        <div class="question-card active" data-q-index="1" data-correct="A">
-            <p>1. Quel type de **focalisation** est utilisé lorsque le narrateur est un personnage de l'histoire et ne sait rien de plus que ce personnage ?</p>
-            <label><input type="radio" name="q1" value="A"> A. Focalisation interne</label>
-            <label><input type="radio" name="q1" value="B"> B. Focalisation externe</label>
-            <label><input type="radio" name="q1" value="C"> C. Focalisation omnisciente</label>
-        </div>
-
-        <div class="question-card" data-q-index="2" data-correct="B">
-            <p>2. Comment nomme-t-on le procédé qui consiste à commencer un récit **directement au milieu de l'action** ?</p>
-            <label><input type="radio" name="q2" value="A"> A. Prolepse</label>
-            <label><input type="radio" name="q2" value="B"> B. In medias res</label>
-            <label><input type="radio" name="q2" value="C"> C. Analepse</label>
-        </div>
-
-        <div class="question-card" data-q-index="3" data-correct="C">
-            <p>3. Quel temps verbal est généralement utilisé en parallèle du Passé Simple pour décrire le **décor, l'arrière-plan ou une action habituelle** ?</p>
-            <label><input type="radio" name="q3" value="A"> A. Le Présent de narration</label>
-            <label><input type="radio" name="q3" value="B"> B. Le Passé Composé</label>
-            <label><input type="radio" name="q3" value="C"> C. L'Imparfait</label>
-        </div>
-
-        <div class="question-card" data-q-index="4" data-correct="A">
-            <p>4. Dans le schéma narratif, l'événement qui vient **rompre l'équilibre de la situation initiale** s'appelle :</p>
-            <label><input type="radio" name="q4" value="A"> A. L'élément perturbateur</label>
-            <label><input type="radio" name="q4" value="B"> B. Le dénouement</label>
-            <label><input type="radio" name="q4" value="C"> C. La situation finale</label>
-        </div>
-
-        <div class="question-card" data-q-index="5" data-correct="B">
-            <p>5. L'énonciation à la **première personne** (« Je ») permet principalement de transmettre :</p>
-            <label><input type="radio" name="q5" value="A"> A. Une objectivité totale</label>
-            <label><input type="radio" name="q5" value="B"> B. La subjectivité du personnage</label>
-            <label><input type="radio" name="q5" value="C"> C. Le point de vue du lecteur</label>
-        </div>
-
-        <div class="question-card" data-q-index="6" data-correct="C">
-            <p>6. Quel est la fonction du récit qui cherche à transmettre une **leçon de vie ou un enseignement** sur le bien et le mal ?</p>
-            <label><input type="radio" name="q6" value="A"> A. Fonction d'information</label>
-            <label><input type="radio" name="q6" value="B"> B. Fonction de fiction</label>
-            <label><input type="radio" name="q6" value="C"> C. Fonction de moralité</label>
-        </div>
-        
-        <div class="question-card" data-q-index="7" data-correct="A">
-            <p>7. La **narration rétrospective** est synonyme de :</p>
-            <label><input type="radio" name="q7" value="A"> A. Analepse</label>
-            <label><input type="radio" name="q7" value="B"> B. Prolepse</label>
-            <label><input type="radio" name="q7" value="C"> C. Isocolie</label>
-        </div>
-        
-        <div class="question-card" data-q-index="8" data-correct="C">
-            <p>8. Dans un récit à la troisième personne, le narrateur est-il toujours l'auteur ?</p>
-            <label><input type="radio" name="q8" value="A"> A. Oui, absolument</label>
-            <label><input type="radio" name="q8" value="B"> B. Seulement dans les romans de Victor Hugo</label>
-            <label><input type="radio" name="q8" value="C"> C. Non, ce sont deux entités distinctes</label>
-        </div>
-        
-        <div class="question-card" data-q-index="9" data-correct="B">
-            <p>9. Quel type de **discours rapporté** utilise des guillemets et des tirets pour insérer les paroles exactes des personnages ?</p>
-            <label><input type="radio" name="q9" value="A"> A. Discours indirect</label>
-            <label><input type="radio" name="q9" value="B"> B. Discours direct</label>
-            <label><input type="radio" name="q9" value="C"> C. Discours indirect libre</label>
-        </div>
-        
-        <div class="question-card" data-q-index="10" data-correct="A">
-            <p>10. Quel mot est un **connecteur chronologique** essentiel pour marquer la succession d'actions dans un récit ?</p>
-            <label><input type="radio" name="q10" value="A"> A. Puis</label>
-            <label><input type="radio" name="q10" value="B"> B. Donc</label>
-            <label><input type="radio" name="q10" value="C"> C. Mais</label>
-        </div>
-        
-        <div class="question-card" data-q-index="11" data-correct="C">
-            <p>11. Si le narrateur agit comme une simple **caméra** qui ne décrit que ce qu'il voit et entend, sans connaître les pensées des personnages, la focalisation est :</p>
-            <label><input type="radio" name="q11" value="A"> A. Interne</label>
-            <label><input type="radio" name="q11" value="B"> B. Omnisciente</label>
-            <label><input type="radio" name="q11" value="C"> C. Externe</label>
-        </div>
-        
-        <div class="question-card" data-q-index="12" data-correct="B">
-            <p>12. Dans l'extrait de Jean Valjean, la phrase : « J'ai de l'argent, ma masse. » est principalement un exemple de :</p>
-            <label><input type="radio" name="q12" value="A"> A. Description</label>
-            <label><input type="radio" name="q12" value="B"> B. Narration / Discours rapporté</label>
-            <label><input type="radio" name="q12" value="C"> C. Argumentation</label>
-        </div>
-
-        <div class="question-card" data-q-index="13" data-correct="A">
-            <p>13. Quel temps exprime une **action antérieure** à une autre action passée (ex: "Il *avait terminé* avant qu'elle n'arrive") ?</p>
-            <label><input type="radio" name="q13" value="A"> A. Le Plus-que-Parfait</label>
-            <label><input type="radio" name="q13" value="B"> B. Le Passé Antérieur</label>
-            <label><input type="radio" name="q13" value="C"> C. Le Futur Antérieur</label>
-        </div>
-        
-        <div class="question-card" data-q-index="14" data-correct="A">
-            <p>14. L'énonciation à la **troisième personne** (« Il », « Elle ») est-elle compatible avec la focalisation interne ?</p>
-            <label><input type="radio" name="q14" value="A"> A. Oui, si le narrateur se concentre sur la perception d'un seul personnage.</label>
-            <label><input type="radio" name="q14" value="B"> B. Non, la 3e personne est toujours omnisciente.</label>
-            <label><input type="radio" name="q14" value="C"> C. Non, la 3e personne est toujours externe.</label>
-        </div>
-        
-        <div class="question-card" data-q-index="15" data-correct="C">
-            <p>15. Dans le schéma narratif, l'étape où le **problème est résolu** (pour le meilleur ou pour le pire) s'appelle :</p>
-            <label><input type="radio" name="q15" value="A"> A. La situation initiale</label>
-            <label><input type="radio" name="q15" value="B"> B. Les péripéties</label>
-            <label><input type="radio" name="q15" value="C"> C. Le dénouement</label>
-        </div>
-        
-        <div class="question-card" data-q-index="16" data-correct="A">
-            <p>16. Quelle composante du récit est principalement marquée par l'utilisation de l'Imparfait, des adjectifs qualificatifs et des compléments du nom ?</p>
-            <label><input type="radio" name="q16" value="A"> A. La description</label>
-            <label><input type="radio" name="q16" value="B"> B. La narration</label>
-            <label><input type="radio" name="q16" value="C"> C. L'explication</label>
-        </div>
-        
-        <div class="question-card" data-q-index="17" data-correct="B">
-            <p>17. L'**analepse** (ou *flashback*) est une technique qui permet de :</p>
-            <label><input type="radio" name="q17" value="A"> A. Anticiper un événement futur</label>
-            <label><input type="radio" name="q17" value="B"> B. Raconter un événement passé</label>
-            <label><input type="radio" name="q17" value="C"> C. Ralentir le rythme de la narration</label>
-        </div>
-        
-        <div class="question-card" data-q-index="18" data-correct="C">
-            <p>18. Dans un récit au passé, le Passé Simple ou le Passé Composé est utilisé pour marquer :</p>
-            <label><input type="radio" name="q18" value="A"> A. La répétition</label>
-            <label><input type="radio" name="q18" value="B"> B. La durée non achevée</label>
-            <label><input type="radio" name="q18" value="C"> C. Les actions ponctuelles faisant avancer l'intrigue</label>
-        </div>
-        
-        <div class="question-card" data-q-index="19" data-correct="A">
-            <p>19. Un récit peut-il avoir une fonction **argumentative** ?</p>
-            <label><input type="radio" name="q19" value="A"> A. Oui, comme l'apologue ou la fable, pour illustrer une thèse.</label>
-            <label><input type="radio" name="q19" value="B"> B. Non, les deux genres sont toujours séparés.</label>
-            <label><input type="radio" name="q19" value="C"> C. Seulement si l'auteur s'adresse directement au lecteur.</label>
-        </div>
-        
-        <div class="question-card" data-q-index="20" data-correct="B">
-            <p>20. Le narrateur qui sait tout des personnages (passé, présent, pensées) et de l'intrigue est associé à la focalisation :</p>
-            <label><input type="radio" name="q20" value="A"> A. Interne</label>
-            <label><input type="radio" name="q20" value="B"> B. Zéro (ou Omnisciente)</label>
-            <label><input type="radio" name="q20" value="C"> C. Externe</label>
-        </div>
-
-        </form>
-    
-    <div class="nav-buttons">
-        <button id="prev-btn" disabled>← Précédente</button>
-        <button id="next-btn">Suivante →</button>
-    </div>
-    
-    <button id="submit-quiz" style="display:none;">Terminer et Voir le Résultat</button>
-
-    <div id="results"></div>
-</div>
-
-<script>
-    let currentQuestionIndex = 1;
-    const totalQuestions = 20;
-    const questions = document.querySelectorAll('.question-card');
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
-    const submitBtn = document.getElementById('submit-quiz');
-    const progressIndicator = document.getElementById('progress-indicator');
-    const resultsDiv = document.getElementById('results');
-
-    // Mappage des réponses correctes
-    const correctAnswers = {
-        q1: 'A', q2: 'B', q3: 'C', q4: 'A', q5: 'B', q6: 'C', q7: 'A', q8: 'C', q9: 'B', q10: 'A',
-        q11: 'C', q12: 'B', q13: 'A', q14: 'A', q15: 'C', q16: 'A', q17: 'B', q18: 'C', q19: 'A', q20: 'B'
-    };
-
-    function updateQuestionDisplay() {
-        questions.forEach((q, index) => {
-            q.classList.remove('active');
-            if (index + 1 === currentQuestionIndex) {
-                q.classList.add('active');
-            }
-        });
-
-        // Mise à jour de l'indicateur de progression
-        progressIndicator.textContent = `Question ${currentQuestionIndex} / ${totalQuestions}`;
-
-        // Gestion des boutons de navigation
-        prevBtn.disabled = currentQuestionIndex === 1;
-        
-        if (currentQuestionIndex === totalQuestions) {
-            nextBtn.style.display = 'none';
-            submitBtn.style.display = 'block';
-        } else {
-            nextBtn.style.display = 'block';
-            submitBtn.style.display = 'none';
-            nextBtn.disabled = false;
-        }
-    }
-
-    function goToNextQuestion() {
-        if (currentQuestionIndex < totalQuestions) {
-            currentQuestionIndex++;
-            updateQuestionDisplay();
-        }
-    }
-
-    function goToPrevQuestion() {
-        if (currentQuestionIndex > 1) {
-            currentQuestionIndex--;
-            updateQuestionDisplay();
-        }
-    }
-
-    function checkQuiz() {
-        let score = 0;
-        resultsDiv.innerHTML = '';
-        
-        // Parcourir toutes les questions pour vérifier les réponses
-        for (let i = 1; i <= totalQuestions; i++) {
-            const qId = `q${i}`;
-            const selectedOption = document.querySelector(`input[name="${qId}"]:checked`);
+    <main class="main-content">
+        <div class="game-card">
             
-            if (selectedOption && selectedOption.value === correctAnswers[qId]) {
+            <div id="start-zone" class="text-center">
+                <div class="w-20 h-20 bg-green-100 text-green-600 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-6">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h2 class="text-3xl font-black text-slate-800 mb-2">Maîtrise du Récit</h2>
+                <p class="text-slate-500 mb-8 px-10">Focalisation, temps verbaux et schémas narratifs. Prêt pour les 20 questions ?</p>
+                
+                <div class="max-w-xs mx-auto">
+                    <input type="text" id="playerNameInput" placeholder="Ton Prénom" class="w-full p-4 rounded-2xl mb-4 text-center font-bold text-lg outline-none">
+                    <button onclick="preStart()" class="w-full bg-green-600 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-green-700 transition-all">DÉMARRER LE QUIZ</button>
+                </div>
+            </div>
+
+            <div id="quiz-ui" class="hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <span id="progress" class="bg-slate-100 text-slate-600 px-4 py-1 rounded-full text-xs font-bold uppercase">Question 1 / 20</span>
+                    <div class="text-right">
+                        <p class="text-slate-400 text-[10px] font-bold uppercase">Points</p>
+                        <p id="score-display" class="text-2xl font-black text-green-600">0</p>
+                    </div>
+                </div>
+
+                <h3 id="q-text" class="text-xl font-bold text-slate-800 mb-6 leading-tight"></h3>
+                <div id="options" class="space-y-3"></div>
+                
+                <div id="feedback" class="mt-6 p-4 rounded-2xl text-sm hidden border-l-8"></div>
+                
+                <button id="next-btn" class="hidden w-full mt-6 bg-slate-800 text-white py-4 rounded-2xl font-bold hover:bg-slate-900 transition">QUESTION SUIVANTE &rarr;</button>
+            </div>
+
+            <div id="final-screen" class="hidden text-center">
+                <div class="w-20 h-20 bg-yellow-100 text-yellow-600 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-6">
+                    <i class="fas fa-star"></i>
+                </div>
+                <h2 class="text-3xl font-black text-slate-800 mb-2">Félicitations !</h2>
+                <p class="text-slate-500 mb-6">Ton score a été enregistré.</p>
+                <div class="text-6xl font-black text-green-600 mb-8" id="final-score">0 / 20</div>
+                
+                <div class="flex flex-col gap-3">
+                    <button onclick="window.location.href='index.html'" class="w-full bg-slate-800 text-white py-4 rounded-2xl font-bold">RETOUR ACCUEIL</button>
+                    <button onclick="location.reload()" class="w-full bg-slate-100 text-slate-600 py-4 rounded-2xl font-bold">REJOUER</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys_uz58mt03TDr5gthhtJIeZJqqJDTuikaHwUa60o2rp3S4jIOeuABIrjWyfUDuhEdLg/exec";
+        
+        const questions = [
+            { q: "Quel type de focalisation est utilisé lorsque le narrateur est un personnage et ne sait rien de plus que lui ?", o: ["Focalisation interne", "Focalisation externe", "Focalisation omnisciente"], r: 0 },
+            { q: "Procédé consistant à commencer un récit directement au milieu de l'action ?", o: ["Prolepse", "In medias res", "Analepse"], r: 1 },
+            { q: "Temps verbal utilisé pour le décor ou une action habituelle ?", o: ["Le Présent", "Le Passé Simple", "L'Imparfait"], r: 2 },
+            { q: "Événement qui rompt l'équilibre de la situation initiale ?", o: ["L'élément perturbateur", "Le dénouement", "Les péripéties"], r: 0 },
+            { q: "L'énonciation à la première personne (« Je ») transmet :", o: ["Une objectivité totale", "La subjectivité du personnage", "Le point de vue du lecteur"], r: 1 },
+            { q: "Fonction du récit cherchant à transmettre une leçon de vie ?", o: ["Fonction d'information", "Fonction de fiction", "Fonction de moralité"], r: 2 },
+            { q: "La narration rétrospective est synonyme de :", o: ["Analepse", "Prolepse", "Isocolie"], r: 0 },
+            { q: "Dans un récit à la 3e personne, le narrateur est-il l'auteur ?", o: ["Oui, absolument", "Seulement chez Victor Hugo", "Non, ce sont deux entités distinctes"], r: 2 },
+            { q: "Discours utilisant guillemets et tirets pour les paroles exactes ?", o: ["Discours indirect", "Discours direct", "Discours indirect libre"], r: 1 },
+            { q: "Lequel est un connecteur chronologique essentiel ?", o: ["Puis", "Donc", "Mais"], r: 0 },
+            { q: "Focalisation où le narrateur agit comme une caméra (pas de pensées) ?", o: ["Interne", "Omnisciente", "Externe"], r: 2 },
+            { q: "« J'ai de l'argent, ma masse » est un exemple de :", o: ["Description", "Discours rapporté", "Argumentation"], r: 1 },
+            { q: "Temps exprimant une action antérieure à une autre action passée ?", o: ["Le Plus-que-Parfait", "Le Passé Antérieur", "Le Futur Antérieur"], r: 0 },
+            { q: "La 3e personne (« Il ») est-elle compatible avec la foc. interne ?", o: ["Oui, si on suit la perception d'un seul perso", "Non, c'est forcément omniscient", "Non, c'est forcément externe"], r: 0 },
+            { q: "Étape où le problème est résolu ?", o: ["Situation initiale", "Péripéties", "Dénouement"], r: 2 },
+            { q: "Composante marquée par l'Imparfait et les adjectifs ?", o: ["La description", "La narration", "L'explication"], r: 0 },
+            { q: "L'analepse (flashback) permet de :", o: ["Anticiper le futur", "Raconter un événement passé", "Ralentir le rythme"], r: 1 },
+            { q: "Dans un récit au passé, le Passé Simple marque :", o: ["La répétition", "La durée", "Les actions ponctuelles de l'intrigue"], r: 2 },
+            { q: "Un récit peut-il avoir une fonction argumentative ?", o: ["Oui (ex: fable/apologue)", "Non, jamais", "Seulement si l'auteur intervient"], r: 0 },
+            { q: "Narrateur qui sait tout (passé, présent, pensées) ?", o: ["Interne", "Omnisciente / Zéro", "Externe"], r: 1 }
+        ];
+
+        let currentIndex = 0, score = 0, pseudo = "";
+
+        function preStart() {
+            const input = document.getElementById('playerNameInput');
+            if(input.value.trim().length < 2) return alert("Entre ton prénom !");
+            pseudo = input.value.trim();
+            document.getElementById('start-zone').classList.add('hidden');
+            document.getElementById('quiz-ui').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const data = questions[currentIndex];
+            document.getElementById('progress').innerText = `Question ${currentIndex + 1} / ${questions.length}`;
+            document.getElementById('q-text').innerText = data.q;
+            document.getElementById('feedback').classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+            
+            const box = document.getElementById('options');
+            box.innerHTML = "";
+            data.o.forEach((opt, i) => {
+                const b = document.createElement('button');
+                b.className = "opt-btn";
+                b.innerText = opt;
+                b.onclick = () => check(i, b);
+                box.appendChild(b);
+            });
+        }
+
+        function check(idx, btn) {
+            const data = questions[currentIndex];
+            const btns = document.getElementsByClassName('opt-btn');
+            for(let b of btns) b.disabled = true;
+
+            const f = document.getElementById('feedback');
+            f.classList.remove('hidden');
+            
+            if(idx === data.r) {
                 score++;
+                btn.classList.add('correct');
+                f.className = "mt-6 p-4 rounded-2xl text-sm border-l-8 bg-green-50 text-green-700 border-green-500";
+                f.innerHTML = "<b>Bravo !</b> C'est la bonne réponse.";
+            } else {
+                btn.classList.add('wrong');
+                f.className = "mt-6 p-4 rounded-2xl text-sm border-l-8 bg-red-50 text-red-700 border-red-500";
+                f.innerHTML = `<b>Erreur...</b> La réponse était : ${data.o[data.r]}`;
             }
-            
-            // Afficher la correction (facultatif, mais utile pour l'apprentissage)
-            const questionCard = document.querySelector(`.question-card[data-q-index="${i}"]`);
-            if(questionCard) {
-                // Créer et afficher le feedback sous la question
-                let feedback = document.createElement('div');
-                feedback.style.marginTop = '10px';
-                feedback.style.padding = '8px';
-                feedback.style.borderRadius = '4px';
-                feedback.style.border = '1px solid';
-                
-                if (selectedOption && selectedOption.value === correctAnswers[qId]) {
-                    feedback.textContent = '✅ Correct !';
-                    feedback.style.backgroundColor = '#e6ffe6';
-                    feedback.style.borderColor = 'green';
-                } else {
-                    feedback.textContent = `❌ Incorrect. La bonne réponse était l'option ${correctAnswers[qId]}.`;
-                    feedback.style.backgroundColor = '#ffe6e6';
-                    feedback.style.borderColor = 'red';
-                }
-                
-                // Retirer le feedback précédent si existant
-                const existingFeedback = questionCard.querySelector('.feedback-result');
-                if (existingFeedback) existingFeedback.remove();
-
-                feedback.classList.add('feedback-result');
-                questionCard.appendChild(feedback);
-                questionCard.style.display = 'block'; // S'assurer que toutes les questions sont visibles pour la correction
-            }
+            document.getElementById('score-display').innerText = score;
+            document.getElementById('next-btn').classList.remove('hidden');
         }
-        
-        // Affichage du score final
-        resultsDiv.innerHTML = `<h2>Résultat Final : ${score} / ${totalQuestions}</h2>`;
-        
-        // Afficher toutes les questions pour la correction finale
-        questions.forEach(q => q.style.display = 'block');
-        
-        // Cacher les boutons de navigation et de soumission
-        document.querySelector('.nav-buttons').style.display = 'none';
-        submitBtn.style.display = 'none';
-        progressIndicator.style.display = 'none';
-    }
 
-    // Événements
-    nextBtn.addEventListener('click', goToNextQuestion);
-    prevBtn.addEventListener('click', goToPrevQuestion);
-    submitBtn.addEventListener('click', checkQuiz);
+        document.getElementById('next-btn').onclick = () => {
+            currentIndex++;
+            if(currentIndex < questions.length) loadQuestion();
+            else finish();
+        };
 
-    // Initialisation
-    updateQuestionDisplay();
-</script>
-
+        async function finish() {
+            document.getElementById('quiz-ui').classList.add('hidden');
+            document.getElementById('final-screen').classList.remove('hidden');
+            document.getElementById('final-score').innerText = `${score} / ${questions.length}`;
+            
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({ nom: pseudo, score: score * 5, quiz: "Fondamentaux du Récit" })
+                });
+            } catch (e) { console.error(e); }
+        }
+    </script>
 </body>
 </html>
