@@ -182,7 +182,7 @@
             {q:"Le maître des vents ?", a:"Éole", c:["Zeus", "Poséidon", "Éole", "Hélios"], i:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500"},
             {q:"Le club de Phileas Fogg ?", a:"Reform Club", c:["Reform Club", "Odyssée", "Journal", "Livre"], i:"https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=500"},
             {q:"Princesse qui aide Ulysse ?", a:"Nausicaa", c:["Nausicaa", "Circé", "Pénélope", "Aouda"], i:"https://images.unsplash.com/photo-1533105079780-92b9be482077?w=500"},
-            {q:"Monstre qui tourbillonne ?", a:"Charybde", c:["Scylla", "Charybde", "Polyphème", "Sirènes"], i:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500"},
+            {q:"Monstre qui tourbillonne ?", a:"Charybde", c:["Scylla", "Charybde", "Polyphème", "Sirènes"], i:"https://images.mbox.com/photo-1507525428034-b723cf961d3e?w=500"},
             {q:"Ville escale en Inde ?", a:"Bombay", i:"https://images.unsplash.com/photo-1524492707947-2f85a512b7fb?w=500", c:["Bombay", "Ithaque", "Londres", "Paris"]},
             {q:"Chemin détaillé à suivre ?", a:"Itinéraire", c:["Itinéraire", "Boussole", "Eldorado", "Escale"], i:"https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?w=500"},
             {q:"Indiquer le Nord ?", a:"Boussole", c:["Boussole", "Visa", "Billet", "Passeport"], i:"https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?w=500"},
@@ -247,7 +247,11 @@
 
     function finishPalier() {
         confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+        
+        // 1. Demander le pseudo (exactement comme dans Monte-Cristo)
         const pseudo = prompt("Bravo ! Ton nom pour le classement :") || "Anonyme";
+        
+        // 2. Envoyer le score avec la fonction manquante
         envoyerResultat(pseudo, score);
 
         const hasNext = currentLvl < levels.length - 1;
@@ -256,7 +260,7 @@
                 <div class="text-6xl mb-4">🏆</div>
                 <h2 class="text-2xl font-black text-slate-700 uppercase">Niveau ${currentLvl + 1} Terminé !</h2>
                 <p class="text-lg font-bold text-sky-600 mt-2">Score : ${score} / 15</p>
-                <p class="text-[10px] text-slate-400 mt-2">Score enregistré pour ${pseudo}</p>
+                <p class="text-[12px] text-slate-500 mt-2 italic">Résultat envoyé pour ${pseudo}</p>
                 <button onclick="${hasNext ? 'nextLevel()' : 'window.location.href=\'index.html\''}" class="mt-8 bg-sky-500 text-white px-10 py-4 rounded-2xl font-black shadow-lg uppercase tracking-wide w-full">
                     ${hasNext ? 'Passer au Niveau ' + (currentLvl + 2) : 'Voir le classement général'}
                 </button>
@@ -268,4 +272,29 @@
         document.getElementById('quiz-ui').innerHTML = `
             <div id="q-counter" class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Question 1 / 15</div>
             <h2 id="q-text" class="question-text"></h2>
-            <div id="
+            <div id="grid" class="options-grid"></div>
+            <div id="feedback" class="feedback-box"></div>
+            <div id="next-btn" onclick="goToNext()" class="btn-next">Continuer <i class="fas fa-arrow-right ml-2"></i></div>`;
+        loadQuestion();
+    }
+
+    // --- CETTE FONCTION ÉTAIT ABSENTE ET EST NÉCESSAIRE POUR EXCEL ---
+    function envoyerResultat(pseudoJoueur, scoreFinal) {
+        const url = "https://script.google.com/macros/s/AKfycbzqLheXqYNAzM3cDMNJTtM03MxUmKYZTfB4etoK5jmHFtWNlDjlc6zQDyZlE7gZnlyXqg/exec"; 
+        
+        const data = {
+            nom: pseudoJoueur, 
+            score: Math.round((scoreFinal / 15) * 100), // On remet sur 100 pour l'index
+            sujet: "Voyage" 
+        };
+
+        fetch(url, {
+            method: "POST",
+            mode: "no-cors", 
+            cache: "no-cache",
+            body: JSON.stringify(data)
+        });
+    }
+</script>
+</body>
+</html>
