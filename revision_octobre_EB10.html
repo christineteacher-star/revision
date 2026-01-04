@@ -3,840 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QCM - Chapitre "Vivre ailleurs"</title>
+    <title>Révision : Vivre ailleurs | Académie</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', 'Arial', sans-serif;
-            background-color: #f4f7f9;
-            color: #333;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #1a5276;
-            text-align: center;
-            border-bottom: 3px solid #3498db;
-            padding-bottom: 10px;
-            margin-bottom: 30px;
-            font-size: 1.8em;
-        }
-        .section-title {
-            color: #3498db;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            padding-bottom: 5px;
-            border-bottom: 1px dashed #ccc;
-            font-size: 1.4em;
-        }
-        .question-container {
-            margin-bottom: 25px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #fcfcfc;
-            transition: border 0.3s;
-            /* Clé du changement : cacher par défaut */
-            display: none; 
-        }
-        /* Afficher uniquement la question actuelle */
-        .question-container.active {
-            display: block;
-        }
-
-        .question-text {
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #2c3e50;
-            font-size: 1.1em;
-        }
-        .option {
-            margin-bottom: 8px;
-        }
-        .option label {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            padding: 10px 12px;
-            border-radius: 6px;
-            transition: background-color 0.2s, border-color 0.2s;
-            border: 1px solid #ccc;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        body { font-family: 'Quicksand', sans-serif; background-color: #f0f7ff; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 85px; background: white; display: flex; flex-direction: column; align-items: center; padding: 25px 0; border-right: 1px solid #eef2f6; }
+        .logo-dragon { width: 48px; height: 48px; background: #3b82f6; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; margin-bottom: 40px; cursor:pointer; }
+        .main-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+        .game-card { background: white; border-radius: 35px; padding: 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 750px; }
         
-        .option input[type="radio"] {
-            margin-right: 10px;
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #3498db;
-            border-radius: 50%;
-            transition: border-color 0.2s, background-color 0.2s;
-            position: relative;
-            flex-shrink: 0;
-        }
+        .opt-btn { width: 100%; padding: 15px; margin-bottom: 10px; border: 2px solid #f1f5f9; border-radius: 18px; text-align: left; font-weight: 600; transition: 0.2s; cursor: pointer; color: #475569; display: flex; align-items: center; gap: 12px; }
+        .opt-btn:hover:not(:disabled) { background: #f0f9ff; border-color: #3b82f6; transform: translateX(5px); }
         
-        .option input[type="radio"]:checked {
-            border-color: #1a5276;
-        }
-        .option input[type="radio"]:checked::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #1a5276;
-            transform: translate(-50%, -50%);
-        }
-
-        .option label:hover {
-            background-color: #e8f5fe;
-            border-color: #3498db;
-        }
+        .correct { background: #d1fae5 !important; color: #065f46 !important; border-color: #10b981 !important; }
+        .wrong { background: #fee2e2 !important; color: #991b1b !important; border-color: #ef4444 !important; }
         
-        /* Styles de feedback */
-        .correct { 
-            background-color: #d4edda !important; 
-            color: #155724 !important; 
-            border-color: #155724 !important;
-            font-weight: 600;
-        }
-        .incorrect { 
-            background-color: #f8d7da !important; 
-            color: #721c24 !important; 
-            border-color: #721c24 !important;
-        }
-        .feedback-correct { 
-            background-color: #c3e6cb !important;
-            color: #155724 !important;
-            font-weight: bold;
-            border-color: #155724 !important;
-        }
-        
-        .feedback-correct input[type="radio"],
-        .correct input[type="radio"] {
-            border-color: #155724 !important;
-        }
-        .feedback-correct input[type="radio"]:checked::after,
-        .correct input[type="radio"]:checked::after {
-            background: #155724 !important;
-        }
-        .incorrect input[type="radio"] {
-            border-color: #721c24 !important;
-        }
-        .incorrect input[type="radio"]::after {
-             background: #721c24 !important;
-        }
-
-        .feedback-explanation {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #a6c0e0;
-            background-color: #eaf3fd;
-            font-size: 0.9em;
-            color: #555;
-            display: none;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-        .feedback-explanation strong {
-            color: #1a5276;
-        }
-        
-        .navigation-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-
-        .navigation-buttons button,
-        #submit-button {
-            padding: 10px 20px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.1s;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            flex-grow: 1;
-            margin: 0 5px; /* Pour l'espacement */
-        }
-        
-        .navigation-buttons button:hover {
-            background-color: #2980b9;
-            transform: translateY(-1px);
-        }
-
-        #submit-button {
-            background-color: #2ecc71;
-            width: 100%;
-            margin: 30px 0 0 0;
-            padding: 14px;
-            font-size: 1.1em;
-        }
-        #submit-button:hover {
-            background-color: #27ae60;
-        }
-
-        #results {
-            margin-top: 20px;
-            padding: 20px;
-            border: 2px solid #3498db;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 1.3em;
-            font-weight: bold;
-            display: none;
-            background-color: #eaf6ff;
-        }
-        #results ul {
-            text-align: left;
-            font-size: 0.9em;
-            font-weight: normal;
-            list-style-type: square;
-            margin-top: 15px;
-            padding-left: 20px;
-        }
-        /* Pour cacher les titres de section répétitifs */
-        #quiz-form .section-title {
-             display: none;
-        }
-        /* Afficher le titre de la section A */
-        #quiz-form .section-title:first-of-type {
-             display: block;
-        }
+        #playerNameInput { background-color: #f1f5f9 !important; border: 2px solid #cbd5e1 !important; }
+        .section-tag { background: #dbeafe; color: #1e40af; padding: 4px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; display: inline-block; }
     </style>
 </head>
 <body>
+    <nav class="sidebar">
+        <div class="logo-dragon" onclick="window.location.href='index.html'"><i class="fas fa-dragon"></i></div>
+        <div class="text-slate-300 hover:text-blue-500 cursor-pointer" onclick="window.location.href='index.html'"><i class="fas fa-home text-2xl"></i></div>
+    </nav>
 
-<div class="container">
-    <h1>📝 QCM de Révision : Vivre ailleurs</h1>
-    <p>Testez vos connaissances sur la séquence (objectifs, récit, et analyse d'image).</p>
-    
-    <form id="quiz-form">
-        </form>
+    <main class="main-content">
+        <div class="game-card">
+            
+            <div id="start-zone" class="text-center">
+                <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-6">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+                <h2 class="text-3xl font-black text-slate-800 mb-2">Vivre Ailleurs</h2>
+                <p class="text-slate-500 mb-8 px-10">Révision complète : Modes du récit, conjugaison et analyse d'image. Prêt pour le test ?</p>
+                
+                <div class="max-w-xs mx-auto">
+                    <input type="text" id="playerNameInput" placeholder="Ton Prénom" class="w-full p-4 rounded-2xl mb-4 text-center font-bold text-lg outline-none">
+                    <button onclick="preStart()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-blue-700 transition-all">COMMENCER LA RÉVISION</button>
+                </div>
+            </div>
 
-    <div class="navigation-buttons">
-        <button type="button" id="prev-button" onclick="changeQuestion(-1)">← Précédent</button>
-        <button type="button" id="next-button" onclick="changeQuestion(1)">Suivant →</button>
-    </div>
-    
-    <button type="button" id="submit-button" onclick="submitQuiz()">Vérifier et obtenir le Feedback</button>
-    
-    <div id="results"></div>
-</div>
+            <div id="quiz-ui" class="hidden">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <span id="section-label" class="section-tag">Analyse Littéraire</span>
+                        <h3 id="q-text" class="text-xl font-bold text-slate-800 leading-tight mt-2"></h3>
+                    </div>
+                    <div class="text-right min-w-[80px]">
+                        <span id="progress" class="text-slate-400 text-[10px] font-bold uppercase block">Quest. 1 / 30</span>
+                        <p id="score-display" class="text-2xl font-black text-blue-600">0</p>
+                    </div>
+                </div>
 
-<script>
-    const questions = [
-        // Q1 : Description, Narration, Discours (Mode d'écriture)
-        {
-            text: "Quelles sont les trois composantes essentielles (modes d'écriture) que l'on doit différencier dans un récit ?",
-            options: [
-                "L'introduction, le développement, la conclusion",
-                "Le passé simple, l'imparfait, le présent",
-                "La Narration, la Description et le Discours (rapporté)",
-                "L'auteur, le narrateur, le lecteur"
-            ],
-            answer: "La Narration, la Description et le Discours (rapporté)",
-            feedback: "Les trois modes d'écriture du récit sont : la **Narration** (raconter des actions), la **Description** (peindre un lieu, un portrait) et le **Discours Rapporté** (faire parler les personnages).",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q2 : Personnages principaux
-        {
-            text: "Qui sont les deux personnages principaux du roman 'La Petite Fille de Monsieur Linh' (selon l'extrait 'Départ forcé') ?",
-            options: [
-                "L'auteur Philippe Claudel et le narrateur",
-                "Monsieur Linh et la petite fille",
-                "Le narrateur et le chauffeur de bus",
-                "Monsieur Linh et Monsieur Bark"
-            ],
-            answer: "Monsieur Linh et la petite fille",
-            feedback: "Les deux personnages principaux du roman sont **Monsieur Linh** et la **petite fille**, dont l'interaction forme le cœur de l'histoire et de l'extrait.",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q3 : Récit Rétrospectif (Analepse)
-        {
-            text: "Quel terme désigne un récit qui fait un retour en arrière sur des événements passés, comme le fait le narrateur au paragraphe 4 de 'Départ forcé' ?",
-            options: [
-                "Récit proleptique",
-                "Récit descriptif",
-                "Récit prospectif",
-                "Récit rétrospectif"
-            ],
-            answer: "Récit rétrospectif",
-            feedback: "Le **récit rétrospectif** est celui qui revient sur le passé (on parle aussi d'analepse ou de flashback). Le récit prospectif est un saut dans le futur (prolepse).",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q4 : Focalisation / Point de vue (NOUVELLE)
-        {
-            text: "Quand le narrateur sait tout (pensées, passé, futur des personnages), on dit que la focalisation est :",
-            options: [
-                "Interne",
-                "Zéro (ou omnisciente)",
-                "Externe",
-                "Multiple"
-            ],
-            answer: "Zéro (ou omnisciente)",
-            feedback: "La **focalisation zéro** (ou point de vue omniscient) est celle du narrateur qui sait tout et est en quelque sorte 'Dieu' du récit.",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q5 : Type de Narrateur (NOUVELLE)
-        {
-            text: "Si un récit est écrit à la troisième personne ('il', 'elle'), le narrateur est :",
-            options: [
-                "Un narrateur-personnage",
-                "Un narrateur externe (ou extradiégétique)",
-                "Un personnage secondaire",
-                "Un narrateur subjectif"
-            ],
-            answer: "Un narrateur externe (ou extradiégétique)",
-            feedback: "Un **narrateur externe** raconte l'histoire sans y participer comme personnage, d'où l'usage de la troisième personne.",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q6 : Vitesse du récit (NOUVELLE)
-        {
-            text: "Dans un récit, quel procédé permet d'étirer la durée (par exemple, un dialogue qui prend plus de place que la minute réelle de l'action) ?",
-            options: [
-                "Le Sommaire",
-                "L'Ellipse",
-                "La Pause (ou Description)",
-                "La Scène (ou Dialogue)"
-            ],
-            answer: "La Scène (ou Dialogue)",
-            feedback: "La **scène** (souvent sous forme de dialogue) fait coïncider le temps de l'histoire avec le temps du récit ($T_{récit} \approx T_{histoire}$), donnant une impression de ralentissement par rapport aux actions. La pause est l'arrêt de l'action pour une description.",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q7 : Type de discours (NOUVELLE)
-        {
-            text: "Dans 'La mère demanda : « Où est-il ? »', le discours est :",
-            options: [
-                "Indirect libre",
-                "Indirect",
-                "Direct",
-                "Rapporté"
-            ],
-            answer: "Direct",
-            feedback: "Le **discours direct** utilise les guillemets et/ou les tirets pour rapporter les paroles telles qu'elles ont été prononcées, sans modification.",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q8 : Mode d'énonciation
-        {
-            text: "Quel mode d'énonciation est caractérisé par un narrateur coupé du récit qui raconte les événements à la troisième personne (il/elle/ils/elles) ?",
-            options: [
-                "Le mode énonciatif",
-                "Le mode d'énonciation non-ancré",
-                "Le mode d'énonciation ancré",
-                "Le discours direct"
-            ],
-            answer: "Le mode d'énonciation non-ancré",
-            feedback: "Le **mode d'énonciation non-ancré** (ou mode coupé) se caractérise par l'absence de marques de la personne (Je, Tu) ou de l'espace-temps de l'énonciateur. C'est le mode du récit au passé simple/imparfait.",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q9 : Présent de narration
-        {
-            text: "Quelle est la valeur principale du Présent de l'indicatif (Présent de narration) utilisé dans un récit au passé ?",
-            options: [
-                "Exprimer une habitude répétée",
-                "Ancrer le lecteur dans l'instant de l'action",
-                "Rapporter des événements postérieurs au moment de l'énonciation",
-                "Décrire un état permanent"
-            ],
-            answer: "Ancrer le lecteur dans l'instant de l'action",
-            feedback: "Le **Présent de narration** rend les actions plus vivantes et présentes pour le lecteur, donnant l'impression qu'elles se déroulent sous ses yeux au moment de la lecture.",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q10 : L'Imparfait (valeur)
-        {
-            text: "Dans 'Ses cheveux étaient blonds et elle souriait', l'Imparfait exprime une valeur de :",
-            options: [
-                "Succession d'actions",
-                "Antériorité par rapport au Passé Simple",
-                "Description ou état",
-                "Action achevée"
-            ],
-            answer: "Description ou état",
-            feedback: "L'Imparfait est principalement le temps de la **description** et de l'état (toile de fond). Il sert à peindre le décor, les sentiments ou l'apparence des personnages.",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q11 : Valeur du Passé Simple (NOUVELLE)
-        {
-            text: "Le Passé Simple dans 'Soudain, il **tomba**' exprime une action :",
-            options: [
-                "Répétée",
-                "Longue et non délimitée",
-                "Soudaine, brève et achevée",
-                "Antérieure à une autre"
-            ],
-            answer: "Soudaine, brève et achevée",
-            feedback: "Le **Passé Simple** est le temps des actions ponctuelles, soudaines et de la narration écrite. Il fait progresser l'intrigue.",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q12 : Valeur du Plus-que-parfait (NOUVELLE)
-        {
-            text: "Le Plus-que-parfait (ex: 'il avait compris') sert à exprimer :",
-            options: [
-                "La simultanéité",
-                "Une action postérieure au passé simple",
-                "L'antériorité par rapport à une action passée",
-                "Une habitude dans le passé"
-            ],
-            answer: "L'antériorité par rapport à une action passée",
-            feedback: "Le **Plus-que-parfait** exprime une action qui s'est déroulée *avant* une autre action déjà au passé (Passé Simple ou Imparfait). Il est le temps de l'antériorité dans le récit au passé.",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q13 : L'Imparfait (conjugaison)
-        {
-            text: "Laquelle de ces formes verbales correspond à l'Imparfait de l'indicatif ?",
-            options: [
-                "Il voit",
-                "Il verra",
-                "Il voyait",
-                "Il vit"
-            ],
-            answer: "Il voyait",
-            feedback: "L'Imparfait se termine généralement par -ais, -ais, **-ait**, -ions, -iez, -aient (pour le verbe 'voir', c'est 'il voyait').",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q14 : Passé Simple vs Passé Composé
-        {
-            text: "Parmi ces deux temps, lequel est privilégié à l'oral pour raconter une action passée et achevée (ex: 'J'ai mangé') ?",
-            options: [
-                "L'Imparfait",
-                "Le Passé Simple",
-                "Le Passé Composé",
-                "Le Plus-que-parfait"
-            ],
-            answer: "Le Passé Composé",
-            feedback: "Le **Passé Composé** est le temps du récit oral. Le Passé Simple est le temps de la narration écrite et est rarement utilisé à l'oral.",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q15 : Formation du Passé Composé (NOUVELLE)
-        {
-            text: "Comment se forme le Passé Composé ?",
-            options: [
-                "Auxiliaire Être/Avoir à l'Imparfait + Participe Passé",
-                "Auxiliaire Être/Avoir au Présent + Infinitif",
-                "Auxiliaire Être/Avoir au Présent + Participe Passé",
-                "Verbe conjugué au Passé Simple + Participe Passé"
-            ],
-            answer: "Auxiliaire Être/Avoir au Présent + Participe Passé",
-            feedback: "Le **Passé Composé** est un temps composé : Auxiliaire (*être* ou *avoir*) conjugué au présent de l'indicatif + Participe Passé du verbe à conjuguer.",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q16 : Conjugaison Passé Simple (3e groupe) (NOUVELLE)
-        {
-            text: "La forme correcte du verbe 'sortir' au Passé Simple, troisième personne du singulier est :",
-            options: [
-                "Il sortait",
-                "Il sorta",
-                "Il sortit",
-                "Il est sorti"
-            ],
-            answer: "Il sortit",
-            feedback: "Pour les verbes du troisième groupe comme 'sortir' (et 'partir', 'dormir'), le Passé Simple se termine souvent par **-is, -is, -it, -îmes, -îtes, -irent** (ici, 'il sortit').",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q17 : Conjugaison Passé Simple (1er groupe) (NOUVELLE)
-        {
-            text: "La forme correcte du verbe 'pleurer' au Passé Simple, troisième personne du pluriel est :",
-            options: [
-                "Ils pleuraient",
-                "Ils pleurèrent",
-                "Ils pleurons",
-                "Ils ont pleuré"
-            ],
-            answer: "Ils pleurèrent",
-            feedback: "Les verbes du premier groupe au Passé Simple ont les terminaisons **-ai, -as, -a, -âmes, -âtes, -èrent** (ici, 'ils pleurèrent').",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q18 : Comparaison
-        {
-            text: "Dans la phrase 'Elle bouge comme un sac de riz', quel type de figure de style est utilisé ?",
-            options: [
-                "Une métaphore",
-                "Une hyperbole",
-                "Une comparaison",
-                "Une personnification"
-            ],
-            answer: "Une comparaison",
-            feedback: "Il s'agit d'une **comparaison** car elle utilise un outil comparatif ('comme') pour relier un comparé ('Elle') à un comparant ('un sac de riz').",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q19 : Métaphore
-        {
-            text: "Si l'on écrit 'La petite fille est une ancre', quelle figure de style est employée ?",
-            options: [
-                "Une comparaison",
-                "Une métaphore",
-                "Une allégorie",
-                "Une litote"
-            ],
-            answer: "Une métaphore",
-            feedback: "C'est une **métaphore** car elle crée une assimilation sans outil comparatif (comme, tel, pareil à). Elle sous-entend : La petite fille est [aussi solide et rassurante] qu'une ancre.",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q20 : Hyperbole (NOUVELLE)
-        {
-            text: "La figure de style qui consiste à exagérer pour impressionner (ex: 'Elle a pleuré toutes les larmes de son corps') est :",
-            options: [
-                "Une litote",
-                "Une antiphrase",
-                "Une anaphore",
-                "Une hyperbole"
-            ],
-            answer: "Une hyperbole",
-            feedback: "L'**hyperbole** est la figure de l'exagération, souvent utilisée pour exprimer des sentiments extrêmes ou donner une impression de grandeur.",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q21 : Connecteurs Logiques (Conséquence)
-        {
-            text: "Dans la phrase 'Il pleut, **donc** je prends mon parapluie', le mot en gras est un connecteur qui exprime :",
-            options: [
-                "L'addition",
-                "La cause",
-                "La conséquence",
-                "L'opposition"
-            ],
-            answer: "La conséquence",
-            feedback: "Le connecteur 'donc' introduit la **conséquence** logique d'un fait ou d'une situation précédente ('Il pleut').",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q22 : Connecteurs Logiques (Opposition) (NOUVELLE)
-        {
-            text: "Quel connecteur logique exprime une opposition ou une restriction ?",
-            options: [
-                "De plus",
-                "Par conséquent",
-                "Cependant",
-                "Car"
-            ],
-            answer: "Cependant",
-            feedback: "**Cependant** (ainsi que *mais*, *pourtant*, *toutefois*) permet de relier deux idées dont la seconde contredit ou nuance la première (opposition).",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q23 : Nature grammaticale (NOUVELLE)
-        {
-            text: "Quelle est la classe grammaticale du mot 'ailleurs' dans 'Vivre ailleurs' ?",
-            options: [
-                "Un nom commun",
-                "Un adjectif",
-                "Un adverbe",
-                "Une préposition"
-            ],
-            answer: "Un adverbe",
-            feedback: "**Ailleurs** est un adverbe de lieu, signifiant 'en un autre lieu'. Il est invariable.",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q24 : Valeur de l'Infinitif (NOUVELLE)
-        {
-            text: "Dans le titre 'Vivre ailleurs', l'Infinitif ('Vivre') renvoie à une valeur :",
-            options: [
-                "Impérative (ordre)",
-                "Ponctuelle (action unique)",
-                "Générale et impersonnelle",
-                "Future"
-            ],
-            answer: "Générale et impersonnelle",
-            feedback: "L'Infinitif est un mode impersonnel qui, dans un titre, confère une valeur **générale** et anonyme au thème, sans renvoyer à une personne précise. (Comme dans la définition tirée du support : *il a une valeur générale*).",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q25 : Identification du COD (NOUVELLE)
-        {
-            text: "Dans la phrase 'Elle regarda l'enfant', le Complément d'Objet Direct (COD) est :",
-            options: [
-                "Elle",
-                "regarda",
-                "l'enfant",
-                "regarda l'enfant"
-            ],
-            answer: "l'enfant",
-            feedback: "Le COD répond à la question 'Qui ?' ou 'Quoi ?' après le verbe. Ici, elle regarde **qui ?** -> **l'enfant**.",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q26 : Différence de Mode (NOUVELLE)
-        {
-            text: "Lequel de ces modes est dit 'impersonnel' (ne se conjugue pas selon les personnes je, tu, il...) ?",
-            options: [
-                "L'Indicatif",
-                "Le Subjonctif",
-                "Le Conditionnel",
-                "L'Infinitif"
-            ],
-            answer: "L'Infinitif",
-            feedback: "Les modes impersonnels sont l'**Infinitif**, le Participe et le Gérondif. L'Indicatif, le Subjonctif et l'Impératif sont des modes personnels.",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        // Q27 : Fonction du Gérondif (NOUVELLE)
-        {
-            text: "Dans 'Elle marchait **en chantant**', la forme 'en chantant' est un gérondif qui exprime :",
-            options: [
-                "Une conséquence",
-                "Une condition",
-                "La cause",
-                "La simultanéité"
-            ],
-            answer: "La simultanéité",
-            feedback: "Le **gérondif** (en + participe présent) exprime une action qui se déroule en même temps que l'action principale (simultanéité) : elle marchait *pendant qu'elle* chantait.",
-            section: "A. Analyse Littéraire et Modes du Récit"
-        },
-        
-        // --- Questions sur l'Image (Section B) ---
-        
-        // Q28 : Type de plan
-        {
-            text: "Concernant une image, si l'on voit le personnage en entier et que le décor est très visible, il s'agit d'un :",
-            options: [
-                "Gros plan",
-                "Plan d'ensemble",
-                "Plan américain",
-                "Plan rapproché"
-            ],
-            answer: "Plan d'ensemble",
-            feedback: "Le **Plan d'ensemble** montre le décor dans son intégralité et le personnage en entier, permettant de localiser l'action. Le Plan américain coupe aux genoux.",
-            section: "B. Vocabulaire de l'Image et Analyse (PAGES 8-9)"
-        },
-        // Q29 : Angle de prise de vue (NOUVELLE)
-        {
-            text: "Un angle de prise de vue où l'on domine le sujet (vue d'en haut) est appelé :",
-            options: [
-                "Plan séquence",
-                "Contre-plongée",
-                "Plongée",
-                "Plan général"
-            ],
-            answer: "Plongée",
-            feedback: "La **plongée** écrase le sujet et le montre vu d'en haut. À l'inverse, la contre-plongée grandit le sujet et le montre vu d'en bas.",
-            section: "B. Vocabulaire de l'Image et Analyse (PAGES 8-9)"
-        },
-        // Q30 : Couleurs / Signification
-        {
-            text: "Le choix d'utiliser principalement des couleurs sombres (gris, marron) pour représenter un lieu crée souvent un effet d'impression de :",
-            options: [
-                "Joie et légèreté",
-                "Évasion et liberté",
-                "Mélancolie, mystère ou gravité",
-                "Dynamisme et vitesse"
-            ],
-            answer: "Mélancolie, mystère ou gravité",
-            feedback: "Les couleurs sombres (dominante froide) sont associées à la **mélancolie, au mystère, à la gravité** ou à la difficulté de la situation (contrairement aux couleurs chaudes et lumineuses).",
-            section: "B. Vocabulaire de l'Image et Analyse (PAGES 8-9)"
+                <div id="options" class="space-y-3"></div>
+                
+                <div id="feedback" class="mt-6 p-5 rounded-2xl text-sm hidden border-l-8"></div>
+                
+                <button id="next-btn" class="hidden w-full mt-6 bg-slate-800 text-white py-4 rounded-2xl font-bold hover:bg-slate-900 transition flex items-center justify-center gap-2">
+                    CONTINUER <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div id="final-screen" class="hidden text-center">
+                <div id="final-icon" class="w-24 h-24 rounded-full flex items-center justify-center text-4xl mx-auto mb-6"></div>
+                <h2 id="final-title" class="text-3xl font-black text-slate-800 mb-2"></h2>
+                <p id="final-msg" class="text-slate-500 mb-8 px-10"></p>
+                <div class="text-6xl font-black text-blue-600 mb-8" id="final-score">0 / 30</div>
+                
+                <div class="flex flex-col gap-3">
+                    <button onclick="location.reload()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold">RECOMMENCER</button>
+                    <button onclick="window.location.href='index.html'" class="w-full bg-slate-100 text-slate-600 py-4 rounded-2xl font-bold">RETOUR ACCUEIL</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Configuration des questions basée sur ton document
+        const questions = [
+            { s: "Analyse Littéraire", q: "Quelles sont les trois composantes essentielles (modes d'écriture) d'un récit ?", o: ["Introduction, développement, conclusion", "Passé simple, imparfait, présent", "Narration, Description et Discours rapporté", "Auteur, narrateur, lecteur"], r: 2, f: "La **Narration** (actions), la **Description** (lieux/portraits) et le **Discours** (paroles) sont les trois piliers du récit." },
+            { s: "Analyse Littéraire", q: "Qui sont les deux personnages principaux de 'La Petite Fille de Monsieur Linh' ?", o: ["Philippe Claudel et le narrateur", "Monsieur Linh et la petite fille", "Le narrateur et le chauffeur", "Monsieur Linh et Monsieur Bark"], r: 1, f: "L'interaction entre **Monsieur Linh** et la **petite fille** forme le cœur de l'extrait 'Départ forcé'." },
+            { s: "Analyse Littéraire", q: "Quel terme désigne un récit qui fait un retour en arrière ?", o: ["Proleptique", "Descriptif", "Prospectif", "Rétrospectif"], r: 3, f: "Le récit **rétrospectif** (ou analepse) revient sur des événements passés." },
+            { s: "Analyse Littéraire", q: "Quand le narrateur sait tout (pensées, passé, futur), la focalisation est :", o: ["Interne", "Zéro (omnisciente)", "Externe", "Multiple"], r: 1, f: "La **focalisation zéro** est celle du narrateur 'Dieu' qui connaît tout de son univers." },
+            { s: "Analyse Littéraire", q: "Si le récit est écrit à la 3e personne ('il/elle'), le narrateur est :", o: ["Un narrateur-personnage", "Un narrateur externe", "Un personnage secondaire", "Un narrateur subjectif"], r: 1, f: "Le **narrateur externe** raconte l'histoire sans y participer." },
+            { s: "Analyse Littéraire", q: "Quel procédé permet d'étirer la durée (ex: un dialogue) ?", o: ["Le Sommaire", "L'Ellipse", "La Pause", "La Scène"], r: 3, f: "La **scène** fait coïncider le temps du récit avec celui de l'histoire." },
+            { s: "Analyse Littéraire", q: "Dans 'La mère demanda : « Où est-il ? »', le discours est :", o: ["Indirect libre", "Indirect", "Direct", "Rapporté"], r: 2, f: "Le **discours direct** utilise les guillemets pour rapporter les paroles exactes." },
+            { s: "Analyse Littéraire", q: "Le narrateur coupé du récit utilisant la 3e personne est en mode :", o: ["Énonciatif", "Non-ancré (coupé)", "Ancré", "Direct"], r: 1, f: "Le **mode non-ancré** est typique du récit au passé (Passé Simple/Imparfait)." },
+            { s: "Analyse Littéraire", q: "Quelle est la valeur du Présent de Narration ?", o: ["Habitude", "Ancrer dans l'action", "Événements futurs", "État permanent"], r: 1, f: "Il rend les actions plus **vivantes**, comme si elles se passaient sous nos yeux." },
+            { s: "Analyse Littéraire", q: "L'Imparfait dans 'Ses cheveux étaient blonds' exprime :", o: ["Succession", "Antériorité", "Description ou état", "Action achevée"], r: 2, f: "C'est le temps de la **description** et de la toile de fond." },
+            { s: "Analyse Littéraire", q: "Le Passé Simple dans 'Soudain, il tomba' exprime :", o: ["Répétition", "Durée", "Action soudaine et achevée", "Antériorité"], r: 2, f: "Le **Passé Simple** fait avancer l'intrigue par des actions brèves." },
+            { s: "Analyse Littéraire", q: "Le Plus-que-parfait (ex: 'il avait compris') sert à exprimer :", o: ["Simultanéité", "Postériorité", "Antériorité dans le passé", "Habitude"], r: 2, f: "Il exprime une action faite **avant** une autre action passée." },
+            { s: "Analyse Littéraire", q: "Laquelle de ces formes est à l'Imparfait ?", o: ["Il voit", "Il verra", "Il voyait", "Il vit"], r: 2, f: "L'Imparfait se reconnaît à sa terminaison en **-ait**." },
+            { s: "Analyse Littéraire", q: "Temps privilégié à l'oral pour une action passée :", o: ["Imparfait", "Passé Simple", "Passé Composé", "Plus-que-parfait"], r: 2, f: "Le **Passé Composé** est le temps du récit oral/quotidien." },
+            { s: "Analyse Littéraire", q: "Comment se forme le Passé Composé ?", o: ["Auxiliaire Imparfait + Participe", "Auxiliaire Présent + Infinitif", "Auxiliaire Présent + Participe Passé", "Passé Simple + Participe"], r: 2, f: "Auxiliaire (être/avoir) au **présent** + Participe Passé." },
+            { s: "Analyse Littéraire", q: "Forme correcte de 'sortir' au Passé Simple (3e pers. sing) :", o: ["Il sortait", "Il sorta", "Il sortit", "Il est sorti"], r: 2, f: "Pour le 3e groupe, c'est souvent la terminaison en **-it**." },
+            { s: "Analyse Littéraire", q: "Forme correcte de 'pleurer' au Passé Simple (3e pers. plur) :", o: ["Ils pleuraient", "Ils pleurèrent", "Ils pleurons", "Ils ont pleuré"], r: 1, f: "1er groupe au pluriel = terminaison en **-èrent**." },
+            { s: "Analyse Littéraire", q: "Figure de style : 'Elle bouge comme un sac de riz' ?", o: ["Métaphore", "Hyperbole", "Comparaison", "Personnification"], r: 2, f: "L'outil comparatif **'comme'** indique une comparaison." },
+            { s: "Analyse Littéraire", q: "Figure de style : 'La petite fille est une ancre' ?", o: ["Comparaison", "Métaphore", "Allégorie", "Litote"], r: 1, f: "C'est une **métaphore** car l'assimilation se fait sans mot-outil." },
+            { s: "Analyse Littéraire", q: "Figure de style : 'Elle a pleuré toutes les larmes de son corps' ?", o: ["Litote", "Antiphrase", "Anaphore", "Hyperbole"], r: 3, f: "L'**hyperbole** est l'exagération pour frapper l'esprit." },
+            { s: "Analyse Littéraire", q: "Valeur de 'donc' dans 'Il pleut, donc je sors' :", o: ["Addition", "Cause", "Conséquence", "Opposition"], r: 2, f: "'Donc' introduit toujours une **conséquence** logique." },
+            { s: "Analyse Littéraire", q: "Lequel exprime une opposition ?", o: ["De plus", "Par conséquent", "Cependant", "Car"], r: 2, f: "**Cependant** marque une rupture ou une nuance." },
+            { s: "Analyse Littéraire", q: "Classe grammaticale de 'ailleurs' :", o: ["Nom", "Adjectif", "Adverbe", "Préposition"], r: 2, f: "C'est un **adverbe** de lieu invariable." },
+            { s: "Analyse Littéraire", q: "Valeur de l'Infinitif dans le titre 'Vivre ailleurs' :", o: ["Ordre", "Action unique", "Générale et impersonnelle", "Future"], r: 2, f: "L'infinitif donne une portée **universelle** au sujet." },
+            { s: "Analyse Littéraire", q: "Quel est le COD dans 'Elle regarda l'enfant' ?", o: ["Elle", "regarda", "l'enfant", "regarda l'enfant"], r: 2, f: "Elle regarda **qui ?** -> l'enfant (COD)." },
+            { s: "Analyse Littéraire", q: "Lequel est un mode impersonnel ?", o: ["Indicatif", "Subjonctif", "Conditionnel", "L'Infinitif"], r: 3, f: "L'**Infinitif** ne change pas selon la personne (je/tu/il)." },
+            { s: "Analyse Littéraire", q: "Valeur de 'en chantant' :", o: ["Conséquence", "Condition", "Cause", "Simultanéité"], r: 3, f: "Le **gérondif** indique deux actions qui se passent en même temps." },
+            { s: "Analyse de l'Image", q: "Plan montrant le personnage en entier et le décor visible :", o: ["Gros plan", "Plan d'ensemble", "Plan américain", "Plan rapproché"], r: 1, f: "Le **Plan d'ensemble** situe l'action dans son contexte." },
+            { s: "Analyse de l'Image", q: "Angle de vue où l'on domine le sujet (vu d'en haut) :", o: ["Plan séquence", "Contre-plongée", "Plongée", "Plan général"], r: 2, f: "La **plongée** écrase le personnage et donne un sentiment de faiblesse." },
+            { s: "Analyse de l'Image", q: "Signification des couleurs sombres (gris, marron) :", o: ["Joie", "Évasion", "Mélancolie ou gravité", "Dynamisme"], r: 2, f: "Les tons froids/sombres créent une atmosphère de **gravité**." }
+        ];
+
+        let currentIndex = 0, score = 0, pseudo = "";
+
+        function preStart() {
+            const input = document.getElementById('playerNameInput');
+            if(input.value.trim().length < 2) return alert("Entre ton prénom !");
+            pseudo = input.value.trim();
+            document.getElementById('start-zone').classList.add('hidden');
+            document.getElementById('quiz-ui').classList.remove('hidden');
+            loadQuestion();
         }
-    ];
 
-    const quizForm = document.getElementById('quiz-form');
-    const resultsDiv = document.getElementById('results');
-    const prevButton = document.getElementById('prev-button');
-    const nextButton = document.getElementById('next-button');
-    const submitButton = document.getElementById('submit-button');
-
-    // Variable pour stocker l'index de la question actuellement affichée
-    let currentQuestionIndex = 0;
-    let questionContainers = [];
-    let sectionTitles = {}; // Pour stocker les éléments des titres de section
-
-    function renderQuiz() {
-        quizForm.innerHTML = ''; // Nettoyer le formulaire
-        questionContainers = [];
-
-        questions.forEach((q, index) => {
-            // Créer le titre de section s'il n'existe pas encore
-            if (!sectionTitles[q.section]) {
-                const title = document.createElement('h2');
-                title.classList.add('section-title');
-                title.textContent = q.section;
-                sectionTitles[q.section] = title;
-                quizForm.appendChild(title);
-            }
-
-            const container = document.createElement('div');
-            container.classList.add('question-container');
-            container.dataset.section = q.section; // Stocker la section pour le retrouver
-
-            questionContainers.push(container);
-
-            const text = document.createElement('div');
-            text.classList.add('question-text');
-            // Afficher le numéro de la question
-            text.textContent = `${index + 1}. ${q.text}`; 
-            container.appendChild(text);
-
-            q.options.forEach((option, optionIndex) => {
-                const optionDiv = document.createElement('div');
-                optionDiv.classList.add('option');
-
-                const input = document.createElement('input');
-                input.type = 'radio';
-                input.id = `q${index}-opt${optionIndex}`;
-                input.name = `question${index}`;
-                input.value = option;
-                
-                input.onchange = (e) => {
-                    const parentContainer = e.target.closest('.question-container');
-                    parentContainer.querySelectorAll('label').forEach(label => {
-                        label.classList.remove('correct', 'incorrect', 'feedback-correct');
-                    });
-                    parentContainer.querySelector('.feedback-explanation').style.display = 'none';
-                };
-
-                const label = document.createElement('label');
-                label.htmlFor = `q${index}-opt${optionIndex}`;
-                
-                // Insérer l'input en premier, puis le texte
-                label.appendChild(input);
-                label.appendChild(document.createTextNode(option));
-                
-                optionDiv.appendChild(label);
-                container.appendChild(optionDiv);
+        function loadQuestion() {
+            const data = questions[currentIndex];
+            document.getElementById('section-label').innerText = data.s;
+            document.getElementById('progress').innerText = `Quest. ${currentIndex + 1} / ${questions.length}`;
+            document.getElementById('q-text').innerText = data.q;
+            document.getElementById('feedback').classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+            
+            const box = document.getElementById('options');
+            box.innerHTML = "";
+            data.o.forEach((opt, i) => {
+                const b = document.createElement('button');
+                b.className = "opt-btn";
+                b.innerHTML = `<span>${opt}</span>`;
+                b.onclick = () => check(i, b);
+                box.appendChild(b);
             });
-
-            // Ajouter le conteneur de feedback
-            const feedback = document.createElement('div');
-            feedback.classList.add('feedback-explanation');
-            feedback.innerHTML = `<strong>Explication :</strong> ${q.feedback}`;
-            container.appendChild(feedback);
-
-            quizForm.appendChild(container);
-        });
-        
-        // Afficher la première question
-        showQuestion(currentQuestionIndex);
-    }
-    
-    // Fonction pour afficher une question spécifique
-    function showQuestion(index) {
-        // Cacher tous les conteneurs
-        questionContainers.forEach(container => {
-            container.classList.remove('active');
-        });
-
-        // Cacher tous les titres de section
-        Object.values(sectionTitles).forEach(title => {
-            title.style.display = 'none';
-        });
-
-        // Afficher la question demandée et la marquer comme active
-        if (questionContainers[index]) {
-            questionContainers[index].classList.add('active');
-            
-            // Afficher le titre de la section correspondante
-            const sectionName = questionContainers[index].dataset.section;
-            if (sectionTitles[sectionName]) {
-                 sectionTitles[sectionName].style.display = 'block';
-            }
-            
-            // Mettre à jour l'index
-            currentQuestionIndex = index;
         }
 
-        // Mettre à jour l'état des boutons de navigation
-        prevButton.disabled = currentQuestionIndex === 0;
-        nextButton.disabled = currentQuestionIndex === questions.length - 1;
+        function check(idx, btn) {
+            const data = questions[currentIndex];
+            const btns = document.getElementsByClassName('opt-btn');
+            for(let b of btns) b.disabled = true;
 
-        // Afficher le bouton Soumettre uniquement sur la dernière question
-        if (currentQuestionIndex === questions.length - 1) {
-            submitButton.style.display = 'block';
-            nextButton.style.display = 'none';
-        } else {
-            submitButton.style.display = 'none';
-            nextButton.style.display = 'block';
-        }
-    }
-
-    // Fonction pour changer de question (direction: +1 pour suivant, -1 pour précédent)
-    function changeQuestion(direction) {
-        const newIndex = currentQuestionIndex + direction;
-        if (newIndex >= 0 && newIndex < questions.length) {
-            showQuestion(newIndex);
-        }
-    }
-    
-    function submitQuiz() {
-        let score = 0;
-        
-        // Afficher toutes les questions pour le feedback
-        questionContainers.forEach(container => {
-            container.classList.add('active');
-            container.querySelector('.feedback-explanation').style.display = 'block';
-        });
-
-        // Afficher tous les titres de section
-        Object.values(sectionTitles).forEach(title => {
-            title.style.display = 'block';
-        });
-        
-        // Cacher les boutons de navigation après la soumission
-        prevButton.style.display = 'none';
-        nextButton.style.display = 'none';
-        submitButton.style.display = 'none';
-
-
-        questions.forEach((q, index) => {
-            const questionName = `question${index}`;
-            const container = questionContainers[index];
-
-            if (!container) return;
-
-            // Sélectionner l'option qui est cochée dans ce conteneur
-            const selectedInput = container.querySelector(`input[name="${questionName}"]:checked`);
+            const f = document.getElementById('feedback');
+            f.classList.remove('hidden');
             
-            // Réinitialiser les couleurs pour tous les labels (important si on soumet plusieurs fois)
-            container.querySelectorAll('label').forEach(label => {
-                label.classList.remove('correct', 'incorrect', 'feedback-correct');
-            });
-            
-            if (selectedInput) {
-                const isCorrect = selectedInput.value === q.answer;
-                const selectedLabel = selectedInput.closest('label');
-                
-                // 1. Colorer la réponse sélectionnée
-                selectedLabel.classList.add(isCorrect ? 'correct' : 'incorrect');
-
-                if (isCorrect) {
-                    score++;
-                } else {
-                    // 2. Si incorrect, marquer la bonne réponse (le label)
-                    container.querySelectorAll('input').forEach(input => {
-                        if (input.value === q.answer) {
-                            input.closest('label').classList.add('feedback-correct');
-                        }
-                    });
-                }
+            if(idx === data.r) {
+                score++;
+                btn.classList.add('correct');
+                f.className = "mt-6 p-5 rounded-2xl text-sm border-l-8 bg-green-50 text-green-700 border-green-500 shadow-sm";
+                f.innerHTML = `<div class="flex items-center gap-3 mb-1"><i class="fas fa-check-circle text-lg"></i><b>Excellent !</b></div> ${data.f}`;
             } else {
-                // 3. Si non répondu, marquer seulement la bonne réponse (le label)
-                 container.querySelectorAll('input').forEach(input => {
-                    if (input.value === q.answer) {
-                        input.closest('label').classList.add('feedback-correct');
-                    }
-                });
+                btn.classList.add('wrong');
+                f.className = "mt-6 p-5 rounded-2xl text-sm border-l-8 bg-red-50 text-red-700 border-red-500 shadow-sm";
+                f.innerHTML = `<div class="flex items-center gap-3 mb-1"><i class="fas fa-times-circle text-lg"></i><b>À revoir...</b></div> ${data.f}`;
+                btns[data.r].classList.add('correct');
             }
-        });
-
-        resultsDiv.style.display = 'block';
-        resultsDiv.innerHTML = `Votre score : <span style="color: #2ecc71;">${score}</span> / ${questions.length}<br>`;
-        
-        if (score === questions.length) {
-             resultsDiv.innerHTML += '<span style="color: #1a5276; font-size: 1em;">✅ Parfait ! Vous maîtrisez tous les objectifs de la séquence.</span>';
-        } else {
-            resultsDiv.innerHTML += `<span style="color: #e74c3c; font-size: 1em;">🧐 Encore ${questions.length - score} points à revoir. Lisez attentivement les explications pour chaque question.</span>`;
+            document.getElementById('score-display').innerText = score;
+            document.getElementById('next-btn').classList.remove('hidden');
         }
-    }
 
-    // Lancer le quiz au chargement de la page
-    renderQuiz();
-</script>
+        document.getElementById('next-btn').onclick = () => {
+            currentIndex++;
+            if(currentIndex < questions.length) loadQuestion();
+            else finish();
+        };
 
+        function finish() {
+            document.getElementById('quiz-ui').classList.add('hidden');
+            const screen = document.getElementById('final-screen');
+            screen.classList.remove('hidden');
+            
+            const scoreDisplay = document.getElementById('final-score');
+            scoreDisplay.innerText = `${score} / ${questions.length}`;
+
+            const icon = document.getElementById('final-icon');
+            const title = document.getElementById('final-title');
+            const msg = document.getElementById('final-msg');
+
+            if(score === questions.length) {
+                icon.className = "w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-6";
+                icon.innerHTML = '<i class="fas fa-trophy"></i>';
+                title.innerText = "Maître de la Séquence !";
+                msg.innerText = `Incroyable ${pseudo}, tu maîtrises absolument tous les objectifs.`;
+            } else if (score >= questions.length * 0.7) {
+                icon.className = "w-24 h-24 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-6";
+                icon.innerHTML = '<i class="fas fa-star"></i>';
+                title.innerText = "Très Bon Travail !";
+                msg.innerText = `Bravo ${pseudo}, tu as une base très solide pour l'évaluation.`;
+            } else {
+                icon.className = "w-24 h-24 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-6";
+                icon.innerHTML = '<i class="fas fa-pen-nib"></i>';
+                title.innerText = "Encore un effort !";
+                msg.innerText = `Lis bien les explications ${pseudo}, tu vas y arriver au prochain essai.`;
+            }
+        }
+    </script>
 </body>
 </html>
