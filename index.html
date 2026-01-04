@@ -103,8 +103,7 @@
         <div id="podium-area" class="podium-container"></div>
         <div id="leader-list" class="overflow-y-auto flex-1"></div>
     </aside>
-
-  <script>
+<script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys_uz58mt03TDr5gthhtJIeZJqqJDTuikaHwUa60o2rp3S4jIOeuABIrjWyfUDuhEdLg/exec";
     
     async function updateApp() {
@@ -114,70 +113,81 @@
 
             const players = rawData.map(p => {
                 const valeurs = Object.values(p);
-                // On essaie de transformer la date texte en vrai objet Date pour le calcul
-                const dateBrute = p.date || valeurs[2] || "";
+                
+                // SELON VOTRE IMAGE GOOGLE SHEET :
+                // valeurs[0] = nom (aventurier_1)
+                // valeurs[1] = score (150)
+                // valeurs[2] = date (1/4/2026...) <--- C'EST ICI
+                // valeurs[3] = sujet (Mon Académie...)
+                
+                const dateBrute = valeurs[2] || "";
                 
                 return {
-                    nom: (p.nom || p.Nom || valeurs[0] || "Inconnu").trim(),
-                    score: parseInt(p.score || p.Score || valeurs[1]) || 0,
-                    // On crée un "timestamp" (nombre de millisecondes) pour comparer les dates facilement
+                    nom: String(valeurs[0] || "Inconnu").trim(),
+                    score: parseInt(valeurs[1]) || 0,
+                    // On transforme la date du tableau en chiffre pour le tri
                     timestamp: new Date(dateBrute).getTime() || 0,
-                    originalDate: dateBrute
+                    sujet: valeurs[3] || ""
                 };
             })
-            .filter(p => p.nom !== "" && p.nom !== "Inconnu")
-            // LA RÈGLE DE TRI DOUBLE
+            .filter(p => p.nom !== "Inconnu" && p.nom !== "")
             .sort((a, b) => {
-                // 1. On compare d'abord les scores
+                // 1. Priorité au score
                 if (b.score !== a.score) {
-                    return b.score - a.score; // Le plus gros score gagne
+                    return b.score - a.score;
                 }
-                // 2. Si les scores sont égaux, on compare les dates
-                // Le plus récent (timestamp le plus grand) gagne
+                // 2. Si égalité, le plus récent (timestamp le plus grand) gagne
                 return b.timestamp - a.timestamp;
             });
 
-            console.log("Classement final avec départage par date :", players);
+            console.log("Nouveau classement corrigé :", players);
 
             if (players.length > 0) {
-                // AFFICHAGE DU PODIUM
-                const p1 = players[0] || {nom: "-", score: 0};
-                const p2 = players[1] || {nom: "-", score: 0};
-                const p3 = players[2] || {nom: "-", score: 0};
-
-                document.getElementById('podium-area').innerHTML = `
-                    <div class="flex flex-col items-center w-[100px]">
-                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(p2.nom)}" class="w-16 h-16 mb-2">
-                        <span class="text-[11px] font-bold truncate w-full text-center">${p2.nom}</span>
-                        <div class="podium-block bg-amber-400 h-[85px] flex items-center justify-center text-white font-bold">#2</div>
-                    </div>
-                    <div class="flex flex-col items-center w-[100px]">
-                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(p1.nom)}" class="w-20 h-20 mb-2">
-                        <span class="text-[11px] font-bold truncate w-full text-center">${p1.nom}</span>
-                        <div class="podium-block bg-green-400 h-[115px] flex items-center justify-center text-white font-bold">#1</div>
-                    </div>
-                    <div class="flex flex-col items-center w-[100px]">
-                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(p3.nom)}" class="w-16 h-16 mb-2">
-                        <span class="text-[11px] font-bold truncate w-full text-center">${p3.nom}</span>
-                        <div class="podium-block bg-red-400 h-[65px] flex items-center justify-center text-white font-bold">#3</div>
-                    </div>`;
-
-                // AFFICHAGE DU RESTE
-                document.getElementById('leader-list').innerHTML = players.slice(3).map((p, i) => `
-                    <div class="list-row shadow-sm flex items-center p-2 bg-white rounded-lg mb-2">
-                        <div class="w-8 font-black opacity-30">#${i+4}</div>
-                        <div class="flex-1 ml-2">
-                            <p class="font-bold text-slate-700 text-sm">${p.nom}</p>
-                            <div class="text-[10px] font-bold text-blue-500">💎 ${p.score} PTS</div>
-                        </div>
-                    </div>`).join('');
+                renderPodium(players);
+                renderList(players);
             }
-        } catch (e) { console.error("Erreur de tri :", e); }
+        } catch (e) { console.error("Erreur :", e); }
     }
+
+    function renderPodium(players) {
+        const p1 = players[0] || {nom: "-", score: 0};
+        const p2 = players[1] || {nom: "-", score: 0};
+        const p3 = players[2] || {nom: "-", score: 0};
+
+        document.getElementById('podium-area').innerHTML = `
+            <div class="flex flex-col items-center w-[100px]">
+                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(p2.nom)}" class="w-16 h-16 mb-1">
+                <span class="text-[10px] font-bold truncate w-full text-center">${p2.nom}</span>
+                <div class="podium-block bg-amber-400 h-[70px] flex items-center justify-center text-white text-xs">#2</div>
+            </div>
+            <div class="flex flex-col items-center w-[100px]">
+                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(p1.nom)}" class="w-20 h-20 mb-1">
+                <span class="text-[10px] font-bold truncate w-full text-center">${p1.nom}</span>
+                <div class="podium-block bg-green-400 h-[100px] flex items-center justify-center text-white text-xs">#1</div>
+            </div>
+            <div class="flex flex-col items-center w-[100px]">
+                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(p3.nom)}" class="w-16 h-16 mb-1">
+                <span class="text-[10px] font-bold truncate w-full text-center">${p3.nom}</span>
+                <div class="podium-block bg-red-400 h-[50px] flex items-center justify-center text-white text-xs">#3</div>
+            </div>`;
+    }
+
+    function renderList(players) {
+        document.getElementById('leader-list').innerHTML = players.slice(3).map((p, i) => `
+            <div class="list-row shadow-sm flex items-center p-2 bg-white rounded-lg mb-2">
+                <div class="w-8 font-black opacity-30">#${i+4}</div>
+                <div class="flex-1 ml-2">
+                    <p class="font-bold text-slate-700 text-sm">${p.nom}</p>
+                    <div class="text-[10px] font-bold text-blue-500">💎 ${p.score} PTS - ${p.sujet}</div>
+                </div>
+            </div>`).join('');
+    }
+
     window.onload = updateApp;
 </script>
 </body>
 </html>
+
 
 
 
