@@ -118,71 +118,81 @@
             const response = await fetch(SCRIPT_URL);
             const data = await response.json();
 
+            // --- TRI AVANCÉ ---
             const players = data
                 .filter(i => i.nom && i.nom.trim() !== "")
                 .sort((a, b) => {
-                    // 1. Comparaison des scores
-                    const scoreA = parseInt(a.score) || 0;
-                    const scoreB = parseInt(b.score) || 0;
-                    if (scoreB !== scoreA) return scoreB - scoreA;
+                    // 1. On transforme les scores en nombres (important !)
+                    const scoreA = Number(a.score) || 0;
+                    const scoreB = Number(b.score) || 0;
 
-                    // 2. Gestion robuste de la date (pour les égalités)
-                    // On essaie de créer une date valide quoi qu'il arrive
-                    const dateA = new Date(a.date).getTime() || 0;
-                    const dateB = new Date(b.date).getTime() || 0;
-                    return dateB - dateA; // Le plus récent en haut
+                    if (scoreB !== scoreA) {
+                        return scoreB - scoreA; // Le plus haut score en premier
+                    }
+
+                    // 2. Si les scores sont identiques, on compare les dates
+                    // On s'assure que le dernier à avoir joué (date la plus grande) soit en haut
+                    const timeA = new Date(a.date).getTime() || 0;
+                    const timeB = new Date(b.date).getTime() || 0;
+                    return timeB - timeA; 
                 });
 
-            // Affichage du Podium
-            if (players.length > 0) {
-                const p = [
-                    players[0] || { nom: "---", score: 0 },
-                    players[1] || { nom: "---", score: 0 },
-                    players[2] || { nom: "---", score: 0 }
-                ];
+            // --- MISE À JOUR DU PODIUM ---
+            const p = [
+                players[0] || { nom: "---", score: 0 },
+                players[1] || { nom: "---", score: 0 },
+                players[2] || { nom: "---", score: 0 }
+            ];
 
-                document.getElementById('podium-area').innerHTML = `
-                    <div class="flex flex-col items-center w-[100px]">
-                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p[1].nom}" class="w-14 h-14 mb-2">
-                        <span class="text-[11px] font-bold text-slate-700 truncate w-full text-center">${p[1].nom.split(' ')[0]}</span>
-                        <div class="podium-block bg-slate-300 h-[80px] shadow-inner text-white text-sm">#2</div>
-                    </div>
-                    <div class="flex flex-col items-center w-[110px]">
+            document.getElementById('podium-area').innerHTML = `
+                <div class="flex flex-col items-center w-[100px] transition-all">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p[1].nom}" class="w-14 h-14 mb-2">
+                    <span class="text-[11px] font-bold text-slate-700 truncate w-full text-center">${p[1].nom.split(' ')[0]}</span>
+                    <div class="podium-block bg-slate-300 h-[85px] shadow-inner text-white font-black text-lg">#2</div>
+                    <div class="text-[10px] font-bold text-slate-400 mt-1">${p[1].score} pts</div>
+                </div>
+                <div class="flex flex-col items-center w-[110px] transition-all scale-110">
+                    <div class="relative">
+                        <i class="fas fa-crown absolute -top-4 left-1/2 -translate-x-1/2 text-yellow-400 text-xl"></i>
                         <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p[0].nom}" class="w-20 h-20 mb-2 border-4 border-yellow-400 rounded-full shadow-lg">
-                        <span class="text-[13px] font-black text-slate-800 truncate w-full text-center">${p[0].nom.split(' ')[0]}</span>
-                        <div class="podium-block bg-yellow-400 h-[110px] shadow-lg text-white">#1</div>
                     </div>
-                    <div class="flex flex-col items-center w-[100px]">
-                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p[2].nom}" class="w-14 h-14 mb-2">
-                        <span class="text-[11px] font-bold text-slate-700 truncate w-full text-center">${p[2].nom.split(' ')[0]}</span>
-                        <div class="podium-block bg-orange-400 h-[60px] shadow-inner text-white text-sm">#3</div>
-                    </div>`;
-            }
+                    <span class="text-[13px] font-black text-slate-800 truncate w-full text-center">${p[0].nom.split(' ')[0]}</span>
+                    <div class="podium-block bg-yellow-400 h-[115px] shadow-lg text-white font-black text-2xl">#1</div>
+                    <div class="text-[10px] font-bold text-yellow-600 mt-1">${p[0].score} pts</div>
+                </div>
+                <div class="flex flex-col items-center w-[100px] transition-all">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p[2].nom}" class="w-14 h-14 mb-2">
+                    <span class="text-[11px] font-bold text-slate-700 truncate w-full text-center">${p[2].nom.split(' ')[0]}</span>
+                    <div class="podium-block bg-orange-400 h-[65px] shadow-inner text-white font-black text-lg">#3</div>
+                    <div class="text-[10px] font-bold text-slate-400 mt-1">${p[2].score} pts</div>
+                </div>`;
 
-            // Affichage de la liste
+            // --- MISE À JOUR DE LA LISTE ---
             document.getElementById('leader-list').innerHTML = players.slice(3).map((p, i) => {
                 const s = rowStyles[i % rowStyles.length];
                 return `
                 <div class="list-row shadow-sm" style="background-color: ${s.bg}; color: ${s.color}">
                     <div class="w-8 font-black opacity-30 text-xs">#${i + 4}</div>
-                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p.nom}" class="w-10 h-10 rounded-xl bg-white">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p.nom}" class="w-10 h-10 rounded-xl bg-white shadow-sm">
                     <div class="flex-1 truncate ml-2">
                         <p class="font-bold text-slate-700 text-[13px]">${p.nom}</p>
-                        <div class="text-[9px] font-black uppercase opacity-60 text-slate-500">${p.sujet || 'Aventure'}</div>
+                        <div class="text-[9px] font-black uppercase opacity-60 text-slate-500 truncate w-40">${p.sujet || 'Exploration'}</div>
                     </div>
                     <div class="font-black text-sm pr-1">💎 ${p.score}</div>
                 </div>`;
             }).join('');
 
         } catch (e) {
-            console.error("Erreur détectée :", e);
+            console.error("Erreur de synchronisation :", e);
         }
     }
 
+    // Charger les données au démarrage
     window.onload = updateApp;
 </script>
  
 </body>
 </html>
+
 
 
