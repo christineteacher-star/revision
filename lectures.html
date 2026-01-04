@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lecteur DELF - Correction Phonétique Avancée</title>
+    <title>Lecteur DELF - Correction Phonétique</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -11,67 +11,45 @@
         body { font-family: 'Quicksand', sans-serif; background: #f8fafc; }
         .word { font-size: 1.8rem; margin: 0 5px; color: #cbd5e1; transition: all 0.3s; display: inline-block; cursor: pointer; border-radius: 8px; padding: 2px 4px; }
         .word.current { color: #3b82f6; font-weight: 700; background: #eff6ff; border-bottom: 4px solid #3b82f6; }
-        .word.read { color: #10b981 !important; font-weight: 700; } 
-        .word.skipped { color: #ef4444 !important; text-decoration: line-through; opacity: 0.6; }
-        .word.blocked { color: #f59e0b; animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        .word.read { color: #10b981 !important; font-weight: 700; }
+        .word.skipped { color: #ef4444 !important; text-decoration: line-through; } /* ROUGE SI PASSÉ */
     </style>
 </head>
 <body class="p-4 md:p-8">
 
     <div class="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl p-6 border border-slate-200">
         <header class="text-center mb-6">
-            <h1 class="text-3xl font-black text-slate-800 tracking-tight">LECTEUR INTERACTIF EXPERT</h1>
-            <p class="text-slate-500">Gérez les muettes. Si vous bloquez, cliquez 3 fois sur le bouton noir pour passer.</p>
+            <h1 class="text-3xl font-black text-slate-800">LECTEUR INTERACTIF</h1>
+            <p id="status-msg" class="text-slate-500">Dites "Ils mangent". Après 3 clics sur le 🔊, le mot devient rouge et passe.</p>
         </header>
 
-        <div class="flex flex-wrap justify-center gap-2 mb-8">
-            <button onclick="loadLevel('A1')" class="px-4 py-2 bg-slate-100 rounded-xl font-bold hover:bg-slate-200 transition">A1</button>
-            <button onclick="loadLevel('B1')" class="px-4 py-2 bg-slate-100 rounded-xl font-bold hover:bg-slate-200 transition">B1</button>
-            <button onclick="loadLevel('C1')" class="px-4 py-2 bg-slate-100 rounded-xl font-bold hover:bg-slate-200 transition">C1</button>
-        </div>
-
-        <div id="text-zone" class="bg-slate-50 rounded-2xl p-10 flex flex-wrap justify-center items-center text-center leading-[3.5rem] min-h-[300px]"></div>
-
-        <div id="help-container" class="mt-6 h-24 flex flex-col items-center justify-center">
-            <div id="help-message" class="hidden bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-xl shadow-sm text-amber-800 text-sm max-w-md"></div>
-        </div>
+        <div id="text-zone" class="bg-slate-50 rounded-2xl p-10 flex flex-wrap justify-center items-center text-center leading-[3.5rem] min-h-[250px]"></div>
 
         <div class="mt-4 flex flex-col items-center gap-4">
-            <div id="attempts-display" class="text-sm font-bold text-blue-500">Essais sur ce mot : 0/3</div>
+            <div id="attempts-badge" class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-bold">Essais : 0/3</div>
             <div class="flex gap-4">
-                <button id="mic-toggle" onclick="toggleSpeech()" class="w-20 h-20 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center text-3xl hover:bg-blue-700 transition-all">
+                <button id="mic-toggle" onclick="toggleSpeech()" class="w-20 h-20 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center text-3xl">
                     <i class="fas fa-microphone" id="mic-icon"></i>
                 </button>
-                <button onclick="listenAndCount()" class="w-16 h-16 bg-slate-800 text-white rounded-full shadow-lg flex items-center justify-center text-2xl hover:bg-slate-900 transition-all">
+                <button onclick="handleManualHelp()" class="w-16 h-16 bg-slate-800 text-white rounded-full shadow-lg flex items-center justify-center text-2xl">
                     <i class="fas fa-volume-up"></i>
                 </button>
             </div>
-            <div id="status" class="text-xs font-bold uppercase text-slate-400">Activez le micro (Chrome recommandé)</div>
         </div>
     </div>
 
     <script>
-        const texts = {
-            'A1': "Ils mangent du pain. Le chat attend sous le petit lit blanc. Ils parlent beaucoup.",
-            'B1': "Les touristes arrivent souvent tard. Ils achètent des vêtements.",
-            'C1': "Les scientifiques soutiennent que ces phénomènes surviennent brusquement."
-        };
-
-        const grammarRules = [
-            { regex: /ent$/, help: "💡 Aide : Le '-ent' final des verbes au pluriel est MUET." },
-            { regex: /[stdx]$/, help: "💡 Aide : La consonne finale est souvent muette en français." }
-        ];
-
+        const textToRead = "Ils mangent du pain.";
+        let words = textToRead.split(/\s+/);
         let currentIdx = 0;
-        let words = [];
-        let recognition;
+        let attempts = 0; // COMPTEUR D'ESSAIS
         let isActive = false;
-        let attempts = 0;
+        let recognition;
         const synth = window.speechSynthesis;
 
+        // 1. Initialisation de la reconnaissance
         const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if(Speech) {
+        if (Speech) {
             recognition = new Speech();
             recognition.lang = 'fr-FR';
             recognition.continuous = true;
@@ -82,15 +60,11 @@
                                  .map(res => res[0].transcript).join('').toLowerCase();
                 evaluate(heard);
             };
-            recognition.onend = () => { if(isActive) recognition.start(); };
         }
 
-        function loadLevel(lvl) {
-            words = texts[lvl].split(/\s+/);
-            currentIdx = 0;
-            attempts = 0;
+        // 2. Affichage des mots
+        function init() {
             const zone = document.getElementById('text-zone');
-            zone.innerHTML = '';
             words.forEach((w, i) => {
                 const s = document.createElement('span');
                 s.id = 'wd-' + i;
@@ -102,89 +76,82 @@
         }
 
         function updateFocus() {
-            document.querySelectorAll('.word').forEach(s => s.classList.remove('current', 'blocked'));
-            document.getElementById('help-message').classList.add('hidden');
-            document.getElementById('attempts-display').innerText = `Essais sur ce mot : ${attempts}/3`;
-            
+            document.querySelectorAll('.word').forEach(s => s.classList.remove('current'));
             const c = document.getElementById('wd-' + currentIdx);
-            if(c) {
-                c.classList.add('current');
-                c.scrollIntoView({behavior: "smooth", block: "center"});
-            }
+            if (c) c.classList.add('current');
+            document.getElementById('attempts-badge').innerText = `Essais : ${attempts}/3`;
         }
 
+        // 3. Logique de validation (avec correction pour les muettes)
         function evaluate(said) {
-            if(currentIdx >= words.length) return;
+            if (currentIdx >= words.length) return;
 
-            let target = words[currentIdx].toLowerCase().replace(/[.,!?;:]/g, "").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            let cleanSaid = said.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            let target = words[currentIdx].toLowerCase().replace(/[.,!?;:]/g, "");
+            let heard = said.toLowerCase();
 
-            // TOLÉRANCE PHONÉTIQUE (Ils/Il)
-            let isMatch = cleanSaid.includes(target);
-            if (!isMatch && target === "ils" && cleanSaid.includes("il")) isMatch = true;
-            if (!isMatch && target === "elles" && cleanSaid.includes("elle")) isMatch = true;
+            // TOLÉRANCE : On accepte "il" pour "ils" et "mange" pour "mangent"
+            let isMatch = heard.includes(target);
+            
+            // Si le mot est "ils", on accepte si l'IA entend "il"
+            if (!isMatch && target === "ils" && heard.includes("il")) isMatch = true;
+            
+            // Si le mot est "mangent", on accepte si l'IA entend "mange"
+            if (!isMatch && target === "mangent" && heard.includes("mange")) isMatch = true;
 
-            if(isMatch) {
+            if (isMatch) {
                 document.getElementById('wd-' + currentIdx).classList.add('read');
-                currentIdx++;
-                attempts = 0;
-                updateFocus();
+                moveToNext();
             }
         }
 
-        function listenAndCount() {
-            if(currentIdx >= words.length) return;
+        // 4. Gestion du bouton d'aide (3 clics = Rouge + Passage)
+        function handleManualHelp() {
+            if (currentIdx >= words.length) return;
 
-            // Lecture audio
+            // Faire prononcer le mot
             const utterance = new SpeechSynthesisUtterance(words[currentIdx]);
             utterance.lang = 'fr-FR';
-            utterance.rate = 0.8;
             synth.speak(utterance);
 
+            // Augmenter les essais
             attempts++;
-            
-            if(attempts >= 3) {
-                // PASSAGE EN ROUGE AUTOMATIQUE
-                showHelp(words[currentIdx]);
+
+            if (attempts >= 3) {
+                // Marquer en ROUGE
                 const el = document.getElementById('wd-' + currentIdx);
-                el.classList.add('skipped');
+                el.classList.add('skipped'); 
                 
+                // Petit délai avant de passer
                 setTimeout(() => {
-                    currentIdx++;
-                    attempts = 0;
-                    updateFocus();
-                }, 1500);
+                    moveToNext();
+                }, 800);
             } else {
                 updateFocus();
             }
         }
 
-        function showHelp(word) {
-            const cleanWord = word.toLowerCase().replace(/[.,!?;]/g, "");
-            let message = "Écoute bien la prononciation correcte.";
-            for (let rule of grammarRules) {
-                if (rule.regex.test(cleanWord)) { message = rule.help; break; }
+        function moveToNext() {
+            attempts = 0;
+            currentIdx++;
+            updateFocus();
+            if (currentIdx === words.length) {
+                document.getElementById('status-msg').innerText = "Félicitations ! Lecture terminée.";
             }
-            const helpEl = document.getElementById('help-message');
-            helpEl.innerHTML = message;
-            helpEl.classList.remove('hidden');
         }
 
         function toggleSpeech() {
-            if(!isActive) {
+            if (!isActive) {
                 recognition.start();
                 isActive = true;
                 document.getElementById('mic-toggle').classList.replace('bg-blue-600', 'bg-red-500');
-                document.getElementById('status').innerText = "Lecture en cours...";
             } else {
                 recognition.stop();
                 isActive = false;
                 document.getElementById('mic-toggle').classList.replace('bg-red-500', 'bg-blue-600');
-                document.getElementById('status').innerText = "Pause";
             }
         }
 
-        loadLevel('A1');
+        init();
     </script>
 </body>
 </html>
