@@ -280,31 +280,31 @@
 
     // --- CETTE FONCTION ÉTAIT ABSENTE ET EST NÉCESSAIRE POUR EXCEL ---
     function envoyerResultat(pseudoJoueur, scoreFinal) {
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys_uz58mt03TDr5gthhtJIeZJqqJDTuikaHwUa60o2rp3S4jIOeuABIrjWyfUDuhEdLg/exec"; 
+    // L'URL unique qui centralise tout
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys_uz58mt03TDr5gthhtJIeZJqqJDTuikaHwUa60o2rp3S4jIOeuABIrjWyfUDuhEdLg/exec";
     
     const data = {
-        nom: pseudoJoueur, 
-        score: Math.round((scoreFinal / 15) * 100),
-        sujet: "Voyage" 
+        nom: pseudoJoueur,   // On utilise "nom" car c'est ce que votre index et script attendent
+        score: scoreFinal * 10, 
+        sujet: document.title // Récupère automatiquement le titre de la page (ex: Monte Cristo)
     };
-
-    // Ajout d'une vérification console pour le débogage
-    console.log("Tentative d'envoi pour :", pseudoJoueur);
 
     fetch(SCRIPT_URL, {
         method: "POST",
-        mode: "no-cors", // Gardé pour éviter les erreurs CORS avec Google Apps Script
+        mode: "no-cors", 
         cache: "no-cache",
-        headers: {
-            "Content-Type": "text/plain;charset=utf-8", // Format recommandé pour Apps Script en mode no-cors
-        },
         body: JSON.stringify(data)
     })
-    .then(() => console.log("Données transmises vers le script."))
-    .catch(err => console.error("Erreur de transmission :", err));
+    .then(() => {
+        console.log("Données envoyées !");
+    })
+    .catch((error) => {
+        console.error("Erreur :", error);
+    });
 }
 </script>
 </body>
 </html>
+
 
 
