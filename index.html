@@ -104,40 +104,60 @@
         <div id="leader-list" class="overflow-y-auto flex-1"></div>
     </aside>
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqLheXqYNAzM3cDMNJTtM03MxUmKYZTfB4etoK5jmHFtWNlDjlc6zQDyZlE7gZnlyXqg/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys_uz58mt03TDr5gthhtJIeZJqqJDTuikaHwUa60o2rp3S4jIOeuABIrjWyfUDuhEdLg/exec";
     
     const rowStyles = [
-        { bg: "#f5f3ff", color: "#8b5cf6" },
-        { bg: "#ecfdf5", color: "#10b981" },
-        { bg: "#fff7ed", color: "#f97316" },
-        { bg: "#eff6ff", color: "#3b82f6" }
+        { bg: "#f5f3ff", color: "#8b5cf6", glow: "rgba(139, 92, 246, 0.3)" },
+        { bg: "#ecfdf5", color: "#10b981", glow: "rgba(16, 185, 129, 0.3)" },
+        { bg: "#fff7ed", color: "#f97316", glow: "rgba(249, 115, 22, 0.3)" },
+        { bg: "#eff6ff", color: "#3b82f6", glow: "rgba(59, 130, 246, 0.3)" }
     ];
 
     async function updateApp() {
         try {
-            const response = await fetch(SCRIPT_URL);
+            const response = await fetch(SCRIPT_URL + "?nocache=" + Date.now());
             const data = await response.json();
 
-            // --- TRI AVANCÉ ---
-            const players = data
-                .filter(i => i.nom && i.nom.trim() !== "")
-                .sort((a, b) => {
-                    // 1. On transforme les scores en nombres (important !)
-                    const scoreA = Number(a.score) || 0;
-                    const scoreB = Number(b.score) || 0;
+            // --- TRAITEMENT INTELLIGENT ---
+            let players = data.map((item, index) => {
+                let foundName = "Aventurier";
+                let foundScore = 0;
 
-                    if (scoreB !== scoreA) {
-                        return scoreB - scoreA; // Le plus haut score en premier
+                // On scanne toutes les propriétés de l'objet envoyé par Google
+                for (let key in item) {
+                    let val = item[key];
+                    let lowKey = key.toLowerCase();
+
+                    // Si c'est une colonne de nom
+                    if (lowKey.includes("nom") || lowKey.includes("joueur")) {
+                        foundName = val;
                     }
+                    // Si c'est une valeur numérique (le score), on prend la plus haute trouvée
+                    if (!isNaN(val) && typeof val !== "boolean" && lowKey !== "id") {
+                        let num = parseInt(val);
+                        if (num > foundScore) foundScore = num;
+                    }
+                }
+                
+                return {
+                    nom: String(foundName).trim(),
+                    score: foundScore,
+                    // On utilise l'index d'arrivée (le dernier dans le Sheets est le plus grand index)
+                    order: index 
+                };
+            }).filter(p => p.nom !== "Aventurier" && p.nom !== "");
 
-                    // 2. Si les scores sont identiques, on compare les dates
-                    // On s'assure que le dernier à avoir joué (date la plus grande) soit en haut
-                    const timeA = new Date(a.date).getTime() || 0;
-                    const timeB = new Date(b.date).getTime() || 0;
-                    return timeB - timeA; 
-                });
+            // --- LE TRI CRITIQUE ---
+            players.sort((a, b) => {
+                // 1. D'abord par score (le plus haut)
+                if (b.score !== a.score) {
+                    return b.score - a.score;
+                }
+                // 2. Si égalité (ex: 100 pts), le DERNIER arrivé (index le plus haut) passe devant
+                return b.order - a.order;
+            });
 
-            // --- MISE À JOUR DU PODIUM ---
+            // --- RENDU PODIUM (DESIGN RESTAURÉ) ---
             const p = [
                 players[0] || { nom: "---", score: 0 },
                 players[1] || { nom: "---", score: 0 },
@@ -145,54 +165,45 @@
             ];
 
             document.getElementById('podium-area').innerHTML = `
-                <div class="flex flex-col items-center w-[100px] transition-all">
-                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p[1].nom}" class="w-14 h-14 mb-2">
-                    <span class="text-[11px] font-bold text-slate-700 truncate w-full text-center">${p[1].nom.split(' ')[0]}</span>
-                    <div class="podium-block bg-slate-300 h-[85px] shadow-inner text-white font-black text-lg">#2</div>
+                <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p[1].nom}" class="w-16 h-16 mb-2">
+                    <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">${p[1].nom}</span>
+                    <div class="podium-block bg-amber-400 h-[85px] shadow-md flex items-center justify-center text-white font-black text-xl">#2</div>
                     <div class="text-[10px] font-bold text-slate-400 mt-1">${p[1].score} pts</div>
                 </div>
-                <div class="flex flex-col items-center w-[110px] transition-all scale-110">
-                    <div class="relative">
-                        <i class="fas fa-crown absolute -top-4 left-1/2 -translate-x-1/2 text-yellow-400 text-xl"></i>
-                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p[0].nom}" class="w-20 h-20 mb-2 border-4 border-yellow-400 rounded-full shadow-lg">
-                    </div>
-                    <span class="text-[13px] font-black text-slate-800 truncate w-full text-center">${p[0].nom.split(' ')[0]}</span>
-                    <div class="podium-block bg-yellow-400 h-[115px] shadow-lg text-white font-black text-2xl">#1</div>
+                <div class="flex flex-col items-center w-[110px] transition-transform hover:-translate-y-2">
+                    <i class="fas fa-crown text-yellow-400 mb-1"></i>
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p[0].nom}" class="w-20 h-20 mb-2 border-4 border-yellow-400 rounded-full shadow-lg">
+                    <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">${p[0].nom}</span>
+                    <div class="podium-block bg-green-400 h-[115px] shadow-xl flex items-center justify-center text-white font-black text-2xl">#1</div>
                     <div class="text-[10px] font-bold text-yellow-600 mt-1">${p[0].score} pts</div>
                 </div>
-                <div class="flex flex-col items-center w-[100px] transition-all">
-                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p[2].nom}" class="w-14 h-14 mb-2">
-                    <span class="text-[11px] font-bold text-slate-700 truncate w-full text-center">${p[2].nom.split(' ')[0]}</span>
-                    <div class="podium-block bg-orange-400 h-[65px] shadow-inner text-white font-black text-lg">#3</div>
+                <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p[2].nom}" class="w-16 h-16 mb-2">
+                    <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">${p[2].nom}</span>
+                    <div class="podium-block bg-red-400 h-[65px] shadow-md flex items-center justify-center text-white font-black text-xl">#3</div>
                     <div class="text-[10px] font-bold text-slate-400 mt-1">${p[2].score} pts</div>
                 </div>`;
 
-            // --- MISE À JOUR DE LA LISTE ---
-            document.getElementById('leader-list').innerHTML = players.slice(3).map((p, i) => {
+            // --- RENDU LISTE (DESIGN RESTAURÉ) ---
+            document.getElementById('leader-list').innerHTML = players.slice(3).map((player, i) => {
                 const s = rowStyles[i % rowStyles.length];
                 return `
-                <div class="list-row shadow-sm" style="background-color: ${s.bg}; color: ${s.color}">
-                    <div class="w-8 font-black opacity-30 text-xs">#${i + 4}</div>
-                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p.nom}" class="w-10 h-10 rounded-xl bg-white shadow-sm">
+                <div class="list-row shadow-sm" style="background-color: ${s.bg}; color: ${s.color}; border: 2px solid transparent; cursor: pointer; transition: 0.3; " 
+                     onmouseover="this.style.transform='translateX(10px)'; this.style.boxShadow='0 10px 20px ${s.glow}'; this.style.borderColor='white'" 
+                     onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='none'; this.style.borderColor='transparent'">
+                    <div class="w-8 font-black opacity-30">#${i + 4}</div>
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${player.nom}" class="w-11 h-11 rounded-2xl bg-white border-2 border-white shadow-sm">
                     <div class="flex-1 truncate ml-2">
-                        <p class="font-bold text-slate-700 text-[13px]">${p.nom}</p>
-                        <div class="text-[9px] font-black uppercase opacity-60 text-slate-500 truncate w-40">${p.sujet || 'Exploration'}</div>
+                        <p class="font-bold text-slate-700 text-[13px]">${player.nom}</p>
+                        <div class="text-[10px] font-black uppercase tracking-widest opacity-70">💎 ${player.score} PTS</div>
                     </div>
-                    <div class="font-black text-sm pr-1">💎 ${p.score}</div>
                 </div>`;
             }).join('');
 
-        } catch (e) {
-            console.error("Erreur de synchronisation :", e);
-        }
+        } catch (e) { console.error("Erreur:", e); }
     }
-
-    // Charger les données au démarrage
     window.onload = updateApp;
 </script>
- 
 </body>
 </html>
-
-
-
