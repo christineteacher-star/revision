@@ -13,108 +13,90 @@
         .logo-dragon { width: 48px; height: 48px; background: #3b82f6; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; margin-bottom: 40px; cursor:pointer; }
         .main-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
         .game-card { background: white; border-radius: 35px; padding: 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 750px; }
-        
         .opt-btn { width: 100%; padding: 15px; margin-bottom: 10px; border: 2px solid #f1f5f9; border-radius: 18px; text-align: left; font-weight: 600; transition: 0.2s; cursor: pointer; color: #475569; display: flex; align-items: center; gap: 12px; }
         .opt-btn:hover:not(:disabled) { background: #f0f9ff; border-color: #3b82f6; transform: translateX(5px); }
-        
         .correct { background: #d1fae5 !important; color: #065f46 !important; border-color: #10b981 !important; }
         .wrong { background: #fee2e2 !important; color: #991b1b !important; border-color: #ef4444 !important; }
-        
-        #playerNameInput { background-color: #f1f5f9 !important; border: 2px solid #cbd5e1 !important; }
         .section-tag { background: #dbeafe; color: #1e40af; padding: 4px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; display: inline-block; }
     </style>
 </head>
 <body>
     <nav class="sidebar">
-        <div class="logo-dragon" onclick="window.location.href='index.html'"><i class="fas fa-dragon"></i></div>
-        <div class="text-slate-300 hover:text-blue-500 cursor-pointer" onclick="window.location.href='index.html'"><i class="fas fa-home text-2xl"></i></div>
+        <div class="logo-dragon"><i class="fas fa-dragon"></i></div>
+        <div class="text-slate-300 hover:text-blue-500 cursor-pointer"><i class="fas fa-home text-2xl"></i></div>
     </nav>
 
     <main class="main-content">
         <div class="game-card">
-            
             <div id="start-zone" class="text-center">
-                <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-6">
-                    <i class="fas fa-map-marked-alt"></i>
-                </div>
+                <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-6"><i class="fas fa-map-marked-alt"></i></div>
                 <h2 class="text-3xl font-black text-slate-800 mb-2">Vivre Ailleurs</h2>
-                <p class="text-slate-500 mb-8 px-10">Révision complète : Modes du récit, conjugaison et analyse d'image. Prêt pour le test ?</p>
-                
-                <div class="max-w-xs mx-auto">
-                    <input type="text" id="playerNameInput" placeholder="Ton Prénom" class="w-full p-4 rounded-2xl mb-4 text-center font-bold text-lg outline-none">
-                    <button onclick="preStart()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-blue-700 transition-all">COMMENCER LA RÉVISION</button>
+                <div class="max-w-xs mx-auto mt-8">
+                    <input type="text" id="playerNameInput" placeholder="Ton Prénom" class="w-full p-4 rounded-2xl mb-4 text-center font-bold text-lg border-2 border-slate-200 outline-none focus:border-blue-500">
+                    <button onclick="preStart()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-blue-700 transition-all">DÉMARRER LA RÉVISION</button>
                 </div>
             </div>
 
             <div id="quiz-ui" class="hidden">
                 <div class="flex justify-between items-start mb-6">
                     <div>
-                        <span id="section-label" class="section-tag">Analyse Littéraire</span>
+                        <span id="section-label" class="section-tag">Analyse</span>
                         <h3 id="q-text" class="text-xl font-bold text-slate-800 leading-tight mt-2"></h3>
                     </div>
-                    <div class="text-right min-w-[80px]">
+                    <div class="text-right">
                         <span id="progress" class="text-slate-400 text-[10px] font-bold uppercase block">Quest. 1 / 30</span>
                         <p id="score-display" class="text-2xl font-black text-blue-600">0</p>
                     </div>
                 </div>
-
                 <div id="options" class="space-y-3"></div>
-                
                 <div id="feedback" class="mt-6 p-5 rounded-2xl text-sm hidden border-l-8"></div>
-                
-                <button id="next-btn" class="hidden w-full mt-6 bg-slate-800 text-white py-4 rounded-2xl font-bold hover:bg-slate-900 transition flex items-center justify-center gap-2">
-                    CONTINUER <i class="fas fa-arrow-right"></i>
-                </button>
+                <button id="next-btn" class="hidden w-full mt-6 bg-slate-800 text-white py-4 rounded-2xl font-bold hover:bg-slate-900 transition flex items-center justify-center gap-2">CONTINUER <i class="fas fa-arrow-right"></i></button>
             </div>
 
             <div id="final-screen" class="hidden text-center">
                 <div id="final-icon" class="w-24 h-24 rounded-full flex items-center justify-center text-4xl mx-auto mb-6"></div>
                 <h2 id="final-title" class="text-3xl font-black text-slate-800 mb-2"></h2>
-                <p id="final-msg" class="text-slate-500 mb-8 px-10"></p>
                 <div class="text-6xl font-black text-blue-600 mb-8" id="final-score">0 / 30</div>
-                
-                <div class="flex flex-col gap-3">
-                    <button onclick="location.reload()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold">RECOMMENCER</button>
-                    <button onclick="window.location.href='index.html'" class="w-full bg-slate-100 text-slate-600 py-4 rounded-2xl font-bold">RETOUR ACCUEIL</button>
-                </div>
+                <button onclick="location.reload()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold">REJOUER</button>
             </div>
-
         </div>
     </main>
 
     <script>
-        // Configuration des questions basée sur ton document
+        // REMPLACEZ CETTE URL PAR LA VÔTRE
+         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys_uz58mt03TDr5gthhtJIeZJqqJDTuikaHwUa60o2rp3S4jIOeuABIrjWyfUDuhEdLg/exec";
+        
         const questions = [
-            { s: "Analyse Littéraire", q: "Quelles sont les trois composantes essentielles (modes d'écriture) d'un récit ?", o: ["Introduction, développement, conclusion", "Passé simple, imparfait, présent", "Narration, Description et Discours rapporté", "Auteur, narrateur, lecteur"], r: 2, f: "La **Narration** (actions), la **Description** (lieux/portraits) et le **Discours** (paroles) sont les trois piliers du récit." },
-            { s: "Analyse Littéraire", q: "Qui sont les deux personnages principaux de 'La Petite Fille de Monsieur Linh' ?", o: ["Philippe Claudel et le narrateur", "Monsieur Linh et la petite fille", "Le narrateur et le chauffeur", "Monsieur Linh et Monsieur Bark"], r: 1, f: "L'interaction entre **Monsieur Linh** et la **petite fille** forme le cœur de l'extrait 'Départ forcé'." },
-            { s: "Analyse Littéraire", q: "Quel terme désigne un récit qui fait un retour en arrière ?", o: ["Proleptique", "Descriptif", "Prospectif", "Rétrospectif"], r: 3, f: "Le récit **rétrospectif** (ou analepse) revient sur des événements passés." },
-            { s: "Analyse Littéraire", q: "Quand le narrateur sait tout (pensées, passé, futur), la focalisation est :", o: ["Interne", "Zéro (omnisciente)", "Externe", "Multiple"], r: 1, f: "La **focalisation zéro** est celle du narrateur 'Dieu' qui connaît tout de son univers." },
-            { s: "Analyse Littéraire", q: "Si le récit est écrit à la 3e personne ('il/elle'), le narrateur est :", o: ["Un narrateur-personnage", "Un narrateur externe", "Un personnage secondaire", "Un narrateur subjectif"], r: 1, f: "Le **narrateur externe** raconte l'histoire sans y participer." },
-            { s: "Analyse Littéraire", q: "Quel procédé permet d'étirer la durée (ex: un dialogue) ?", o: ["Le Sommaire", "L'Ellipse", "La Pause", "La Scène"], r: 3, f: "La **scène** fait coïncider le temps du récit avec celui de l'histoire." },
-            { s: "Analyse Littéraire", q: "Dans 'La mère demanda : « Où est-il ? »', le discours est :", o: ["Indirect libre", "Indirect", "Direct", "Rapporté"], r: 2, f: "Le **discours direct** utilise les guillemets pour rapporter les paroles exactes." },
-            { s: "Analyse Littéraire", q: "Le narrateur coupé du récit utilisant la 3e personne est en mode :", o: ["Énonciatif", "Non-ancré (coupé)", "Ancré", "Direct"], r: 1, f: "Le **mode non-ancré** est typique du récit au passé (Passé Simple/Imparfait)." },
-            { s: "Analyse Littéraire", q: "Quelle est la valeur du Présent de Narration ?", o: ["Habitude", "Ancrer dans l'action", "Événements futurs", "État permanent"], r: 1, f: "Il rend les actions plus **vivantes**, comme si elles se passaient sous nos yeux." },
-            { s: "Analyse Littéraire", q: "L'Imparfait dans 'Ses cheveux étaient blonds' exprime :", o: ["Succession", "Antériorité", "Description ou état", "Action achevée"], r: 2, f: "C'est le temps de la **description** et de la toile de fond." },
-            { s: "Analyse Littéraire", q: "Le Passé Simple dans 'Soudain, il tomba' exprime :", o: ["Répétition", "Durée", "Action soudaine et achevée", "Antériorité"], r: 2, f: "Le **Passé Simple** fait avancer l'intrigue par des actions brèves." },
-            { s: "Analyse Littéraire", q: "Le Plus-que-parfait (ex: 'il avait compris') sert à exprimer :", o: ["Simultanéité", "Postériorité", "Antériorité dans le passé", "Habitude"], r: 2, f: "Il exprime une action faite **avant** une autre action passée." },
-            { s: "Analyse Littéraire", q: "Laquelle de ces formes est à l'Imparfait ?", o: ["Il voit", "Il verra", "Il voyait", "Il vit"], r: 2, f: "L'Imparfait se reconnaît à sa terminaison en **-ait**." },
-            { s: "Analyse Littéraire", q: "Temps privilégié à l'oral pour une action passée :", o: ["Imparfait", "Passé Simple", "Passé Composé", "Plus-que-parfait"], r: 2, f: "Le **Passé Composé** est le temps du récit oral/quotidien." },
-            { s: "Analyse Littéraire", q: "Comment se forme le Passé Composé ?", o: ["Auxiliaire Imparfait + Participe", "Auxiliaire Présent + Infinitif", "Auxiliaire Présent + Participe Passé", "Passé Simple + Participe"], r: 2, f: "Auxiliaire (être/avoir) au **présent** + Participe Passé." },
-            { s: "Analyse Littéraire", q: "Forme correcte de 'sortir' au Passé Simple (3e pers. sing) :", o: ["Il sortait", "Il sorta", "Il sortit", "Il est sorti"], r: 2, f: "Pour le 3e groupe, c'est souvent la terminaison en **-it**." },
-            { s: "Analyse Littéraire", q: "Forme correcte de 'pleurer' au Passé Simple (3e pers. plur) :", o: ["Ils pleuraient", "Ils pleurèrent", "Ils pleurons", "Ils ont pleuré"], r: 1, f: "1er groupe au pluriel = terminaison en **-èrent**." },
-            { s: "Analyse Littéraire", q: "Figure de style : 'Elle bouge comme un sac de riz' ?", o: ["Métaphore", "Hyperbole", "Comparaison", "Personnification"], r: 2, f: "L'outil comparatif **'comme'** indique une comparaison." },
-            { s: "Analyse Littéraire", q: "Figure de style : 'La petite fille est une ancre' ?", o: ["Comparaison", "Métaphore", "Allégorie", "Litote"], r: 1, f: "C'est une **métaphore** car l'assimilation se fait sans mot-outil." },
-            { s: "Analyse Littéraire", q: "Figure de style : 'Elle a pleuré toutes les larmes de son corps' ?", o: ["Litote", "Antiphrase", "Anaphore", "Hyperbole"], r: 3, f: "L'**hyperbole** est l'exagération pour frapper l'esprit." },
-            { s: "Analyse Littéraire", q: "Valeur de 'donc' dans 'Il pleut, donc je sors' :", o: ["Addition", "Cause", "Conséquence", "Opposition"], r: 2, f: "'Donc' introduit toujours une **conséquence** logique." },
-            { s: "Analyse Littéraire", q: "Lequel exprime une opposition ?", o: ["De plus", "Par conséquent", "Cependant", "Car"], r: 2, f: "**Cependant** marque une rupture ou une nuance." },
-            { s: "Analyse Littéraire", q: "Classe grammaticale de 'ailleurs' :", o: ["Nom", "Adjectif", "Adverbe", "Préposition"], r: 2, f: "C'est un **adverbe** de lieu invariable." },
-            { s: "Analyse Littéraire", q: "Valeur de l'Infinitif dans le titre 'Vivre ailleurs' :", o: ["Ordre", "Action unique", "Générale et impersonnelle", "Future"], r: 2, f: "L'infinitif donne une portée **universelle** au sujet." },
-            { s: "Analyse Littéraire", q: "Quel est le COD dans 'Elle regarda l'enfant' ?", o: ["Elle", "regarda", "l'enfant", "regarda l'enfant"], r: 2, f: "Elle regarda **qui ?** -> l'enfant (COD)." },
-            { s: "Analyse Littéraire", q: "Lequel est un mode impersonnel ?", o: ["Indicatif", "Subjonctif", "Conditionnel", "L'Infinitif"], r: 3, f: "L'**Infinitif** ne change pas selon la personne (je/tu/il)." },
-            { s: "Analyse Littéraire", q: "Valeur de 'en chantant' :", o: ["Conséquence", "Condition", "Cause", "Simultanéité"], r: 3, f: "Le **gérondif** indique deux actions qui se passent en même temps." },
-            { s: "Analyse de l'Image", q: "Plan montrant le personnage en entier et le décor visible :", o: ["Gros plan", "Plan d'ensemble", "Plan américain", "Plan rapproché"], r: 1, f: "Le **Plan d'ensemble** situe l'action dans son contexte." },
-            { s: "Analyse de l'Image", q: "Angle de vue où l'on domine le sujet (vu d'en haut) :", o: ["Plan séquence", "Contre-plongée", "Plongée", "Plan général"], r: 2, f: "La **plongée** écrase le personnage et donne un sentiment de faiblesse." },
-            { s: "Analyse de l'Image", q: "Signification des couleurs sombres (gris, marron) :", o: ["Joie", "Évasion", "Mélancolie ou gravité", "Dynamisme"], r: 2, f: "Les tons froids/sombres créent une atmosphère de **gravité**." }
+            { s: "Analyse Littéraire", q: "Quelles sont les trois composantes essentielles (modes d'écriture) d'un récit ?", o: ["Introduction, développement, conclusion", "Passé simple, imparfait, présent", "Narration, Description et Discours rapporté", "Auteur, narrateur, lecteur"], r: 2, f: "La Narration, la Description et le Discours sont les trois piliers." },
+            { s: "Analyse Littéraire", q: "Qui sont les deux personnages principaux de 'Monsieur Linh' ?", o: ["Philippe Claudel et le narrateur", "Monsieur Linh et la petite fille", "Le narrateur et le chauffeur", "Monsieur Linh et Monsieur Bark"], r: 1, f: "Monsieur Linh et la petite fille forment le cœur de l'histoire." },
+            { s: "Analyse Littéraire", q: "Quel terme désigne un récit qui fait un retour en arrière ?", o: ["Proleptique", "Descriptif", "Prospectif", "Rétrospectif"], r: 3, f: "Le récit rétrospectif revient sur le passé." },
+            { s: "Analyse Littéraire", q: "Quand le narrateur sait tout, la focalisation est :", o: ["Interne", "Zéro (omnisciente)", "Externe", "Multiple"], r: 1, f: "La focalisation zéro signifie que le narrateur sait tout." },
+            { s: "Analyse Littéraire", q: "Si le récit est écrit à la 3e personne ('il'), le narrateur est :", o: ["Narrateur-personnage", "Narrateur externe", "Personnage secondaire", "Narrateur subjectif"], r: 1, f: "Le narrateur externe ne participe pas à l'histoire." },
+            { s: "Analyse Littéraire", q: "Quel procédé permet d'étirer la durée ?", o: ["Le Sommaire", "L'Ellipse", "La Pause", "La Scène"], r: 3, f: "La scène (souvent dialogue) ralentit le récit." },
+            { s: "Analyse Littéraire", q: "Dans 'Elle dit : « Bonjour »', le discours est :", o: ["Indirect libre", "Indirect", "Direct", "Rapporté"], r: 2, f: "Le discours direct utilise les guillemets." },
+            { s: "Analyse Littéraire", q: "Le narrateur coupé du récit est en mode :", o: ["Énonciatif", "Non-ancré (coupé)", "Ancré", "Direct"], r: 1, f: "Le mode non-ancré est typique du récit au passé." },
+            { s: "Analyse Littéraire", q: "Quelle est la valeur du Présent de Narration ?", o: ["Habitude", "Ancrer dans l'action", "Futur", "Permanent"], r: 1, f: "Il rend l'action vivante." },
+            { s: "Analyse Littéraire", q: "L'Imparfait exprime souvent :", o: ["Succession", "Antériorité", "Description ou état", "Action achevée"], r: 2, f: "C'est le temps de la description." },
+            { s: "Analyse Littéraire", q: "Le Passé Simple exprime une action :", o: ["Répétée", "Longue", "Soudaine et achevée", "Antérieure"], r: 2, f: "Il marque les actions brèves qui font avancer l'histoire." },
+            { s: "Analyse Littéraire", q: "Le Plus-que-parfait exprime :", o: ["Simultanéité", "Postériorité", "Antériorité dans le passé", "Habitude"], r: 2, f: "Il exprime une action faite avant une autre." },
+            { s: "Analyse Littéraire", q: "Laquelle est à l'Imparfait ?", o: ["Il voit", "Il verra", "Il voyait", "Il vit"], r: 2, f: "Terminaison en -ait." },
+            { s: "Analyse Littéraire", q: "Temps privilégié à l'oral pour le passé :", o: ["Imparfait", "Passé Simple", "Passé Composé", "Plus-que-parfait"], r: 2, f: "Le Passé Composé domine à l'oral." },
+            { s: "Analyse Littéraire", q: "Formation du Passé Composé :", o: ["Imparfait + Participe", "Présent + Infinitif", "Auxiliaire Présent + Participe", "Passé Simple + Participe"], r: 2, f: "Auxiliaire présent + participe passé." },
+            { s: "Analyse Littéraire", q: "Sortir au Passé Simple (il) :", o: ["Sortait", "Sorta", "Sortit", "Est sorti"], r: 2, f: "3e groupe = souvent -it." },
+            { s: "Analyse Littéraire", q: "Pleurer au Passé Simple (ils) :", o: ["Pleuraient", "Pleurèrent", "Pleurons", "Ont pleuré"], r: 1, f: "1er groupe = -èrent." },
+            { s: "Analyse Littéraire", q: "Figure de style : 'Elle bouge comme un sac' ?", o: ["Métaphore", "Hyperbole", "Comparaison", "Personnification"], r: 2, f: "Présence du mot 'comme'." },
+            { s: "Analyse Littéraire", q: "Figure de style : 'La fille est une ancre' ?", o: ["Comparaison", "Métaphore", "Allégorie", "Litote"], r: 1, f: "Métaphore (pas d'outil de comparaison)." },
+            { s: "Analyse Littéraire", q: "Exagération : 'Elle a pleuré toutes ses larmes' ?", o: ["Litote", "Antiphrase", "Anaphore", "Hyperbole"], r: 3, f: "C'est une hyperbole." },
+            { s: "Analyse Littéraire", q: "Valeur de 'donc' :", o: ["Addition", "Cause", "Conséquence", "Opposition"], r: 2, f: "Indique la conséquence." },
+            { s: "Analyse Littéraire", q: "Exprime une opposition :", o: ["De plus", "Par conséquent", "Cependant", "Car"], r: 2, f: "Cependant est une opposition." },
+            { s: "Analyse Littéraire", q: "Classe de 'ailleurs' :", o: ["Nom", "Adjectif", "Adverbe", "Préposition"], r: 2, f: "C'est un adverbe de lieu." },
+            { s: "Analyse Littéraire", q: "Infinitif 'Vivre' dans un titre :", o: ["Ordre", "Unique", "Général et impersonnel", "Futur"], r: 2, f: "Valeur générale." },
+            { s: "Analyse Littéraire", q: "COD dans 'Elle regarde l'enfant' :", o: ["Elle", "regarde", "l'enfant", "regarde l'enfant"], r: 2, f: "Répond à 'Qui ?'." },
+            { s: "Analyse Littéraire", q: "Mode impersonnel :", o: ["Indicatif", "Subjonctif", "Conditionnel", "Infinitif"], r: 3, f: "L'infinitif ne se conjugue pas." },
+            { s: "Analyse Littéraire", q: "Valeur de 'en chantant' :", o: ["Conséquence", "Condition", "Cause", "Simultanéité"], r: 3, f: "Action simultanée." },
+            { s: "Analyse Image", q: "Plan montrant décor et personnage entier :", o: ["Gros plan", "Plan d'ensemble", "Plan américain", "Rapproché"], r: 1, f: "C'est le plan d'ensemble." },
+            { s: "Analyse Image", q: "Angle vu d'en haut :", o: ["Séquence", "Contre-plongée", "Plongée", "Général"], r: 2, f: "C'est la plongée." },
+            { s: "Analyse Image", q: "Couleurs sombres signifiant :", o: ["Joie", "Évasion", "Mélancolie/Gravité", "Dynamisme"], r: 2, f: "Évoque souvent la gravité." }
         ];
 
         let currentIndex = 0, score = 0, pseudo = "";
@@ -135,13 +117,12 @@
             document.getElementById('q-text').innerText = data.q;
             document.getElementById('feedback').classList.add('hidden');
             document.getElementById('next-btn').classList.add('hidden');
-            
             const box = document.getElementById('options');
             box.innerHTML = "";
             data.o.forEach((opt, i) => {
                 const b = document.createElement('button');
                 b.className = "opt-btn";
-                b.innerHTML = `<span>${opt}</span>`;
+                b.innerText = opt;
                 b.onclick = () => check(i, b);
                 box.appendChild(b);
             });
@@ -151,19 +132,17 @@
             const data = questions[currentIndex];
             const btns = document.getElementsByClassName('opt-btn');
             for(let b of btns) b.disabled = true;
-
             const f = document.getElementById('feedback');
             f.classList.remove('hidden');
-            
             if(idx === data.r) {
                 score++;
                 btn.classList.add('correct');
                 f.className = "mt-6 p-5 rounded-2xl text-sm border-l-8 bg-green-50 text-green-700 border-green-500 shadow-sm";
-                f.innerHTML = `<div class="flex items-center gap-3 mb-1"><i class="fas fa-check-circle text-lg"></i><b>Excellent !</b></div> ${data.f}`;
+                f.innerHTML = `<b>Excellent !</b> ${data.f}`;
             } else {
                 btn.classList.add('wrong');
                 f.className = "mt-6 p-5 rounded-2xl text-sm border-l-8 bg-red-50 text-red-700 border-red-500 shadow-sm";
-                f.innerHTML = `<div class="flex items-center gap-3 mb-1"><i class="fas fa-times-circle text-lg"></i><b>À revoir...</b></div> ${data.f}`;
+                f.innerHTML = `<b>À revoir...</b> ${data.f}`;
                 btns[data.r].classList.add('correct');
             }
             document.getElementById('score-display').innerText = score;
@@ -176,34 +155,30 @@
             else finish();
         };
 
-        function finish() {
+        async function finish() {
             document.getElementById('quiz-ui').classList.add('hidden');
-            const screen = document.getElementById('final-screen');
-            screen.classList.remove('hidden');
-            
-            const scoreDisplay = document.getElementById('final-score');
-            scoreDisplay.innerText = `${score} / ${questions.length}`;
-
+            document.getElementById('final-screen').classList.remove('hidden');
+            document.getElementById('final-score').innerText = `${score} / 30`;
             const icon = document.getElementById('final-icon');
             const title = document.getElementById('final-title');
-            const msg = document.getElementById('final-msg');
-
-            if(score === questions.length) {
-                icon.className = "w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-6";
-                icon.innerHTML = '<i class="fas fa-trophy"></i>';
-                title.innerText = "Maître de la Séquence !";
-                msg.innerText = `Incroyable ${pseudo}, tu maîtrises absolument tous les objectifs.`;
-            } else if (score >= questions.length * 0.7) {
-                icon.className = "w-24 h-24 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-6";
-                icon.innerHTML = '<i class="fas fa-star"></i>';
-                title.innerText = "Très Bon Travail !";
-                msg.innerText = `Bravo ${pseudo}, tu as une base très solide pour l'évaluation.`;
+            if(score >= 20) {
+                icon.innerHTML = '<i class="fas fa-trophy text-green-500"></i>';
+                title.innerText = "Bravo !";
             } else {
-                icon.className = "w-24 h-24 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-6";
-                icon.innerHTML = '<i class="fas fa-pen-nib"></i>';
-                title.innerText = "Encore un effort !";
-                msg.innerText = `Lis bien les explications ${pseudo}, tu vas y arriver au prochain essai.`;
+                icon.innerHTML = '<i class="fas fa-book text-orange-500"></i>';
+                title.innerText = "Continue de réviser !";
             }
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({ 
+                        nom: pseudo, 
+                        score: Math.round((score / 30) * 100), 
+                        sujet: "Vivre Ailleurs" // Correction ici
+                    })
+                });
+            } catch (e) { console.error(e); }
         }
     </script>
 </body>
