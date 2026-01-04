@@ -158,20 +158,27 @@
         </div>`;
 }
 function envoyerResultat(nomJoueur, scoreFinal) {
-    // REMPLACEZ l'URL ci-dessous par votre URL Web App (celle qui finit par /exec)
+    // L'URL est correcte
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqLheXqYNAzM3cDMNJTtM03MxUmKYZTfB4etoK5jmHFtWNlDjlc6zQDyZlE7gZnlyXqg/exec";
     
     const data = {
         nom: nomJoueur,
-        score: scoreFinal * 10,
-        sujet: "Le Tour du Monde" // C'est ce nom qui apparaîtra dans la colonne Sujet
+        score: scoreFinal * 10, 
+        sujet: "Le Tour du Monde"
     };
 
-    fetch(url, {
+    // Changement important ici : on utilise SCRIPT_URL (et non 'url')
+    fetch(SCRIPT_URL, {
         method: "POST",
         mode: "no-cors", 
         cache: "no-cache",
         body: JSON.stringify(data)
+    })
+    .then(() => {
+        console.log("Bravo, score envoyé !");
+    })
+    .catch((error) => {
+        console.error("Erreur d'envoi :", error);
     });
 }
 </script>
