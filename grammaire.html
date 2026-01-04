@@ -29,13 +29,20 @@
     </nav>
     <main class="main-content">
         <div class="game-card">
-            <div id="game-zone">
+            <div id="start-zone">
+                <i class="fas fa-brain text-5xl text-purple-500 mb-6"></i>
+                <h2 class="text-2xl font-black text-slate-800 mb-4">Maître des Classes</h2>
+                <input type="text" id="playerName" placeholder="Ton Prénom" class="w-full p-4 rounded-2xl border-2 border-slate-100 mb-4 text-center font-bold outline-none focus:border-purple-500">
+                <button onclick="preStart()" class="w-full bg-purple-500 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-purple-600 transition">ENTRER DANS L'ARÈNE</button>
+            </div>
+
+            <div id="game-zone" class="hidden">
                 <div class="flex justify-between items-center mb-6">
                     <div class="text-left"><p class="text-slate-400 text-xs font-bold uppercase">Score</p><p class="text-3xl font-black text-slate-800" id="score">0</p></div>
                     <div class="w-1/2 h-2 bg-slate-100 rounded-full overflow-hidden"><div id="timer" class="h-full bg-purple-500" style="width: 100%"></div></div>
                 </div>
                 <div class="mb-8">
-                    <h1 id="word-display" class="text-5xl font-black text-slate-800 uppercase py-4">PRÊT ?</h1>
+                    <h1 id="word-display" class="text-5xl font-black text-slate-800 uppercase py-4">...</h1>
                 </div>
                 <div class="grid-buttons">
                     <div class="btn-answer" onclick="check('Nom', this)">Nom</div>
@@ -49,15 +56,19 @@
                     <div class="btn-answer" onclick="check('Interjection', this)">Interjection</div>
                 </div>
             </div>
+
             <div id="result-zone" class="hidden">
-                <h2 class="text-3xl font-black text-slate-800 mb-2">Fin du temps !</h2>
-                <p class="text-slate-500 mb-8 text-xl">Score : <span id="final-score" class="text-purple-600 font-bold">0</span></p>
-                <button onclick="location.reload()" class="w-full bg-purple-500 text-white py-4 rounded-2xl font-bold">REJOUER</button>
+                <h2 class="text-3xl font-black text-slate-800 mb-2">Temps écoulé !</h2>
+                <p class="text-slate-500 mb-8 text-xl">Score envoyé : <span id="final-score" class="text-purple-600 font-bold">0</span></p>
+                <button onclick="window.location.href='index.html'" class="w-full bg-slate-800 text-white py-4 rounded-2xl font-bold mb-3">RETOUR ACCUEIL</button>
+                <button onclick="location.reload()" class="w-full bg-slate-200 text-slate-600 py-3 rounded-2xl font-bold">REJOUER</button>
             </div>
         </div>
     </main>
 
     <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys_uz58mt03TDr5gthhtJIeZJqqJDTuikaHwUa60o2rp3S4jIOeuABIrjWyfUDuhEdLg/exec";
+        
         const banque = [
             {w: "Chien", c: "Nom"}, {w: "Liberté", c: "Nom"}, {w: "Manger", c: "Verbe"}, {w: "Briller", c: "Verbe"},
             {w: "Grand", c: "Adjectif"}, {w: "Magnifique", c: "Adjectif"}, {w: "Vitement", c: "Adverbe"}, {w: "Hier", c: "Adverbe"},
@@ -68,6 +79,17 @@
 
         let score = 0, timeLeft = 60, active = false, pseudo = "";
         let sac = [];
+        let currentQ = null;
+
+        function preStart() {
+            const input = document.getElementById('playerName');
+            if(input.value.trim().length < 2) return alert("Prénom requis !");
+            pseudo = input.value.trim();
+            document.getElementById('start-zone').classList.add('hidden');
+            document.getElementById('game-zone').classList.remove('hidden');
+            startTimer();
+            next();
+        }
 
         function next() {
             if (sac.length === 0) sac = [...banque].sort(() => Math.random() - 0.5);
@@ -89,29 +111,36 @@
             }
         }
 
-        const timer = setInterval(() => {
-            if(!active && timeLeft === 60) return;
-            timeLeft -= 0.1;
-            document.getElementById('timer').style.width = (timeLeft/60*100) + "%";
-            if(timeLeft <= 0) {
-                clearInterval(timer);
-                endGame();
-            }
-        }, 100);
+        function startTimer() {
+            const timerObj = setInterval(() => {
+                timeLeft -= 0.1;
+                document.getElementById('timer').style.width = (timeLeft/60*100) + "%";
+                if(timeLeft <= 0) {
+                    clearInterval(timerObj);
+                    endGame();
+                }
+            }, 100);
+        }
 
-        function endGame() {
-            const record = JSON.parse(localStorage.getItem('recordGrammaire')) || {score: 0};
-            if(score > record.score) {
-                localStorage.setItem('recordGrammaire', JSON.stringify({pseudo: pseudo, score: score}));
-            }
+        async function endGame() {
+            active = false;
             document.getElementById('game-zone').classList.add('hidden');
             document.getElementById('result-zone').classList.remove('hidden');
             document.getElementById('final-score').innerText = score;
-        }
 
-        window.onload = () => {
-            pseudo = prompt("Ton Pseudo :") || "Élève";
-            next();
+            // ENVOI AU LEADERBOARD
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    body: JSON.stringify({
+                        nom: pseudo,
+                        score: score,
+                        quiz: "Grammaire"
+                    })
+                });
+            } catch (e) { console.error(e); }
         }
     </script>
 </body>
