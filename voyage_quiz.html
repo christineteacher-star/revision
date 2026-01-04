@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -11,23 +11,18 @@
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
         body { font-family: 'Quicksand', sans-serif; background-color: #ebf2f7; margin: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .game-card { width: 100%; max-width: 480px; background: white; height: 95vh; display: flex; flex-direction: column; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; }
-        
-        /* Style pour l'en-tête cliquable */
         .header-nav-btn { cursor: pointer; transition: all 0.2s; padding: 4px 8px; border-radius: 8px; }
         .header-nav-btn:hover { background-color: #f0f9ff; }
-
         .img-box { width: 100%; height: 25vh; background: #f8fafc; display: flex; align-items: center; justify-content: center; overflow: hidden; border-bottom: 1px solid #f1f5f9; }
         .img-box img { width: 100%; height: 100%; object-fit: cover; }
         .quiz-body { padding: 20px; flex: 1; display: flex; flex-direction: column; text-align: center; }
         .question-text { font-size: 1.15rem; font-weight: 800; color: #1e293b; margin: 10px 0; min-height: 2.8rem; line-height: 1.3; }
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
         .opt-btn { background: #fdfdfd; border: 2px solid #e2e8f0; padding: 14px 8px; border-radius: 16px; font-weight: 700; color: #475569; cursor: pointer; transition: all 0.2s; min-height: 60px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; }
-        
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-8px); } 60% { transform: translateX(8px); } }
         .animate-error { animation: shake 0.4s ease-in-out; border-color: #ef4444 !important; background: #fef2f2 !important; color: #b91c1c !important; }
         @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
         .animate-correct { animation: pop 0.4s ease-in-out; border-color: #22c55e !important; background: #f0fdf4 !important; color: #15803d !important; }
-
         .feedback-box { display: none; margin-top: 15px; padding: 12px; border-radius: 15px; font-size: 0.85rem; line-height: 1.4; font-weight: 600; text-align: left; }
         .is-correct { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
         .is-wrong { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
@@ -199,7 +194,6 @@
 
     let currentLvl = 0; let currentQ = 0; let score = 0;
 
-    // Lancement automatique au chargement
     window.onload = function() { loadQuestion(); };
 
     function loadQuestion() {
@@ -253,14 +247,18 @@
 
     function finishPalier() {
         confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+        const pseudo = prompt("Bravo ! Ton nom pour le classement :") || "Anonyme";
+        envoyerResultat(pseudo, score);
+
         const hasNext = currentLvl < levels.length - 1;
         document.getElementById('quiz-ui').innerHTML = `
             <div class="py-10">
                 <div class="text-6xl mb-4">🏆</div>
                 <h2 class="text-2xl font-black text-slate-700 uppercase">Niveau ${currentLvl + 1} Terminé !</h2>
                 <p class="text-lg font-bold text-sky-600 mt-2">Score : ${score} / 15</p>
-                <button onclick="${hasNext ? 'nextLevel()' : 'window.location.href=\'index.html\''}" class="mt-8 bg-sky-500 text-white px-10 py-4 rounded-2xl font-black shadow-lg uppercase tracking-wide">
-                    ${hasNext ? 'Passer au Niveau ' + (currentLvl + 2) : 'Retour à l\'Accueil'}
+                <p class="text-[10px] text-slate-400 mt-2">Score enregistré pour ${pseudo}</p>
+                <button onclick="${hasNext ? 'nextLevel()' : 'window.location.href=\'index.html\''}" class="mt-8 bg-sky-500 text-white px-10 py-4 rounded-2xl font-black shadow-lg uppercase tracking-wide w-full">
+                    ${hasNext ? 'Passer au Niveau ' + (currentLvl + 2) : 'Voir le classement général'}
                 </button>
             </div>`;
     }
@@ -270,48 +268,4 @@
         document.getElementById('quiz-ui').innerHTML = `
             <div id="q-counter" class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Question 1 / 15</div>
             <h2 id="q-text" class="question-text"></h2>
-            <div id="grid" class="options-grid"></div>
-            <div id="feedback" class="feedback-box"></div>
-            <div id="next-btn" onclick="goToNext()" class="btn-next">Continuer <i class="fas fa-arrow-right ml-2"></i></div>`;
-        loadQuestion();
-    }
-function finishPalier() {
-    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-    
-    // On demande le nom et on envoie le score
-    const pseudo = prompt("Bravo ! Ton nom pour le classement :") || "Anonyme";
-    envoyerResultat(pseudo, score);
-
-    const hasNext = currentLvl < levels.length - 1;
-    document.getElementById('quiz-ui').innerHTML = `
-        <div class="py-10">
-            <div class="text-6xl mb-4">🏆</div>
-            <h2 class="text-2xl font-black text-slate-700 uppercase">Niveau ${currentLvl + 1} Terminé !</h2>
-            <p class="text-lg font-bold text-sky-600 mt-2">Score : ${score} / 15</p>
-            <p class="text-[10px] text-slate-400 mt-2">Score enregistré pour ${pseudo}</p>
-            <button onclick="${hasNext ? 'nextLevel()' : 'window.location.href=\'index.html\''}" class="mt-8 bg-sky-500 text-white px-10 py-4 rounded-2xl font-black shadow-lg uppercase tracking-wide w-full">
-                ${hasNext ? 'Passer au Niveau ' + (currentLvl + 2) : 'Voir le classement général'}
-            </button>
-        </div>`;
-}
-function envoyerResultat(nomJoueur, scoreFinal) {
-    // L'URL de votre Google Script (la même que sur l'index)
-    const url = "https://script.google.com/macros/s/AKfycbzqLheXqYNAzM3cDMNJTtM03MxUmKYZTfB4etoK5jmHFtWNlDjlc6zQDyZlE7gZnlyXqg/exec"; 
-    
-    const data = {
-        nom: nomJoueur,
-        // On ramène le score sur 100 pour que le 15/15 soit égal à 100 pts
-        score: Math.round((scoreFinal / 15) * 100), 
-        sujet: "Voyage" 
-    };
-
-    fetch(url, {
-        method: "POST",
-        mode: "no-cors", 
-        cache: "no-cache",
-        body: JSON.stringify(data)
-    });
-}</script>
-</body>
-
-</html>
+            <div id="
