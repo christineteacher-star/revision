@@ -157,17 +157,16 @@
             </button>
         </div>`;
 }
-function envoyerResultat(nomJoueur, scoreFinal) {
-    // L'URL est correcte
+function envoyerResultat(pseudoJoueur, scoreFinal) {
+    // L'URL unique qui centralise tout
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys_uz58mt03TDr5gthhtJIeZJqqJDTuikaHwUa60o2rp3S4jIOeuABIrjWyfUDuhEdLg/exec";
     
     const data = {
-        nom: nomJoueur,
+        nom: pseudoJoueur,   // On utilise "nom" car c'est ce que votre index et script attendent
         score: scoreFinal * 10, 
-        sujet: "Le Tour du Monde"
+        sujet: document.title // Récupère automatiquement le titre de la page (ex: Monte Cristo)
     };
 
-    // Changement important ici : on utilise SCRIPT_URL (et non 'url')
     fetch(SCRIPT_URL, {
         method: "POST",
         mode: "no-cors", 
@@ -175,10 +174,10 @@ function envoyerResultat(nomJoueur, scoreFinal) {
         body: JSON.stringify(data)
     })
     .then(() => {
-        console.log("Bravo, score envoyé !");
+        console.log("Données envoyées !");
     })
     .catch((error) => {
-        console.error("Erreur d'envoi :", error);
+        console.error("Erreur :", error);
     });
 }
 </script>
