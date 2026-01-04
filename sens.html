@@ -14,18 +14,25 @@
         .main-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .game-card { background: white; border-radius: 35px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 650px; text-align: center; }
         
-        /* Boutons de choix */
+        /* CHAMP DE SAISIE CORRIGÉ */
+        #playerNameInput { 
+            background-color: #f1f5f9 !important; /* Gris clair pour être visible */
+            border: 2px solid #cbd5e1 !important; /* Bordure bien nette */
+            color: #1e293b !important;
+            display: block !important;
+            width: 100%;
+        }
+        #playerNameInput:focus { 
+            border-color: #f97316 !important; 
+            background-color: white !important;
+            outline: none;
+        }
+
         .btn-choice { background: #f8fafc; padding: 25px; border-radius: 25px; font-weight: 800; cursor: pointer; border: 2px solid #e2e8f0; color: #475569; font-size: 1.2rem; transition: 0.2s; }
         .btn-choice:hover { transform: translateY(-3px); border-color: #f97316; background: #fff7ed; }
-        
         .correct { background: #10b981 !important; color: white !important; border-color: #10b981 !important; }
         .wrong { background: #ef4444 !important; color: white !important; border-color: #ef4444 !important; animation: shake 0.3s; }
-        
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
-        
-        /* Style pour l'input du nom */
-        #playerName { transition: 0.3s; border: 2px solid #e2e8f0; }
-        #playerName:focus { border-color: #f97316; box-shadow: 0 0 15px rgba(249, 115, 22, 0.1); }
     </style>
 </head>
 <body>
@@ -45,10 +52,11 @@
                 <p class="text-slate-500 mb-8">Prêt à distinguer le propre du figuré ?</p>
                 
                 <div class="max-w-xs mx-auto">
-                    <input type="text" id="playerNameInput" placeholder="Ton Prénom" 
-                           class="w-full p-4 rounded-2xl mb-4 text-center font-bold text-lg outline-none">
+                    <input type="text" id="playerNameInput" placeholder="Tape ton prénom ici" 
+                           class="w-full p-4 rounded-2xl mb-4 text-center font-bold text-lg">
+                    
                     <button onclick="preStart()" 
-                            class="w-full bg-orange-500 text-white py-4 rounded-2xl font-bold shadow-lg shadow-orange-200 hover:bg-orange-600 transition-all hover:-translate-y-1">
+                            class="w-full bg-orange-500 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-orange-600 transition-all">
                         COMMENCER LA QUÊTE
                     </button>
                 </div>
@@ -56,19 +64,10 @@
 
             <div id="game-zone" class="hidden">
                 <div class="flex justify-between items-center mb-10">
-                    <div class="text-left">
-                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Points</p>
-                        <p class="text-4xl font-black text-slate-800" id="score">0</p>
-                    </div>
-                    <div class="w-1/2 h-3 bg-slate-100 rounded-full overflow-hidden">
-                        <div id="timer" class="h-full bg-orange-500" style="width: 100%"></div>
-                    </div>
+                    <div class="text-left"><p class="text-slate-400 text-xs font-bold uppercase">Points</p><p class="text-4xl font-black text-slate-800" id="score">0</p></div>
+                    <div class="w-1/2 h-3 bg-slate-100 rounded-full overflow-hidden"><div id="timer" class="h-full bg-orange-500" style="width: 100%"></div></div>
                 </div>
-
-                <div class="mb-12">
-                    <h1 id="phrase-display" class="text-3xl font-bold text-slate-700 italic leading-relaxed">...</h1>
-                </div>
-
+                <div class="mb-12"><h1 id="phrase-display" class="text-3xl font-bold text-slate-700 italic">...</h1></div>
                 <div class="grid grid-cols-2 gap-6">
                     <div class="btn-choice" onclick="check('Propre')">PROPRE</div>
                     <div class="btn-choice" onclick="check('Figuré')">FIGURÉ</div>
@@ -76,24 +75,16 @@
             </div>
 
             <div id="result-zone" class="hidden">
-                <div class="w-20 h-20 bg-green-100 text-green-500 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-6">
-                    <i class="fas fa-trophy"></i>
-                </div>
                 <h2 class="text-4xl font-black text-slate-800 mb-2">Temps fini !</h2>
-                <p class="text-slate-500 mb-8 text-xl">Score envoyé : <span id="final-score" class="text-orange-600 font-bold">0</span> pts</p>
-                
-                <div class="flex flex-col gap-3">
-                    <button onclick="window.location.href='index.html'" class="w-full bg-slate-800 text-white py-4 rounded-2xl font-bold hover:bg-slate-900 transition">RETOUR ACCUEIL</button>
-                    <button onclick="location.reload()" class="w-full bg-slate-100 text-slate-600 py-4 rounded-2xl font-bold hover:bg-slate-200 transition">REJOUER</button>
-                </div>
+                <p class="text-slate-500 mb-8 text-xl">Score envoyé : <span id="final-score" class="text-orange-600 font-bold">0</span></p>
+                <button onclick="window.location.href='index.html'" class="w-full bg-slate-800 text-white py-4 rounded-2xl font-bold mb-3">RETOUR ACCUEIL</button>
+                <button onclick="location.reload()" class="w-full bg-slate-100 text-slate-600 py-4 rounded-2xl font-bold">REJOUER</button>
             </div>
-
         </div>
     </main>
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys_uz58mt03TDr5gthhtJIeZJqqJDTuikaHwUa60o2rp3S4jIOeuABIrjWyfUDuhEdLg/exec";
-
         const banque = [
             {p: "Il dévore son livre.", s: "Figuré"}, {p: "Le lion dévore sa proie.", s: "Propre"},
             {p: "Il a jeté l'argent par les fenêtres.", s: "Figuré"}, {p: "Il a jeté ses clés.", s: "Propre"},
@@ -106,34 +97,27 @@
         let score = 0, timeLeft = 60, active = false, pseudo = "", sac = [];
         let currentQ = null;
 
-        // Étape 1 : Saisie du nom et préparation
         function preStart() {
             const input = document.getElementById('playerNameInput');
             if(input.value.trim().length < 2) {
-                alert("Oups ! Entre ton prénom pour jouer.");
+                alert("Entre ton prénom !");
                 return;
             }
             pseudo = input.value.trim();
             document.getElementById('start-zone').classList.add('hidden');
             document.getElementById('game-zone').classList.remove('hidden');
-            
             startTimer();
             next();
         }
 
-        // Étape 2 : Lancer le chrono
         function startTimer() {
             const timerObj = setInterval(() => {
                 timeLeft -= 0.1;
                 document.getElementById('timer').style.width = (timeLeft/60*100) + "%";
-                if(timeLeft <= 0) { 
-                    clearInterval(timerObj); 
-                    endGame(); 
-                }
+                if(timeLeft <= 0) { clearInterval(timerObj); endGame(); }
             }, 100);
         }
 
-        // Étape 3 : Question suivante
         function next() {
             if (sac.length === 0) sac = [...banque].sort(() => Math.random() - 0.5);
             currentQ = sac.pop();
@@ -142,16 +126,12 @@
             active = true;
         }
 
-        // Étape 4 : Vérification
         function check(choice) {
             if(!active) return; active = false;
-            
             const btns = document.querySelectorAll('.btn-choice');
             const btn = Array.from(btns).find(b => b.innerText === choice.toUpperCase());
-            
             if(choice === currentQ.s) {
-                btn.classList.add('correct'); 
-                score += 20;
+                btn.classList.add('correct'); score += 20;
                 document.getElementById('score').innerText = score;
                 setTimeout(next, 400);
             } else {
@@ -160,28 +140,18 @@
             }
         }
 
-        // Étape 5 : Fin et Envoi
         async function endGame() {
             active = false;
             document.getElementById('game-zone').classList.add('hidden');
             document.getElementById('result-zone').classList.remove('hidden');
             document.getElementById('final-score').innerText = score;
-
-            // Envoi vers le Google Sheets (Leaderboard)
             try {
                 await fetch(SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    cache: 'no-cache',
-                    body: JSON.stringify({
-                        nom: pseudo,
-                        score: score,
-                        quiz: "Sens Propre/Figuré"
-                    })
+                    body: JSON.stringify({ nom: pseudo, score: score, quiz: "Sens Propre/Figuré" })
                 });
-            } catch (e) {
-                console.error("Erreur d'envoi au leaderboard");
-            }
+            } catch (e) { console.error(e); }
         }
     </script>
 </body>
