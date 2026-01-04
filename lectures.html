@@ -9,7 +9,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap');
         body { font-family: 'Quicksand', sans-serif; background: #f1f5f9; }
-        .word { font-size: 1.5rem; margin: 0 4px; color: #94a3b8; transition: all 0.2s; display: inline-block; border-radius: 6px; padding: 0 2px; }
+        .word { font-size: 1.5rem; margin: 0 4px; color: #94a3b8; transition: all 0.2s; display: inline-block; border-radius: 6px; padding: 0 4px; line-height: 2.5rem; }
         .word.current { color: #3b82f6; font-weight: 700; background: #dbeafe; border-bottom: 3px solid #3b82f6; }
         .word.read { color: #10b981 !important; font-weight: 600; }
         .word.skipped { color: #ef4444 !important; text-decoration: line-through; opacity: 0.6; }
@@ -18,34 +18,35 @@
 </head>
 <body class="p-4">
 
-    <div class="max-w-6xl mx-auto bg-white rounded-3xl shadow-xl p-6 border border-slate-200">
+    <div class="max-w-5xl mx-auto bg-white rounded-3xl shadow-xl p-6 border border-slate-200">
         <header class="text-center mb-6">
             <h1 class="text-3xl font-black text-slate-800">ENTRAÎNEMENT DELF / DALF</h1>
-            <p class="text-slate-500">Lecture fluide : 3 échecs au 🔊 = passage en rouge.</p>
+            <p class="text-slate-500 text-sm">Prononcez les mots. Si un mot bloque, cliquez 3 fois sur 🔊 pour le passer en rouge.</p>
         </header>
 
-        <div class="flex flex-wrap justify-center gap-2 mb-8">
-            <button onclick="loadLevel('A1')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-500 hover:text-white transition">A1</button>
-            <button onclick="loadLevel('A2')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-500 hover:text-white transition">A2</button>
-            <button onclick="loadLevel('B1')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-500 hover:text-white transition">B1</button>
-            <button onclick="loadLevel('B2')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-500 hover:text-white transition">B2</button>
-            <button onclick="loadLevel('C1')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-500 hover:text-white transition">C1</button>
-            <button onclick="loadLevel('C2')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-500 hover:text-white transition">C2</button>
+        <div class="flex flex-wrap justify-center gap-2 mb-6">
+            <button onclick="loadLevel('A1')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">A1</button>
+            <button onclick="loadLevel('A2')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">A2</button>
+            <button onclick="loadLevel('B1')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">B1</button>
+            <button onclick="loadLevel('B2')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">B2</button>
+            <button onclick="loadLevel('C1')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">C1</button>
+            <button onclick="loadLevel('C2')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">C2</button>
         </div>
 
-        <div id="text-zone" class="bg-slate-50 rounded-2xl p-8 text-justify leading-[3rem] min-h-[350px]"></div>
+        <div id="text-zone" class="bg-slate-50 rounded-2xl p-8 text-justify min-h-[300px]"></div>
 
         <div class="mt-8 flex flex-col items-center gap-4">
             <div id="attempts-badge" class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-bold">Essais : 0/3</div>
+            
             <div class="flex gap-6">
-                <button id="mic-toggle" onclick="toggleSpeech()" class="w-16 h-16 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center text-2xl hover:scale-110 transition">
+                <button id="mic-toggle" onclick="toggleSpeech()" class="w-16 h-16 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center text-2xl hover:scale-105 transition">
                     <i class="fas fa-microphone" id="mic-icon"></i>
                 </button>
-                <button onclick="handleManualHelp()" class="w-16 h-16 bg-slate-800 text-white rounded-full shadow-lg flex items-center justify-center text-2xl hover:scale-110 transition">
+                <button onclick="handleManualHelp()" class="w-16 h-16 bg-slate-800 text-white rounded-full shadow-lg flex items-center justify-center text-2xl hover:scale-105 transition">
                     <i class="fas fa-volume-up"></i>
                 </button>
             </div>
-            <p id="status" class="text-xs font-bold uppercase text-slate-400 tracking-widest">Choisissez un niveau pour commencer</p>
+            <p id="status" class="text-xs font-bold uppercase text-slate-400 tracking-widest">Cliquez sur le micro pour commencer</p>
         </div>
     </div>
 
@@ -72,8 +73,10 @@
             recognition.lang = 'fr-FR';
             recognition.continuous = true;
             recognition.interimResults = true;
+
             recognition.onresult = (e) => {
-                let heard = Array.from(e.results).slice(e.resultIndex).map(res => res[0].transcript).join('').toLowerCase();
+                let heard = Array.from(e.results).slice(e.resultIndex)
+                                 .map(res => res[0].transcript).join('').toLowerCase();
                 evaluate(heard);
             };
             recognition.onend = () => { if(isActive) recognition.start(); };
@@ -107,20 +110,22 @@
 
         function evaluate(said) {
             if (currentIdx >= words.length) return;
-            let target = words[currentIdx].toLowerCase().replace(/[.,!?;:]/g, "").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            let heard = said.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-            let isMatch = heard.includes(target);
+            let target = words[currentIdx].toLowerCase().replace(/[.,!?;:]/g, "").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             
-            // Correction pour pronoms et verbes muets
-            if (!isMatch) {
-                if ((target === "ils" || target === "il") && (heard.includes("il") || heard.includes("ils"))) isMatch = true;
-                if ((target === "elles" || target === "elle") && (heard.includes("elle") || heard.includes("elles"))) isMatch = true;
-                if (target.endsWith("ent")) {
-                    let radical = target.slice(0, -3);
-                    if (heard.includes(radical)) isMatch = true;
-                }
-            }
+            // ANALYSE MOT À MOT : On ne prend que les 2 derniers mots prononcés
+            let heardArray = said.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/\s+/);
+            let recentSpeech = heardArray.slice(-2); 
+
+            let isMatch = recentSpeech.some(word => {
+                // 1. Match exact
+                if (word === target) return true;
+                // 2. Tolérance pluriels muets (Ils/Il)
+                if ((target === "ils" || target === "elles") && word === target.slice(0, -1)) return true;
+                // 3. Tolérance verbes muets (mangent/mange)
+                if (target.endsWith("ent") && word === target.slice(0, -3)) return true;
+                return false;
+            });
 
             if (isMatch) {
                 document.getElementById('wd-' + currentIdx).classList.add('read');
@@ -130,6 +135,7 @@
 
         function handleManualHelp() {
             if (currentIdx >= words.length) return;
+
             const utterance = new SpeechSynthesisUtterance(words[currentIdx]);
             utterance.lang = 'fr-FR';
             utterance.rate = 0.8;
@@ -138,7 +144,7 @@
             attempts++;
             if (attempts >= 3) {
                 const el = document.getElementById('wd-' + currentIdx);
-                el.classList.add('skipped');
+                el.classList.add('skipped'); 
                 setTimeout(() => { moveToNext(); }, 800);
             } else {
                 updateFocus();
@@ -149,7 +155,9 @@
             attempts = 0;
             currentIdx++;
             updateFocus();
-            if (currentIdx === words.length) document.getElementById('status').innerText = "Excellent ! Niveau terminé.";
+            if (currentIdx === words.length) {
+                document.getElementById('status').innerText = "Félicitations ! Niveau terminé.";
+            }
         }
 
         function toggleSpeech() {
@@ -166,7 +174,7 @@
             }
         }
 
-        loadLevel('A1');
+        loadLevel('A1'); // Charge A1 au démarrage
     </script>
 </body>
 </html>
