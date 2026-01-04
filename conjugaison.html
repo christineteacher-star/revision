@@ -8,39 +8,17 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
-        
-        body { 
-            font-family: 'Quicksand', sans-serif; 
-            background-color: #f0f7ff; 
-            margin: 0; display: flex; height: 100vh; overflow: hidden; 
-        }
-
-        /* Même barre latérale que l'accueil */
+        body { font-family: 'Quicksand', sans-serif; background-color: #f0f7ff; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         .sidebar { width: 85px; background: white; display: flex; flex-direction: column; align-items: center; padding: 25px 0; border-right: 1px solid #eef2f6; }
         .logo-dragon { width: 48px; height: 48px; background: #0ea5e9; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; margin-bottom: 40px; }
-
         .main-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; position: relative; }
-
-        /* Style Carte de l'accueil */
-        .game-card { 
-            background: white; border-radius: 35px; padding: 40px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
-            width: 100%; max-width: 600px; text-align: center;
-        }
-
-        .btn-answer { 
-            background: #f8fafc; padding: 18px; border-radius: 22px; 
-            font-weight: 700; transition: 0.2s; cursor: pointer; 
-            border: 2px solid #e2e8f0; color: #475569;
-        }
+        .game-card { background: white; border-radius: 35px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 600px; text-align: center; }
+        .btn-answer { background: #f8fafc; padding: 18px; border-radius: 22px; font-weight: 700; transition: 0.2s; cursor: pointer; border: 2px solid #e2e8f0; color: #475569; }
         .btn-answer:hover { background: #0ea5e9; color: white; border-color: #0ea5e9; transform: translateY(-2px); }
-
         .timer-container { width: 100%; height: 12px; background: #e2e8f0; border-radius: 10px; margin-top: 30px; overflow: hidden; }
         .timer-bar { height: 100%; background: #0ea5e9; width: 100%; transition: width 0.1s linear; }
-
         .correct { background: #10b981 !important; color: white !important; border-color: #10b981 !important; }
         .wrong { background: #ef4444 !important; color: white !important; border-color: #ef4444 !important; animation: shake 0.3s; }
-
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
     </style>
 </head>
@@ -53,10 +31,17 @@
 
     <main class="main-content">
         <div class="game-card">
-            <div id="game-zone">
+            <div id="start-zone">
+                <i class="fas fa-feather-alt text-5xl text-sky-500 mb-6"></i>
+                <h2 class="text-2xl font-black text-slate-800 mb-4">Prêt pour la conjugaison ?</h2>
+                <input type="text" id="playerName" placeholder="Ton Prénom" class="w-full p-4 rounded-2xl border-2 border-slate-100 mb-4 text-center font-bold outline-none focus:border-sky-500">
+                <button onclick="preStartGame()" class="w-full bg-sky-500 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-sky-600 transition">COMMENCER</button>
+            </div>
+
+            <div id="game-zone" class="hidden">
                 <div class="flex justify-between items-center mb-6">
                     <div class="text-left">
-                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Score Actuel</p>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest" id="display-name">Joueur</p>
                         <p class="text-3xl font-black text-slate-800" id="score">0</p>
                     </div>
                     <div class="text-right">
@@ -64,33 +49,31 @@
                         <p class="text-xl font-bold text-orange-400" id="highscore">0</p>
                     </div>
                 </div>
-
                 <div class="mb-8">
                     <span id="tense-display" class="bg-sky-100 text-sky-600 px-4 py-1 rounded-full text-sm font-bold uppercase">Présent</span>
                     <h2 id="pronoun" class="text-2xl text-slate-400 font-bold mt-6 uppercase">Tu</h2>
                     <h1 id="verb" class="text-5xl font-black text-slate-800 mb-6">MANGER</h1>
                 </div>
-
-                <div id="options" class="grid grid-cols-2 gap-4">
-                    </div>
-
+                <div id="options" class="grid grid-cols-2 gap-4"></div>
                 <div class="timer-container">
                     <div class="timer-bar" id="timer"></div>
                 </div>
             </div>
 
             <div id="result-zone" class="hidden">
-                <div class="mb-6">
-                    <i class="fas fa-fire text-6xl text-orange-500"></i>
-                </div>
-                <h2 class="text-3xl font-black text-slate-800 mb-2">Temps écoulé !</h2>
-                <p class="text-slate-500 mb-8">Bravo, tu as marqué <span id="final-score" class="font-bold text-sky-500">0</span> points.</p>
-                <button onclick="location.reload()" class="w-full bg-sky-500 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-sky-600 transition">RECOMMENCER</button>
+                <div class="mb-6"><i class="fas fa-cloud-upload-alt text-6xl text-sky-500 animate-bounce"></i></div>
+                <h2 class="text-3xl font-black text-slate-800 mb-2">Score envoyé !</h2>
+                <p class="text-slate-500 mb-8">Bravo <span id="end-player-name" class="font-bold"></span>, tu as marqué <span id="final-score" class="font-bold text-sky-500">0</span> points.</p>
+                <button onclick="window.location.href='index.html'" class="w-full bg-slate-800 text-white py-4 rounded-2xl font-bold shadow-lg mb-3">RETOUR À L'ACCUEIL</button>
+                <button onclick="location.reload()" class="w-full bg-slate-200 text-slate-600 py-3 rounded-2xl font-bold transition">REJOUER</button>
             </div>
         </div>
     </main>
 
     <script>
+        // --- CONFIGURATION ---
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys_uz58mt03TDr5gthhtJIeZJqqJDTuikaHwUa60o2rp3S4jIOeuABIrjWyfUDuhEdLg/exec";
+        
         const banqueDeQuestions = [
             { v: "ALLER", p: "Elle", r: "est allée", f: ["est allée", "est allé", "a allé", "est allait"], t: "Passé Composé" },
             { v: "MANGER", p: "Nous", r: "mangeâmes", f: ["mangeâmes", "mangeames", "mangeons", "mangeâtes"], t: "Passé Simple" },
@@ -104,11 +87,24 @@
         let score = 0;
         let timeLeft = 60;
         let canAnswer = true;
-        let questionsEnAttente = [...banqueDeQuestions];
+        let currentPlayer = "";
         let erreursRecyclage = [];
-        let highscore = localStorage.getItem('dragonHighscore') || 0;
+        let highscore = localStorage.getItem('dragonHighscore_conj') || 0;
 
         document.getElementById('highscore').innerText = highscore;
+
+        function preStartGame() {
+            const input = document.getElementById('playerName');
+            if (input.value.trim().length < 2) {
+                alert("Entre ton nom pour enregistrer ton score !");
+                return;
+            }
+            currentPlayer = input.value.trim();
+            document.getElementById('display-name').innerText = currentPlayer;
+            document.getElementById('start-zone').classList.add('hidden');
+            document.getElementById('game-zone').classList.remove('hidden');
+            startGame();
+        }
 
         function startGame() {
             nextQuestion();
@@ -150,7 +146,6 @@
                 btn.classList.add('correct');
                 score += 20;
                 document.getElementById('score').innerText = score;
-                // Si c'était une erreur recyclée, on l'enlève
                 erreursRecyclage = erreursRecyclage.filter(item => item !== qObj);
                 setTimeout(nextQuestion, 400);
             } else {
@@ -160,16 +155,35 @@
             }
         }
 
-        function endGame() {
+        async function endGame() {
+            // Sauvegarde locale
             if (score > highscore) {
-                localStorage.setItem('dragonHighscore', score);
+                localStorage.setItem('dragonHighscore_conj', score);
             }
+
             document.getElementById('game-zone').classList.add('hidden');
             document.getElementById('result-zone').classList.remove('hidden');
             document.getElementById('final-score').innerText = score;
-        }
+            document.getElementById('end-player-name').innerText = currentPlayer;
 
-        setTimeout(startGame, 1000);
+            // --- ENVOI AU LEADERBOARD ---
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nom: currentPlayer,
+                        score: score,
+                        quiz: "Conjugaison"
+                    })
+                });
+                console.log("Score envoyé avec succès");
+            } catch (e) {
+                console.error("Erreur lors de l'envoi :", e);
+            }
+        }
     </script>
 </body>
 </html>
