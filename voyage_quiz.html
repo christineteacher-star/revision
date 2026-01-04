@@ -294,6 +294,24 @@ function finishPalier() {
             </button>
         </div>`;
 }
-</script>
+function envoyerResultat(nomJoueur, scoreFinal) {
+    // L'URL de votre Google Script (la même que sur l'index)
+    const url = "https://script.google.com/macros/s/AKfycbzqLheXqYNAzM3cDMNJTtM03MxUmKYZTfB4etoK5jmHFtWNlDjlc6zQDyZlE7gZnlyXqg/exec"; 
+    
+    const data = {
+        nom: nomJoueur,
+        // On ramène le score sur 100 pour que le 15/15 soit égal à 100 pts
+        score: Math.round((scoreFinal / 15) * 100), 
+        sujet: "Voyage" 
+    };
+
+    fetch(url, {
+        method: "POST",
+        mode: "no-cors", 
+        cache: "no-cache",
+        body: JSON.stringify(data)
+    });
+}</script>
 </body>
+
 </html>
