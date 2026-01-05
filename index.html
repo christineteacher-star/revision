@@ -9,31 +9,33 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
         
-        body { font-family: 'Quicksand', sans-serif; background-color: #ebf2f7; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        body { font-family: 'Quicksand', sans-serif; background-color: #ebf2f7; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        @media (min-width: 1024px) {
+            body { flex-direction: row; height: 100vh; overflow: hidden; }
+        }
 
         /* --- SIDEBAR --- */
-        .sidebar { width: 85px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; align-items: center; padding: 25px 0; flex-shrink: 0; justify-content: space-between; }
-        .nav-icon { width: 50px; height: 50px; border-radius: 18px; display: flex; align-items: center; justify-content: center; transition: 0.3s; cursor: pointer; color: #94a3b8; }
+        .sidebar { width: 100%; height: 85px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; flex-direction: row; align-items: center; padding: 0 25px; justify-content: space-between; flex-shrink: 0; }
+        @media (min-width: 1024px) { .sidebar { width: 85px; height: 100%; flex-direction: column; border-right: 1px solid #e2e8f0; border-bottom: none; padding: 25px 0; } }
+        
+        .nav-icon { width: 50px; height: 50px; border-radius: 18px; display: flex; align-items: center; justify-content: center; transition: 0.3s; cursor: pointer; color: #94a3b8; border: none; background: transparent; }
         .nav-icon:hover { transform: scale(1.1); background-color: #f8fafc; }
 
-        /* --- CONTENU (ALIGNEMENT RÉPARÉ) --- */
+        /* --- CONTENU --- */
         .main-content { flex: 1; padding: 40px; display: flex; flex-direction: column; gap: 25px; overflow-y: auto; }
-        .leaderboard-aside { width: 400px; background: white; border-left: 1px solid #e2e8f0; padding: 20px 0; display: flex; flex-direction: column; border-radius: 50px 0 0 50px; flex-shrink: 0; }
+        .leaderboard-aside { width: 100%; background: white; border-top: 1px solid #e2e8f0; padding: 20px 0; display: flex; flex-direction: column; flex-shrink: 0; }
+        @media (min-width: 1024px) { .leaderboard-aside { width: 400px; border-left: 1px solid #e2e8f0; border-top: none; border-radius: 50px 0 0 50px; height: 100%; } }
 
-        /* --- SQUIRCLES --- */
+        /* --- CARTES --- */
         .exercise-card { background: white; border-radius: 35px; padding: 25px; text-align: center; border: 3px solid transparent; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        
-        /* --- CASES DU BAS --- */
-        .level-card { position: relative; height: 115px; border-radius: 30px; overflow: hidden; flex: 1; border: 3px solid transparent; transition: 0.4s; }
+        .level-card { position: relative; height: 115px; border-radius: 30px; overflow: hidden; flex: 1; border: 3px solid transparent; transition: 0.4s; min-width: 200px; }
         .level-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); transition: 0.4s; }
         .level-card span { position: absolute; bottom: 15px; left: 20px; color: white; font-weight: 800; text-transform: uppercase; font-size: 0.9rem; z-index: 10; }
         .level-card:hover { transform: translateY(-8px); border-color: white; box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
 
-        /* --- PODIUM --- */
+        /* --- LEADERBOARD DESIGN --- */
         .podium-container { background-color: #f8fbff; border: 2px solid #e2efff; margin: 0 20px 20px 20px; border-radius: 35px; padding: 25px 10px 15px 10px; display: flex; justify-content: center; align-items: flex-end; gap: 8px; height: 230px; }
         .podium-block { width: 100%; border-radius: 15px 15px 10px 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 18px; }
-        
-        /* --- LISTE --- */
         .list-row { display: flex; align-items: center; gap: 15px; border-radius: 25px; padding: 12px 15px; margin: 0 20px 10px 20px; transition: 0.3s; background: white; border: 2px solid transparent; }
         .gemini-tag { font-size: 9px; font-weight: 700; color: #cbd5e1; text-transform: uppercase; writing-mode: vertical-rl; transform: rotate(180deg); margin-top: 10px; letter-spacing: 1px; }
     </style>
@@ -41,57 +43,49 @@
 <body>
 
     <nav class="sidebar">
-        <div class="flex flex-col items-center gap-6">
+        <div class="flex flex-row lg:flex-col items-center gap-6">
             <div class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-dragon text-2xl"></i></div>
             <a href="mailto:christine.el.mabsout@gmail.com" class="nav-icon" style="background: #eff6ff; color: #3b82f6;"><i class="fas fa-compass text-2xl"></i></a>
             <div class="nav-icon" onclick="window.location.reload()"><i class="fas fa-home text-xl"></i></div>
         </div>
-        <div class="flex flex-col items-center gap-4">
-            <a href="https://facebook.com" target="_blank" class="nav-icon text-[#1877F2] hover:scale-110 transition-transform"><i class="fab fa-facebook-f text-xl"></i></a>
-            <a href="https://instagram.com" target="_blank" class="nav-icon text-[#E4405F] hover:scale-110 transition-transform"><i class="fab fa-instagram text-xl"></i></a>
-            <a href="https://api.whatsapp.com/send?text=Rejoins-moi !" target="_blank" class="nav-icon text-[#25D366] hover:scale-110 transition-transform"><i class="fab fa-whatsapp text-xl"></i></a>
-            <div class="gemini-tag">Made with Gemini</div>
+        <div class="flex flex-row lg:flex-col items-center gap-4">
+            <button onclick="share('fb')" class="nav-icon text-[#1877F2]"><i class="fab fa-facebook-f text-xl"></i></button>
+            <button onclick="share('ig')" class="nav-icon text-[#E4405F]"><i class="fab fa-instagram text-xl"></i></button>
+            <button onclick="share('wa')" class="nav-icon text-[#25D366]"><i class="fab fa-whatsapp text-xl"></i></button>
+            <div class="gemini-tag hidden lg:block">Made with Gemini</div>
         </div>
     </nav>
 
     <main class="main-content">
         <h1 class="text-3xl font-black text-slate-800">Mon Académie</h1>
         
-        <div class="grid grid-cols-3 gap-6">
-            <div class="exercise-card shadow-sm" 
-                 onmouseover="this.style.transform='translateY(-12px)'; this.style.borderColor='#3b82f6'; this.style.boxShadow='0 20px 30px rgba(59, 130, 246, 0.25)'" 
-                 onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='transparent'; this.style.boxShadow='none'">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="exercise-card shadow-sm" onmouseover="this.style.transform='translateY(-12px)'; this.style.borderColor='#3b82f6'; this.style.boxShadow='0 20px 30px rgba(59, 130, 246, 0.25)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='transparent'; this.style.boxShadow='none'">
                 <i class="fas fa-scroll text-5xl text-blue-500 mb-4 block"></i>
                 <h3 class="font-bold text-slate-700">Sens Propre / Figuré</h3>
                 <a href="sens.html" class="block w-full bg-blue-500 text-white font-black py-3 mt-4 rounded-xl uppercase shadow-md">Explorer</a>
             </div>
-
-            <div class="exercise-card shadow-sm" 
-                 onmouseover="this.style.transform='translateY(-12px)'; this.style.borderColor='#a855f7'; this.style.boxShadow='0 20px 30px rgba(168, 85, 247, 0.25)'" 
-                 onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='transparent'; this.style.boxShadow='none'">
+            <div class="exercise-card shadow-sm" onmouseover="this.style.transform='translateY(-12px)'; this.style.borderColor='#a855f7'; this.style.boxShadow='0 20px 30px rgba(168, 85, 247, 0.25)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='transparent'; this.style.boxShadow='none'">
                 <i class="fas fa-shield-halved text-5xl text-purple-500 mb-4 block"></i>
                 <h3 class="font-bold text-slate-700">Grammaire / Classes</h3>
                 <a href="grammaire.html" class="block w-full bg-purple-500 text-white font-black py-3 mt-4 rounded-xl uppercase shadow-md">S'entraîner</a>
             </div>
-
-            <div class="exercise-card shadow-sm" 
-                 onmouseover="this.style.transform='translateY(-12px)'; this.style.borderColor='#10b981'; this.style.boxShadow='0 20px 30px rgba(16, 185, 129, 0.25)'" 
-                 onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='transparent'; this.style.boxShadow='none'">
+            <div class="exercise-card shadow-sm" onmouseover="this.style.transform='translateY(-12px)'; this.style.borderColor='#10b981'; this.style.boxShadow='0 20px 30px rgba(16, 185, 129, 0.25)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='transparent'; this.style.boxShadow='none'">
                 <i class="fas fa-map-marked-alt text-5xl text-emerald-500 mb-4 block"></i>
                 <h3 class="font-bold text-slate-700">Conjugaison / Temps</h3>
                 <a href="conjugaison.html" class="block w-full bg-emerald-500 text-white font-black py-3 mt-4 rounded-xl uppercase shadow-md">Triompher</a>
             </div>
         </div>
 
-        <div class="bg-white rounded-[40px] p-8 flex justify-between items-center shadow-sm border-2 border-transparent hover:border-slate-800 transition-all cursor-pointer group">
+        <div class="bg-white rounded-[40px] p-8 flex flex-col md:flex-row justify-between items-center shadow-sm border-2 border-transparent hover:border-slate-800 transition-all cursor-pointer group gap-4">
             <div>
                 <h2 class="text-2xl font-black text-slate-800 uppercase">L'Épreuve de Monte-Cristo</h2>
                 <p class="text-slate-400 font-bold text-xs uppercase tracking-widest">Le défi ultime</p>
             </div>
-            <a href="epreuve.html" class="bg-slate-800 text-white px-10 py-4 rounded-2xl font-black shadow-xl group-hover:bg-sky-500 transition-all">AFFRONTER</a>
+            <a href="epreuve.html" class="bg-slate-800 text-white px-10 py-4 rounded-2xl font-black shadow-xl group-hover:bg-sky-500 transition-all text-center w-full md:w-auto">AFFRONTER</a>
         </div>
 
-        <div class="flex gap-4">
+        <div class="flex flex-col md:flex-row gap-4 pb-4">
             <div class="level-card"><img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400"><span>Quête du Brevet</span></div>
             <div class="level-card"><img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400"><span>Seconde Zone</span></div>
             <div class="level-card"><img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400"><span>Épreuve Terminale</span></div>
@@ -103,107 +97,76 @@
         <div id="podium-area" class="podium-container"></div>
         <div id="leader-list" class="overflow-y-auto flex-1"></div>
     </aside>
-<script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys_uz58mt03TDr5gthhtJIeZJqqJDTuikaHwUa60o2rp3S4jIOeuABIrjWyfUDuhEdLg/exec";
-    
-    const rowStyles = [
-        { bg: "#f5f3ff", color: "#8b5cf6", glow: "rgba(139, 92, 246, 0.3)" },
-        { bg: "#ecfdf5", color: "#10b981", glow: "rgba(16, 185, 129, 0.3)" },
-        { bg: "#fff7ed", color: "#f97316", glow: "rgba(249, 115, 22, 0.3)" },
-        { bg: "#eff6ff", color: "#3b82f6", glow: "rgba(59, 130, 246, 0.3)" }
-    ];
 
-    async function updateApp() {
-        try {
-            const response = await fetch(SCRIPT_URL + "?nocache=" + Date.now());
-            const data = await response.json();
+    <script>
+        // --- CONFIGURATION DU PARTAGE ---
+        function share(platform) {
+            const SITE_URL = "https://christineteacher-star.github.io/revision/index.html";
+            const u = encodeURIComponent(SITE_URL);
+            const t = encodeURIComponent("Rejoins l'Académie Dragon pour tes révisions ! 🐉");
+            
+            if(platform === 'fb') window.open(`https://www.facebook.com/sharer/sharer.php?u=${u}`, '_blank');
+            if(platform === 'wa') window.open(`https://api.whatsapp.com/send?text=${t}%20${u}`, '_blank');
+            if(platform === 'ig') {
+                navigator.clipboard.writeText(SITE_URL);
+                alert("Lien copié ! Tu peux maintenant le coller dans ta Story Instagram. 📸");
+            }
+        }
 
-            // --- TRAITEMENT INTELLIGENT ---
-            let players = data.map((item, index) => {
-                let foundName = "Aventurier";
-                let foundScore = 0;
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys_uz58mt03TDr5gthhtJIeZJqqJDTuikaHwUa60o2rp3S4jIOeuABIrjWyfUDuhEdLg/exec";
+        const rowStyles = [{bg:"#f5f3ff",color:"#8b5cf6",glow:"rgba(139,92,246,0.3)"},{bg:"#ecfdf5",color:"#10b981",glow:"rgba(16,185,129,0.3)"},{bg:"#fff7ed",color:"#f97316",glow:"rgba(249,115,22,0.3)"},{bg:"#eff6ff",color:"#3b82f6",glow:"rgba(59,130,246,0.3)"}];
 
-                // On scanne toutes les propriétés de l'objet envoyé par Google
-                for (let key in item) {
-                    let val = item[key];
-                    let lowKey = key.toLowerCase();
-
-                    // Si c'est une colonne de nom
-                    if (lowKey.includes("nom") || lowKey.includes("joueur")) {
-                        foundName = val;
+        async function updateApp() {
+            try {
+                const response = await fetch(SCRIPT_URL + "?nocache=" + Date.now());
+                const data = await response.json();
+                let players = data.map((item, index) => {
+                    let foundName = "Aventurier", foundScore = 0;
+                    for (let key in item) {
+                        let val = item[key], lowKey = key.toLowerCase();
+                        if (lowKey.includes("nom") || lowKey.includes("joueur")) foundName = val;
+                        if (!isNaN(val) && typeof val !== "boolean" && lowKey !== "id") {
+                            let num = parseInt(val); if (num > foundScore) foundScore = num;
+                        }
                     }
-                    // Si c'est une valeur numérique (le score), on prend la plus haute trouvée
-                    if (!isNaN(val) && typeof val !== "boolean" && lowKey !== "id") {
-                        let num = parseInt(val);
-                        if (num > foundScore) foundScore = num;
-                    }
-                }
+                    return { nom: String(foundName).trim(), score: foundScore, order: index };
+                }).filter(p => p.nom !== "Aventurier" && p.nom !== "");
                 
-                return {
-                    nom: String(foundName).trim(),
-                    score: foundScore,
-                    // On utilise l'index d'arrivée (le dernier dans le Sheets est le plus grand index)
-                    order: index 
-                };
-            }).filter(p => p.nom !== "Aventurier" && p.nom !== "");
+                players.sort((a, b) => (b.score !== a.score) ? (b.score - a.score) : (b.order - a.order));
+                const p = [players[0]||{nom:"---",score:0}, players[1]||{nom:"---",score:0}, players[2]||{nom:"---",score:0}];
 
-            // --- LE TRI CRITIQUE ---
-            players.sort((a, b) => {
-                // 1. D'abord par score (le plus haut)
-                if (b.score !== a.score) {
-                    return b.score - a.score;
-                }
-                // 2. Si égalité (ex: 100 pts), le DERNIER arrivé (index le plus haut) passe devant
-                return b.order - a.order;
-            });
-
-            // --- RENDU PODIUM (DESIGN RESTAURÉ) ---
-            const p = [
-                players[0] || { nom: "---", score: 0 },
-                players[1] || { nom: "---", score: 0 },
-                players[2] || { nom: "---", score: 0 }
-            ];
-
-            document.getElementById('podium-area').innerHTML = `
-                <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
-                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p[1].nom}" class="w-16 h-16 mb-2">
-                    <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">${p[1].nom}</span>
-                    <div class="podium-block bg-amber-400 h-[85px] shadow-md flex items-center justify-center text-white font-black text-xl">#2</div>
-                    <div class="text-[10px] font-bold text-slate-400 mt-1">${p[1].score} pts</div>
-                </div>
-                <div class="flex flex-col items-center w-[110px] transition-transform hover:-translate-y-2">
-                    <i class="fas fa-crown text-yellow-400 mb-1"></i>
-                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p[0].nom}" class="w-20 h-20 mb-2 border-4 border-yellow-400 rounded-full shadow-lg">
-                    <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">${p[0].nom}</span>
-                    <div class="podium-block bg-green-400 h-[115px] shadow-xl flex items-center justify-center text-white font-black text-2xl">#1</div>
-                    <div class="text-[10px] font-bold text-yellow-600 mt-1">${p[0].score} pts</div>
-                </div>
-                <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
-                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p[2].nom}" class="w-16 h-16 mb-2">
-                    <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">${p[2].nom}</span>
-                    <div class="podium-block bg-red-400 h-[65px] shadow-md flex items-center justify-center text-white font-black text-xl">#3</div>
-                    <div class="text-[10px] font-bold text-slate-400 mt-1">${p[2].score} pts</div>
-                </div>`;
-
-            // --- RENDU LISTE (DESIGN RESTAURÉ) ---
-            document.getElementById('leader-list').innerHTML = players.slice(3).map((player, i) => {
-                const s = rowStyles[i % rowStyles.length];
-                return `
-                <div class="list-row shadow-sm" style="background-color: ${s.bg}; color: ${s.color}; border: 2px solid transparent; cursor: pointer; transition: 0.3; " 
-                     onmouseover="this.style.transform='translateX(10px)'; this.style.boxShadow='0 10px 20px ${s.glow}'; this.style.borderColor='white'" 
-                     onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='none'; this.style.borderColor='transparent'">
-                    <div class="w-8 font-black opacity-30">#${i + 4}</div>
-                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${player.nom}" class="w-11 h-11 rounded-2xl bg-white border-2 border-white shadow-sm">
-                    <div class="flex-1 truncate ml-2">
-                        <p class="font-bold text-slate-700 text-[13px]">${player.nom}</p>
-                        <div class="text-[10px] font-black uppercase tracking-widest opacity-70">💎 ${player.score} PTS</div>
+                document.getElementById('podium-area').innerHTML = `
+                    <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
+                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p[1].nom}" class="w-16 h-16 mb-2">
+                        <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">${p[1].nom}</span>
+                        <div class="podium-block bg-amber-400 h-[85px] shadow-md flex items-center justify-center text-white font-black text-xl">#2</div>
+                        <div class="text-[10px] font-bold text-slate-400 mt-1">${p[1].score} pts</div>
                     </div>
-                </div>`;
-            }).join('');
+                    <div class="flex flex-col items-center w-[110px] transition-transform hover:-translate-y-2">
+                        <i class="fas fa-crown text-yellow-400 mb-1"></i>
+                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p[0].nom}" class="w-20 h-20 mb-2 border-4 border-yellow-400 rounded-full shadow-lg">
+                        <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">${p[0].nom}</span>
+                        <div class="podium-block bg-green-400 h-[115px] shadow-xl flex items-center justify-center text-white font-black text-2xl">#1</div>
+                        <div class="text-[10px] font-bold text-yellow-600 mt-1">${p[0].score} pts</div>
+                    </div>
+                    <div class="flex flex-col items-center w-[100px] transition-transform hover:-translate-y-2">
+                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${p[2].nom}" class="w-16 h-16 mb-2">
+                        <span class="text-[13px] font-bold text-slate-700 mb-1 truncate w-full text-center">${p[2].nom}</span>
+                        <div class="podium-block bg-red-400 h-[65px] shadow-md flex items-center justify-center text-white font-black text-xl">#3</div>
+                        <div class="text-[10px] font-bold text-slate-400 mt-1">${p[2].score} pts</div>
+                    </div>`;
 
-        } catch (e) { console.error("Erreur:", e); }
-    }
-    window.onload = updateApp;
-</script>
+                document.getElementById('leader-list').innerHTML = players.slice(3).map((player, i) => {
+                    const s = rowStyles[i % rowStyles.length];
+                    return `<div class="list-row shadow-sm" style="background-color: ${s.bg}; color: ${s.color};" onmouseover="this.style.transform='translateX(10px)'; this.style.boxShadow='0 10px 20px ${s.glow}'; this.style.borderColor='white'" onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='none'; this.style.borderColor='transparent'">
+                        <div class="w-8 font-black opacity-30">#${i + 4}</div>
+                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${player.nom}" class="w-11 h-11 rounded-2xl bg-white border-2 border-white shadow-sm">
+                        <div class="flex-1 truncate ml-2"><p class="font-bold text-slate-700 text-[13px]">${player.nom}</p><div class="text-[10px] font-black uppercase tracking-widest opacity-70">💎 ${player.score} PTS</div></div>
+                    </div>`;
+                }).join('');
+            } catch (e) { console.error("Erreur:", e); }
+        }
+        window.onload = updateApp;
+    </script>
 </body>
 </html>
