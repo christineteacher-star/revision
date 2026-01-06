@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminale - Bac Libanais | Académie Dragon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        body { font-family: 'Quicksand', sans-serif; background-color: #fcfaff; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        @media (min-width: 1024px) { body { flex-direction: row; height: 100vh; overflow: hidden; } }
+        
+        /* Sidebar */
+        .sidebar { width: 100%; height: 85px; background: white; border-bottom: 1px solid #e9d5ff; display: flex; flex-direction: row; align-items: center; padding: 0 25px; justify-content: space-between; z-index: 50; flex-shrink: 0; }
+        @media (min-width: 1024px) { .sidebar { width: 85px; height: 100%; flex-direction: column; border-right: 1px solid #e9d5ff; border-bottom: none; padding: 25px 0; } }
+        
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+        
+        .category-card { background: white; border-radius: 24px; padding: 25px; transition: all 0.3s ease; border: 1px solid #e9d5ff; display: flex; flex-direction: column; align-items: center; text-align: center; text-decoration: none; }
+        .category-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px rgba(168, 85, 247, 0.05); border-color: #a855f7; }
+        .icon-box { width: 60px; height: 60px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="flex flex-row lg:flex-col items-center gap-6">
+            <a href="index.html" class="w-12 h-12 bg-purple-600 rounded-2xl flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform">
+                <i class="fas fa-dragon text-2xl"></i>
+            </a>
+            <div class="text-purple-600 bg-purple-50 p-3 rounded-xl"><i class="fas fa-graduation-cap text-xl"></i></div>
+            <a href="index.html" class="text-slate-400 hover:text-purple-600 transition-colors"><i class="fas fa-home text-xl"></i></a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="max-w-6xl mx-auto mb-10 text-center lg:text-left">
+            <h1 class="text-4xl font-black text-slate-800 uppercase tracking-tight">Baccalauréat Libanais</h1>
+            <p class="text-slate-500 font-semibold text-lg">Préparation intensive aux épreuves officielles.</p>
+        </header>
+
+        <div class="grid-container">
+            <a href="litterature_liban.html" class="category-card shadow-sm">
+                <div class="icon-box bg-purple-100 text-purple-600"><i class="fas fa-book"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Littérature & Thèmes</h3>
+                <p class="text-slate-500 text-sm mt-2">La condition humaine, le progrès, l'engagement et les courants.</p>
+            </a>
+
+            <a href="analyse_liban.html" class="category-card shadow-sm">
+                <div class="icon-box bg-blue-100 text-blue-600"><i class="fas fa-search-plus"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Analyse de Textes</h3>
+                <p class="text-slate-500 text-sm mt-2">Questions de compréhension, outils de langue et indices textuels.</p>
+            </a>
+
+            <a href="methode_liban.html" class="category-card shadow-sm">
+                <div class="icon-box bg-emerald-100 text-emerald-600"><i class="fas fa-clipboard-list"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Méthodologie</h3>
+                <p class="text-slate-500 text-sm mt-2">Structure de l'essai, résumé de texte et commentaire composé.</p>
+            </a>
+
+            <a href="grammaire_liban.html" class="category-card shadow-sm">
+                <div class="icon-box bg-amber-100 text-amber-600"><i class="fas fa-pen-fancy"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Grammaire & Style</h3>
+                <p class="text-slate-500 text-sm mt-2">Figures de style, connecteurs logiques et valeurs des temps.</p>
+            </a>
+
+            <a href="annales_liban.html" class="category-card shadow-sm border-2 border-dashed border-purple-200">
+                <div class="icon-box bg-slate-100 text-slate-600"><i class="fas fa-history"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Sujets Officiels</h3>
+                <p class="text-slate-500 text-sm mt-2">Entraînement sur les sessions précédentes du CRDP.</p>
+            </a>
+
+            <a href="culture_liban.html" class="category-card shadow-sm">
+                <div class="icon-box bg-indigo-100 text-indigo-600"><i class="fas fa-headphones"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Audio & Vidéo</h3>
+                <p class="text-slate-500 text-sm mt-2">Analyses audio sur les thèmes du programme.</p>
+            </a>
+        </div>
+    </main>
+
+</body>
+</html>

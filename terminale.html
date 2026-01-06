@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cycle Secondaire | Académie Dragon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        body { font-family: 'Quicksand', sans-serif; background-color: #f8fafc; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        @media (min-width: 1024px) { body { flex-direction: row; height: 100vh; overflow: hidden; } }
+
+        /* Sidebar */
+        .sidebar { width: 100%; height: 85px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; flex-direction: row; align-items: center; padding: 0 25px; justify-content: space-between; z-index: 50; flex-shrink: 0; }
+        @media (min-width: 1024px) { .sidebar { width: 85px; height: 100%; flex-direction: column; border-right: 1px solid #e2e8f0; border-bottom: none; padding: 25px 0; } }
+
+        .main-content { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; }
+        
+        .selection-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; width: 100%; max-width: 900px; }
+
+        .level-card { background: white; border-radius: 30px; padding: 40px; text-align: center; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid #e2e8f0; text-decoration: none; display: flex; flex-direction: column; align-items: center; }
+        .level-card:hover { transform: translateY(-10px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); border-color: #ef4444; }
+
+        .icon-circle { width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 20px; transition: 0.3s; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="flex flex-row lg:flex-col items-center gap-6">
+            <a href="index.html" class="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform">
+                <i class="fas fa-dragon text-2xl"></i>
+            </a>
+            <div class="text-slate-400 bg-slate-50 p-3 rounded-xl"><i class="fas fa-graduation-cap text-xl"></i></div>
+            <a href="index.html" class="text-slate-400 hover:text-red-500 transition-colors"><i class="fas fa-home text-xl"></i></a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="text-center mb-16">
+            <h1 class="text-5xl font-black text-slate-800 uppercase tracking-tighter mb-4">Cycle Secondaire</h1>
+            <p class="text-slate-500 text-xl font-medium">Choisissez votre niveau de préparation au Bac Libanais</p>
+        </header>
+
+        <div class="selection-container">
+            
+            <a href="terminale1.html" class="level-card group">
+                <div class="icon-circle bg-red-50 text-red-500 group-hover:bg-red-500 group-hover:text-white">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h2 class="text-2xl font-black text-slate-800 uppercase">Terminale 1</h2>
+                <p class="text-slate-400 mt-2 font-bold">(Classe de Première)</p>
+                <div class="mt-6 px-6 py-2 bg-red-100 text-red-600 rounded-full text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                    Entrer
+                </div>
+            </a>
+
+            <a href="terminale2.html" class="level-card group">
+                <div class="icon-circle bg-purple-50 text-purple-500 group-hover:bg-purple-500 group-hover:text-white">
+                    <i class="fas fa-award"></i>
+                </div>
+                <h2 class="text-2xl font-black text-slate-800 uppercase">Terminale 2</h2>
+                <p class="text-slate-400 mt-2 font-bold">(Classe Officielle)</p>
+                <div class="mt-6 px-6 py-2 bg-purple-100 text-purple-600 rounded-full text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                    Entrer
+                </div>
+            </a>
+
+        </div>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Objectif Seconde | Académie Dragon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        body { font-family: 'Quicksand', sans-serif; background-color: #f8fafc; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        @media (min-width: 1024px) { body { flex-direction: row; height: 100vh; overflow: hidden; } }
+        .sidebar { width: 100%; height: 85px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; flex-direction: row; align-items: center; padding: 0 25px; justify-content: space-between; z-index: 50; flex-shrink: 0; }
+        @media (min-width: 1024px) { .sidebar { width: 85px; height: 100%; flex-direction: column; border-right: 1px solid #e2e8f0; border-bottom: none; padding: 25px 0; } }
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .category-card { background: white; border-radius: 24px; padding: 25px; transition: all 0.3s ease; border: 1px solid #e2e8f0; display: flex; flex-direction: column; align-items: center; text-align: center; text-decoration: none; }
+        .category-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); border-color: #3b82f6; }
+        .icon-box { width: 60px; height: 60px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="flex flex-row lg:flex-col items-center gap-6">
+            <a href="index.html" class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform"><i class="fas fa-dragon text-2xl"></i></a>
+            <div class="text-sky-500 bg-sky-50 p-3 rounded-xl"><i class="fas fa-university text-xl"></i></div>
+            <a href="index.html" class="text-slate-400 hover:text-sky-500 transition-colors"><i class="fas fa-home text-xl"></i></a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="max-w-6xl mx-auto mb-10 text-center lg:text-left">
+            <h1 class="text-4xl font-black text-slate-800 uppercase tracking-tight">Classe de Seconde</h1>
+            <p class="text-slate-500 font-semibold text-lg">Vers une analyse littéraire approfondie.</p>
+        </header>
+        <div class="grid-container">
+            <a href="#" class="category-card shadow-sm"><div class="icon-box bg-sky-100 text-sky-600"><i class="fas fa-feather-alt"></i></div><h3 class="font-bold text-slate-800">Littérature</h3><p class="text-slate-500 text-sm mt-2">Genres et formes du récit.</p></a>
+            <a href="#" class="category-card shadow-sm"><div class="icon-box bg-blue-100 text-blue-600"><i class="fas fa-magnifying-glass"></i></div><h3 class="font-bold text-slate-800">Analyse</h3><p class="text-slate-500 text-sm mt-2">Apprendre à décrypter les textes.</p></a>
+            <a href="#" class="category-card shadow-sm"><div class="icon-box bg-emerald-100 text-emerald-600"><i class="fas fa-map"></i></div><h3 class="font-bold text-slate-800">Méthodologie</h3><p class="text-slate-500 text-sm mt-2">L'introduction au commentaire.</p></a>
+            <a href="#" class="category-card shadow-sm"><div class="icon-box bg-purple-100 text-purple-600"><i class="fas fa-font"></i></div><h3 class="font-bold text-slate-800">Grammaire</h3><p class="text-slate-500 text-sm mt-2">Syntaxe et points de langue.</p></a>
+            <a href="#" class="category-card shadow-sm"><div class="icon-box bg-amber-100 text-amber-600"><i class="fas fa-spell-check"></i></div><h3 class="font-bold text-slate-800">Vocabulaire</h3><p class="text-slate-500 text-sm mt-2">Lexique de l'analyse littéraire.</p></a>
+            <a href="#" class="category-card shadow-sm"><div class="icon-box bg-indigo-100 text-indigo-600"><i class="fas fa-play-circle"></i></div><h3 class="font-bold text-slate-800">Médiathèque</h3><p class="text-slate-500 text-sm mt-2">Podcasts et analyses vidéo.</p></a>
+        </div>
+    </main>
+</body>
+</html>

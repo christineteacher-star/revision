@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Première - Bac Libanais | Académie Dragon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        body { font-family: 'Quicksand', sans-serif; background-color: #fffbfb; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        @media (min-width: 1024px) { body { flex-direction: row; height: 100vh; overflow: hidden; } }
+
+        /* Sidebar */
+        .sidebar { width: 100%; height: 85px; background: white; border-bottom: 1px solid #fee2e2; display: flex; flex-direction: row; align-items: center; padding: 0 25px; justify-content: space-between; z-index: 50; flex-shrink: 0; }
+        @media (min-width: 1024px) { .sidebar { width: 85px; height: 100%; flex-direction: column; border-right: 1px solid #fee2e2; border-bottom: none; padding: 25px 0; } }
+
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+
+        /* Cartes de catégories */
+        .category-card { background: white; border-radius: 24px; padding: 25px; transition: all 0.3s ease; border: 1px solid #fee2e2; display: flex; flex-direction: column; align-items: center; text-align: center; text-decoration: none; position: relative; overflow: hidden; }
+        .category-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(239, 68, 68, 0.08); border-color: #ef4444; }
+        
+        .icon-box { width: 60px; height: 60px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 15px; }
+        
+        .section-badge { font-size: 0.65rem; font-weight: 800; padding: 4px 10px; border-radius: 20px; margin-top: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="flex flex-row lg:flex-col items-center gap-6">
+            <a href="index.html" class="w-12 h-12 bg-red-500 rounded-2xl flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform">
+                <i class="fas fa-dragon text-2xl"></i>
+            </a>
+            <div class="text-red-500 bg-red-50 p-3 rounded-xl"><i class="fas fa-book-reader text-xl"></i></div>
+            <a href="index.html" class="text-slate-400 hover:text-red-500 transition-colors"><i class="fas fa-home text-xl"></i></a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="max-w-6xl mx-auto mb-10 text-center lg:text-left">
+            <h1 class="text-4xl font-black text-slate-800 uppercase tracking-tight">Classe de Première</h1>
+            <p class="text-slate-500 font-semibold text-lg">Préparation au Bac Libanais : Thèmes, Analyse et Méthodes.</p>
+        </header>
+
+        <div class="grid-container">
+            
+            <a href="themes_sc.html" class="category-card shadow-sm border-l-4 border-l-blue-500">
+                <div class="icon-box bg-blue-100 text-blue-600"><i class="fas fa-flask"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Thèmes : S / SE</h3>
+                <p class="text-slate-500 text-sm mt-2">Progrès scientifique, environnement et médias.</p>
+                <span class="section-badge bg-blue-50 text-blue-500">Scientifique & Socio-Éco</span>
+            </a>
+
+            <a href="themes_lh.html" class="category-card shadow-sm border-l-4 border-l-red-500">
+                <div class="icon-box bg-red-100 text-red-600"><i class="fas fa-feather"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Thèmes : LH</h3>
+                <p class="text-slate-500 text-sm mt-2">Romantisme, Autobiographie et Engagement.</p>
+                <span class="section-badge bg-red-50 text-red-500">Lettres & Humanités</span>
+            </a>
+
+            <a href="analyse_1.html" class="category-card shadow-sm">
+                <div class="icon-box bg-purple-100 text-purple-600"><i class="fas fa-search"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Analyse de Texte</h3>
+                <p class="text-slate-500 text-sm mt-2">Énonciation, types de textes et visée argumentative.</p>
+            </a>
+
+            <a href="methode_1.html" class="category-card shadow-sm">
+                <div class="icon-box bg-emerald-100 text-emerald-600"><i class="fas fa-clipboard-check"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Méthodologie</h3>
+                <p class="text-slate-500 text-sm mt-2">Le résumé de texte et l'organisation de l'essai.</p>
+            </a>
+
+            <a href="grammaire_1.html" class="category-card shadow-sm">
+                <div class="icon-box bg-amber-100 text-amber-600"><i class="fas fa-font"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Grammaire</h3>
+                <p class="text-slate-500 text-sm mt-2">Connecteurs logiques et outils de la langue.</p>
+            </a>
+
+            <a href="mediatheque_1.html" class="category-card shadow-sm">
+                <div class="icon-box bg-indigo-100 text-indigo-600"><i class="fas fa-play-circle"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Audio & Vidéo</h3>
+                <p class="text-slate-500 text-sm mt-2">Podcasts et analyses pour réviser autrement.</p>
+            </a>
+
+        </div>
+    </main>
+
+</body>
+</html>
