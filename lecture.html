@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lecteur DELF Pro - Correction 3 Essais</title>
+    <title>Lecteur DELF Professionnel - Textes Longs</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap');
         body { font-family: 'Quicksand', sans-serif; background: #f1f5f9; }
-        .word { font-size: 1.5rem; margin: 0 4px; color: #94a3b8; transition: all 0.2s; display: inline-block; border-radius: 6px; padding: 0 4px; line-height: 2.8rem; }
+        .word { font-size: 1.4rem; margin: 0 4px; color: #94a3b8; transition: all 0.2s; display: inline-block; border-radius: 6px; padding: 0 4px; line-height: 2.8rem; }
         .word.current { color: #3b82f6 !important; font-weight: 700; background: #dbeafe; border-bottom: 3px solid #3b82f6; }
         .word.read { color: #10b981 !important; font-weight: 600; }
         .word.skipped { color: #ef4444 !important; text-decoration: line-through; opacity: 0.6; font-weight: 700; }
+        #status-msg { min-height: 1.5rem; }
     </style>
 </head>
 <body class="p-4">
@@ -20,7 +21,7 @@
     <div class="max-w-5xl mx-auto bg-white rounded-3xl shadow-xl p-6 border border-slate-200">
         <header class="text-center mb-6">
             <h1 class="text-3xl font-black text-slate-800 tracking-tight">LECTEUR DELF / DALF</h1>
-            <p class="text-slate-500 text-sm">Prononcez les mots ou cliquez 3 fois sur 🔊 pour passer un mot difficile.</p>
+            <p id="status-msg" class="text-blue-600 font-bold text-sm mt-2 uppercase tracking-wide"></p>
         </header>
 
         <div class="flex flex-wrap justify-center gap-2 mb-6">
@@ -32,7 +33,7 @@
             <button onclick="loadLevel('C2')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">C2</button>
         </div>
 
-        <div id="text-zone" class="bg-slate-50 rounded-2xl p-8 text-justify min-h-[300px]"></div>
+        <div id="text-zone" class="bg-slate-50 rounded-2xl p-8 text-justify min-h-[400px]"></div>
 
         <div class="mt-8 flex flex-col items-center gap-4">
             <div id="attempts-badge" class="bg-orange-100 text-orange-700 px-6 py-2 rounded-full text-lg font-bold shadow-sm">
@@ -43,23 +44,24 @@
                 <button id="mic-toggle" onclick="toggleSpeech()" class="w-16 h-16 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center text-2xl">
                     <i class="fas fa-microphone" id="mic-icon"></i>
                 </button>
-                <button onclick="forceSkipAfter3()" class="w-16 h-16 bg-slate-800 text-white rounded-full shadow-lg flex items-center justify-center text-2xl">
+                <button onclick="handleManualHelp()" class="w-16 h-16 bg-slate-800 text-white rounded-full shadow-lg flex items-center justify-center text-2xl">
                     <i class="fas fa-volume-up"></i>
                 </button>
             </div>
-            <p id="status" class="text-xs font-bold uppercase text-slate-400">Micro éteint</p>
         </div>
     </div>
 
     <script>
         const texts = {
-            'A1': "Ils mangent du pain. Le chat attend sous le petit lit blanc. Ils parlent beaucoup. Elles regardent la télévision le soir. Thomas habite à Paris avec sa famille. Ils aiment le sport.",
-            'A2': "Hier, nous sommes allés au marché. Ils ont acheté des fruits frais. Les enfants jouent dans le jardin. Elles finissent leurs devoirs avant de sortir. Il faisait froid dehors.",
-            'B1': "Le télétravail est devenu très populaire ces dernières années. De nombreux employés apprécient la flexibilité que cela offre. Ils travaillent depuis chez eux et évitent les embouteillages quotidiens. Cependant, certains trouvent difficile de séparer la vie professionnelle de la vie privée.",
-            'B2': "La protection de l'environnement est l'un des enjeux majeurs de notre siècle. Face au changement climatique, les citoyens adoptent des comportements plus responsables. On observe une réduction de la consommation de plastique.",
-            'C1': "Les scientifiques soutiennent des thèses innovantes. Ils considèrent que les algorithmes influencent nos choix. Les chercheurs parviennent à des conclusions surprenantes.",
-            'C2': "L'herméneutique de la traduction exige une érudition profonde. Les auteurs traduisent la pensée plus que les mots. Ils appréhendent les non-dits inhérents à l'œuvre."
+            'A1': "Bonjour. Je m'appelle Thomas et j'ai vingt ans. J'habite dans un petit appartement à Lyon. Le matin, je mange des céréales avec du lait. Mes amis habitent dans la même rue que moi. Ils mangent souvent avec moi le soir. Nous parlent de nos études et de nos projets. Le chat attend derrière la porte. Elles regardent la télévision dans le salon. Le samedi, nous allons au parc pour faire du sport. C'est une vie simple mais très agréable pour un étudiant.",
+            'A2': "L'été dernier, je suis parti en vacances en Bretagne avec ma famille. Nous avons loué une maison près de la mer. Chaque matin, mes parents achètent des croissants frais à la boulangerie du village. Les enfants jouent sur la plage pendant que les adultes lisent des livres. Ils préparent des repas délicieux avec des produits locaux. Elles finissent leurs activités à dix-huit heures. Le soir, nous marchons sur le port pour regarder les bateaux. C'était un séjour inoubliable et nous voulons y retourner l'année prochaine.",
+            'B1': "Le développement durable est devenu une priorité dans notre société actuelle. De nombreux citoyens changent leurs habitudes quotidiennes pour protéger la planète. Ils trient leurs déchets et privilégient les transports en commun au lieu de la voiture individuelle. Les entreprises adoptent également des stratégies plus écologiques. Elles réduisent leur consommation d'énergie et recyclent les matériaux. Cependant, il reste encore beaucoup de chemin à parcourir. Il est nécessaire que tout le monde se sente concerné par le réchauffement climatique afin de garantir un avenir sain.",
+            'B2': "La révolution numérique a profondément transformé le marché du travail mondial. Le télétravail s'est imposé comme une solution flexible pour de nombreux salariés. Ils apprécient l'autonomie et le gain de temps lié à l'absence de trajets. Néanmoins, cette pratique soulève des questions sur le droit à la déconnexion. Les syndicats affirment que la frontière entre vie privée et vie professionnelle devient floue. Les cadres dirigent leurs équipes à distance via des plateformes numériques performantes. Elles permettent une communication instantanée mais limitent parfois les interactions humaines.",
+            'C1': "L'analyse sociologique des comportements urbains révèle une complexité croissante des interactions humaines. Les chercheurs soutiennent que l'anonymat des métropoles favorise paradoxalement l'émergence de nouvelles solidarités locales. Ils observent des réseaux d'entraide qui se structurent autour de thématiques précises. Les politiques publiques tentent d'accompagner ces mutations en favorisant la mixité sociale. Elles considèrent que l'urbanisme doit être repensé pour intégrer les enjeux environnementaux et sociaux. Les experts parviennent à identifier des zones de tension où le dialogue citoyen devient un outil indispensable.",
+            'C2': "L'herméneutique de la traduction ne se limite pas à une simple équivalence lexicale mais constitue une véritable médiation culturelle. Les auteurs traduisent non seulement des mots, mais une vision du monde inhérente à la langue source. Ils appréhendent les non-dits et les subtitilités stylistiques pour les transposer dans un nouveau paradigme. Cette quête de sens exige une érudition profonde et une sensibilité littéraire exacerbée. Les traducteurs parviennent à restituer l'âme d'une œuvre tout en respectant ses structures formelles. C'est dans cette dialectique entre fidélité et créativité que réside la noblesse de cet art."
         };
+
+        const verbsENT = ["mangent", "habitent", "parlent", "regardent", "préparent", "finissent", "changent", "trient", "adoptent", "réduisent", "apprécient", "dirigent", "permettent", "limitent", "soutiennent", "observent", "considèrent", "parviennent", "traduisent", "appréhendent"];
 
         let words = [];
         let currentIdx = 0;
@@ -83,8 +85,7 @@
 
         function loadLevel(lvl) {
             words = texts[lvl].split(/\s+/);
-            currentIdx = 0;
-            attempts = 0;
+            currentIdx = 0; attempts = 0;
             const zone = document.getElementById('text-zone');
             zone.innerHTML = '';
             words.forEach((w, i) => {
@@ -100,27 +101,41 @@
         function updateFocus() {
             document.querySelectorAll('.word').forEach(s => s.classList.remove('current'));
             const c = document.getElementById('wd-' + currentIdx);
+            const status = document.getElementById('status-msg');
             if (c) {
                 c.classList.add('current');
                 c.scrollIntoView({behavior: "smooth", block: "center"});
+                
+                let clean = words[currentIdx].toLowerCase().replace(/[.,!?;:]/g, "");
+                if (verbsENT.includes(clean)) {
+                    status.innerText = "💡 Verbe pluriel : le '-ent' est muet !";
+                } else if (clean.endsWith("ent") || clean.endsWith("ant")) {
+                    status.innerText = "🔔 Sonore : prononcez le son [AN]";
+                } else if (clean === "dix-huit") {
+                    status.innerText = "🔗 Liaison : prononcez 'di-ZUIT'";
+                } else {
+                    status.innerText = "";
+                }
             }
             document.getElementById('count-val').innerText = attempts;
         }
 
         function evaluate(said) {
             if (currentIdx >= words.length) return;
-            let target = words[currentIdx].toLowerCase().replace(/[.,!?;:]/g, "").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            let heardArray = said.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/\s+/);
-            let lastHeard = heardArray.slice(-2); 
+            let target = words[currentIdx].toLowerCase().replace(/[.,!?;:]/g, "");
+            let heardArray = said.toLowerCase().split(/\s+/);
+            let lastWord = heardArray[heardArray.length - 1];
 
-            let isMatch = lastHeard.some(word => {
-                if (word === target) return true;
-                if ((target === "ils" || target === "elles") && word === target.slice(0, -1)) return true;
-                if (target.endsWith("ent") && target.length > 4) {
-                    if (word === target.slice(0, -3) || word === target.slice(0, -2)) return true;
-                }
-                return false;
-            });
+            // Bloquer si c'est un verbe et qu'on entend "en"
+            if (verbsENT.includes(target) && (said.includes(" en") || said.includes(" an"))) return;
+
+            let isMatch = false;
+            if (target === "dix-huit" && (said.includes("18") || said.includes("dizuit"))) isMatch = true;
+            else if (verbsENT.includes(target)) {
+                if (lastWord.startsWith(target.slice(0, -3))) isMatch = true;
+            } else {
+                if (said.includes(target)) isMatch = true;
+            }
 
             if (isMatch) {
                 document.getElementById('wd-' + currentIdx).classList.add('read');
@@ -128,47 +143,26 @@
             }
         }
 
-        // --- LA FONCTION CRITIQUE QUI DOIT MARCHER ---
-        function forceSkipAfter3() {
+        function handleManualHelp() {
             if (currentIdx >= words.length) return;
-
-            // 1. Lire le mot à voix haute
             const utterance = new SpeechSynthesisUtterance(words[currentIdx]);
             utterance.lang = 'fr-FR';
             synth.speak(utterance);
-
-            // 2. Augmenter le compteur
             attempts++;
-            
-            // 3. Vérifier si on a atteint 3
             if (attempts >= 3) {
-                const el = document.getElementById('wd-' + currentIdx);
-                el.classList.add('skipped'); // Le mot devient ROUGE
-                
-                // On attend une seconde pour que l'élève voie le rouge, puis on passe
-                setTimeout(() => {
-                    moveToNext();
-                }, 1000);
-            } else {
-                updateFocus(); // Met à jour le chiffre 1/3, 2/3...
-            }
+                document.getElementById('wd-' + currentIdx).classList.add('skipped');
+                setTimeout(moveToNext, 1000);
+            } else { updateFocus(); }
         }
 
-        function moveToNext() {
-            attempts = 0;
-            currentIdx++;
-            updateFocus();
-            if (currentIdx === words.length) document.getElementById('status').innerText = "Terminé !";
-        }
+        function moveToNext() { attempts = 0; currentIdx++; updateFocus(); }
 
         function toggleSpeech() {
             if (!isActive) {
-                recognition.start();
-                isActive = true;
+                recognition.start(); isActive = true;
                 document.getElementById('mic-toggle').classList.replace('bg-blue-600', 'bg-red-500');
             } else {
-                recognition.stop();
-                isActive = false;
+                recognition.stop(); isActive = false;
                 document.getElementById('mic-toggle').classList.replace('bg-red-500', 'bg-blue-600');
             }
         }
