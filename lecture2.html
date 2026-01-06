@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecteur DELF Niveau 2 | Académie Dragon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap');
+        body { font-family: 'Quicksand', sans-serif; background: #f8fafc; overflow-x: hidden; }
+        .word { font-size: 1.3rem; margin: 0 3px; color: #94a3b8; transition: all 0.2s; display: inline-block; border-radius: 6px; padding: 0 3px; line-height: 2.2rem; }
+        .word.current { color: #3b82f6 !important; font-weight: 700; background: #dbeafe; border-bottom: 3px solid #3b82f6; }
+        .word.read { color: #10b981 !important; font-weight: 600; }
+        .word.skipped { color: #ef4444 !important; text-decoration: line-through; opacity: 0.6; font-weight: 700; }
+        
+        .sidebar { width: 85px; height: 100vh; background: white; border-right: 1px solid #e2e8f0; position: fixed; left: 0; top: 0; display: flex; flex-direction: column; align-items: center; padding: 25px 0; z-index: 100; }
+        .main-container { margin-left: 85px; padding: 1rem; }
+        
+        .themes-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; justify-content: center; }
+        .themes-row::-webkit-scrollbar { height: 4px; }
+        
+        @media (max-width: 1024px) {
+            .sidebar { width: 100%; height: 60px; flex-direction: row; position: relative; padding: 0 20px; justify-content: space-between; border-right: none; border-bottom: 1px solid #e2e8f0; }
+            .main-container { margin-left: 0; padding: 0.5rem; }
+            .themes-row { justify-content: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <a href="index.html" class="w-12 h-12 bg-red-500 rounded-2xl flex items-center justify-center text-white shadow-lg mb-8 hover:scale-110 transition-transform">
+            <i class="fas fa-dragon text-2xl"></i>
+        </a>
+        <a href="index.html" class="text-slate-400 hover:text-red-500"><i class="fas fa-home text-2xl"></i></a>
+    </nav>
+
+    <div class="main-container">
+        <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-5 border border-slate-200">
+            
+            <header class="text-center mb-2">
+                <h1 class="text-xl font-black text-slate-800 tracking-tight uppercase">Lecteur Académie Dragon - Niveau 2</h1>
+                <p id="status-msg" class="text-blue-600 font-bold text-[10px] h-3 uppercase"></p>
+            </header>
+
+            <div class="themes-row mb-4">
+                <button onclick="loadLevel('B1_Travail')" class="whitespace-nowrap px-3 py-1.5 bg-sky-50 text-sky-700 border border-sky-100 rounded-full font-bold text-[11px] hover:bg-sky-600 hover:text-white transition">B1 Travail</button>
+                <button onclick="loadLevel('B1_Ecolo')" class="whitespace-nowrap px-3 py-1.5 bg-sky-50 text-sky-700 border border-sky-100 rounded-full font-bold text-[11px] hover:bg-sky-600 hover:text-white transition">B1 Écologie</button>
+                <button onclick="loadLevel('B1_Media')" class="whitespace-nowrap px-3 py-1.5 bg-sky-50 text-sky-700 border border-sky-100 rounded-full font-bold text-[11px] hover:bg-sky-600 hover:text-white transition">B1 Médias</button>
+                <div class="w-[1px] bg-slate-200 mx-1"></div>
+                <button onclick="loadLevel('B2_Education')" class="whitespace-nowrap px-3 py-1.5 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-full font-bold text-[11px] hover:bg-indigo-600 hover:text-white transition">B2 Éducation</button>
+                <button onclick="loadLevel('B2_Consommation')" class="whitespace-nowrap px-3 py-1.5 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-full font-bold text-[11px] hover:bg-indigo-600 hover:text-white transition">B2 Société</button>
+                <button onclick="loadLevel('B2_NouvellesTech')" class="whitespace-nowrap px-3 py-1.5 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-full font-bold text-[11px] hover:bg-indigo-600 hover:text-white transition">B2 Techno</button>
+            </div>
+
+            <div id="text-zone" class="bg-slate-50 rounded-2xl p-6 text-justify min-h-[320px] max-h-[380px] overflow-y-auto border border-slate-100 shadow-inner"></div>
+
+            <div class="mt-4 flex flex-col items-center gap-3">
+                <div id="attempts-badge" class="bg-orange-50 text-orange-600 px-4 py-1 rounded-full text-xs font-bold border border-orange-100">
+                    Essais : <span id="count-val">0</span>/3
+                </div>
+                
+                <div class="flex gap-6 pb-2">
+                    <button id="mic-toggle" onclick="toggleSpeech()" class="w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center text-lg hover:scale-110 transition">
+                        <i class="fas fa-microphone" id="mic-icon"></i>
+                    </button>
+                    <button onclick="handleManualHelp()" class="w-12 h-12 bg-slate-800 text-white rounded-full shadow-lg flex items-center justify-center text-lg hover:scale-110 transition">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const texts = {
+            'B1_Travail': "Le marché du travail actuel subit des transformations profondes avec l'évolution du numérique. Le télétravail s'est imposé comme une solution flexible pour de nombreux salariés. Ils apprécient cette autonomie qui permet de mieux concilier la vie professionnelle et la vie privée. En travaillant depuis chez eux, les employés évitent le stress des transports et gagnent un temps précieux. Cependant, cette pratique soulève des défis concernant l'isolement social. Il est devenu crucial pour les entreprises de maintenir un lien fort entre les collaborateurs pour réussir leurs missions collectives.",
+            'B1_Ecolo': "Le développement durable est devenu une priorité absolue pour les sociétés modernes face au changement climatique. De nombreux citoyens décident de changer radicalement leurs habitudes de consommation pour protéger la planète. Ils trient soigneusement leurs déchets ménagers et privilégient l'achat de produits locaux sans emballage. L'utilisation du vélo remplace progressivement la voiture individuelle dans les grandes agglomérations. Parallèlement, le passage aux énergies renouvelables est essentiel pour diminuer les émissions de gaz. Chaque geste quotidien contribue à la préservation de la biodiversité mondiale pour les générations futures.",
+            'B1_Media': "Internet a totalement bouleversé la manière dont nous consommons l'information et les actualités internationales. Les réseaux sociaux permettent aujourd'hui de partager des messages instantanément avec des millions de personnes. Cette rapidité d'accès est un avantage indéniable pour rester connecté avec la réalité du monde. Cependant, cette profusion de données favorise aussi la propagation de fausses nouvelles trompeuses. Il est donc devenu impératif pour chaque internaute de vérifier systématiquement la fiabilité de ses sources. L'éducation aux médias est une compétence majeure qu'il faut enseigner dès le plus jeune âge.",
+            'B2_Education': "Le système éducatif doit s'adapter aux nouveaux enjeux d'un monde en constante mutation technologique. L'introduction du numérique dans les salles de classe soulève des débats passionnés entre les enseignants et les parents d'élèves. Certains affirment que ces outils favorisent l'interactivité et l'engagement des jeunes apprenants. D'autres craignent une baisse de la concentration et une dépendance excessive aux écrans. Il est indispensable de trouver un équilibre entre les méthodes traditionnelles et les innovations pédagogiques. L'objectif principal demeure de former des citoyens capables de penser par eux-mêmes dans une société complexe.",
+            'B2_Consommation': "La société de consommation actuelle fait face à une remise en question sans précédent de la part des jeunes générations. Le concept de sobriété heureuse gagne du terrain face à l'accumulation matérielle jugée parfois inutile. Les consommateurs privilégient désormais la qualité et la durabilité des produits plutôt que la quantité. On observe un essor important de l'économie circulaire et du marché de la seconde main. Ces changements de comportement témoignent d'une prise de conscience globale des limites de notre modèle économique. Les entreprises doivent intégrer ces préoccupations éthiques pour rester compétitives et responsables demain.",
+            'B2_NouvellesTech': "L'intelligence artificielle transforme radicalement nos modes de vie et redéfinit la frontière entre l'homme et la machine. Si cette technologie offre des perspectives fascinantes dans le domaine médical ou scientifique, elle suscite aussi des inquiétudes éthiques. La protection des données personnelles devient un enjeu majeur pour garantir la liberté individuelle des citoyens. Les algorithmes influencent nos choix quotidiens, de la consommation de médias à nos interactions sociales. Il est essentiel de mettre en place un cadre réglementaire strict pour éviter les dérives potentielles. La maîtrise de ces outils technologiques est désormais une condition nécessaire au progrès humain."
+        };
+
+        const verbsENT = ["mangent", "habitent", "parlent", "regardent", "préparent", "finissent", "changent", "trient", "adoptent", "réduisent", "apprécient", "dirigent", "permettent", "limitent", "expliquent", "apportent", "témoignent", "offrent", "suscitent", "influencent"];
+
+        let words = [];
+        let currentIdx = 0;
+        let attempts = 0;
+        let isActive = false;
+        let recognition;
+        const synth = window.speechSynthesis;
+
+        if (window.SpeechRecognition || window.webkitSpeechRecognition) {
+            const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new Speech();
+            recognition.lang = 'fr-FR';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.onresult = (e) => {
+                let heard = Array.from(e.results).slice(e.resultIndex).map(res => res[0].transcript).join('').toLowerCase();
+                evaluate(heard);
+            };
+            recognition.onend = () => { if(isActive) recognition.start(); };
+        }
+
+        function loadLevel(lvl) {
+            words = texts[lvl].split(/\s+/);
+            currentIdx = 0; attempts = 0;
+            const zone = document.getElementById('text-zone');
+            zone.innerHTML = '';
+            words.forEach((w, i) => {
+                const s = document.createElement('span');
+                s.id = 'wd-' + i;
+                s.className = 'word';
+                s.innerText = w;
+                zone.appendChild(s);
+            });
+            updateFocus();
+        }
+
+        function updateFocus() {
+            document.querySelectorAll('.word').forEach(s => s.classList.remove('current'));
+            const c = document.getElementById('wd-' + currentIdx);
+            const status = document.getElementById('status-msg');
+            if (c) {
+                c.classList.add('current');
+                c.scrollIntoView({behavior: "smooth", block: "center"});
+                let clean = words[currentIdx].toLowerCase().replace(/[.,!?;:]/g, "");
+                if (verbsENT.includes(clean)) status.innerText = "💡 Verbe pluriel : le '-ent' est muet !";
+                else if (clean.endsWith("ent") || clean.endsWith("ant")) status.innerText = "🔔 Sonore : [AN]";
+                else status.innerText = "";
+            }
+            document.getElementById('count-val').innerText = attempts;
+        }
+
+        function evaluate(said) {
+            if (currentIdx >= words.length) return;
+            let target = words[currentIdx].toLowerCase().replace(/[.,!?;:]/g, "");
+            let heardArray = said.toLowerCase().split(/\s+/);
+            let lastWord = heardArray[heardArray.length - 1];
+            if (verbsENT.includes(target) && (said.includes(" en") || said.includes(" an"))) return;
+            let isMatch = false;
+            if (verbsENT.includes(target)) { if (lastWord.startsWith(target.slice(0, -3))) isMatch = true; }
+            else { if (said.includes(target)) isMatch = true; }
+            if (isMatch) { document.getElementById('wd-' + currentIdx).classList.add('read'); moveToNext(); }
+        }
+
+        function handleManualHelp() {
+            if (currentIdx >= words.length) return;
+            const utterance = new SpeechSynthesisUtterance(words[currentIdx]);
+            utterance.lang = 'fr-FR';
+            synth.speak(utterance);
+            attempts++;
+            if (attempts >= 3) { document.getElementById('wd-' + currentIdx).classList.add('skipped'); setTimeout(moveToNext, 800); }
+            else { updateFocus(); }
+        }
+
+        function moveToNext() { attempts = 0; currentIdx++; updateFocus(); }
+
+        function toggleSpeech() {
+            if (!isActive) {
+                recognition.start(); isActive = true;
+                document.getElementById('mic-toggle').classList.replace('bg-blue-600', 'bg-red-500');
+            } else {
+                recognition.stop(); isActive = false;
+                document.getElementById('mic-toggle').classList.replace('bg-red-500', 'bg-blue-600');
+            }
+        }
+        loadLevel('B1_Travail');
+    </script>
+</body>
+</html>
