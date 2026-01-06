@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture Niveau 1 | Académie Dragon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap');
+        
+        body { 
+            font-family: 'Quicksand', sans-serif; 
+            background: #f1f5f9; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+
+        @media (min-width: 1024px) {
+            body { flex-direction: row; height: 100vh; overflow: hidden; }
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar { 
+            width: 100%; height: 85px; background: white; border-bottom: 1px solid #e2e8f0; 
+            display: flex; flex-direction: row; align-items: center; padding: 0 25px; 
+            justify-content: space-between; flex-shrink: 0; z-index: 50; 
+        }
+        @media (min-width: 1024px) { 
+            .sidebar { width: 85px; height: 100%; flex-direction: column; border-right: 1px solid #e2e8f0; border-bottom: none; padding: 25px 0; } 
+        }
+        
+        .nav-icon { 
+            width: 50px; height: 50px; border-radius: 18px; display: flex; 
+            align-items: center; justify-content: center; transition: 0.3s; 
+            cursor: pointer; color: #94a3b8; text-decoration: none;
+        }
+        .nav-icon:hover { transform: scale(1.1); background-color: #f8fafc; color: #3b82f6; }
+
+        /* --- ZONE CONTENU --- */
+        .main-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
+
+        .word { font-size: 1.4rem; margin: 0 4px; color: #94a3b8; transition: all 0.2s; display: inline-block; border-radius: 6px; padding: 0 4px; line-height: 2.8rem; }
+        .word.current { color: #3b82f6 !important; font-weight: 700; background: #dbeafe; border-bottom: 3px solid #3b82f6; }
+        .word.read { color: #10b981 !important; font-weight: 600; }
+        .word.skipped { color: #ef4444 !important; text-decoration: line-through; opacity: 0.6; font-weight: 700; }
+        #status-msg { min-height: 1.5rem; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="flex flex-row lg:flex-col items-center gap-6">
+            <a href="index.html" class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform">
+                <i class="fas fa-dragon text-2xl"></i>
+            </a>
+            <a href="lecture.html" class="nav-icon" style="background: #eff6ff; color: #3b82f6;">
+                <i class="fas fa-book-open text-2xl"></i>
+            </a>
+            <a href="index.html" class="nav-icon">
+                <i class="fas fa-home text-xl"></i>
+            </a>
+        </div>
+        <div class="hidden lg:block">
+            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" style="writing-mode: vertical-rl; transform: rotate(180deg);">LECTURE NIVEAU 1</div>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <div class="max-w-5xl w-full bg-white rounded-3xl shadow-xl p-6 border border-slate-200">
+            <header class="text-center mb-6">
+                <h1 class="text-3xl font-black text-slate-800 tracking-tight">LECTEUR DELF / DALF</h1>
+                <p id="status-msg" class="text-blue-600 font-bold text-sm mt-2 uppercase tracking-wide"></p>
+            </header>
+
+            <div class="flex flex-wrap justify-center gap-2 mb-6">
+                <button onclick="loadLevel('A1')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">A1</button>
+                <button onclick="loadLevel('A2')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">A2</button>
+                <button onclick="loadLevel('B1')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">B1</button>
+                <button onclick="loadLevel('B2')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">B2</button>
+                <button onclick="loadLevel('C1')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">C1</button>
+                <button onclick="loadLevel('C2')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">C2</button>
+            </div>
+
+            <div id="text-zone" class="bg-slate-50 rounded-2xl p-8 text-justify min-h-[400px]"></div>
+
+            <div class="mt-8 flex flex-col items-center gap-4">
+                <div id="attempts-badge" class="bg-orange-100 text-orange-700 px-6 py-2 rounded-full text-lg font-bold shadow-sm">
+                    Essais sur ce mot : <span id="count-val">0</span>/3
+                </div>
+                
+                <div class="flex gap-6">
+                    <button id="mic-toggle" onclick="toggleSpeech()" class="w-16 h-16 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center text-2xl">
+                        <i class="fas fa-microphone" id="mic-icon"></i>
+                    </button>
+                    <button onclick="handleManualHelp()" class="w-16 h-16 bg-slate-800 text-white rounded-full shadow-lg flex items-center justify-center text-2xl">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const texts = {
+            'A1': "Bonjour. Je m'appelle Thomas et j'ai vingt ans. J'habite dans un petit appartement à Lyon. Le matin, je mange des céréales avec du lait. Mes amis habitent dans la même rue que moi. Ils mangent souvent avec moi le soir. Nous parlent de nos études et de nos projets. Le chat attend derrière la porte. Elles regardent la télévision dans le salon. Le samedi, nous allons au parc pour faire du sport. C'est une vie simple mais très agréable pour un étudiant.",
+            'A2': "L'été dernier, je suis parti en vacances en Bretagne avec ma famille. Nous avons loué une maison près de la mer. Chaque matin, mes parents achètent des croissants frais à la boulangerie du village. Les enfants jouent sur la plage pendant que les adultes lisent des livres. Ils préparent des repas délicieux avec des produits locaux. Elles finissent leurs activités à dix-huit heures. Le soir, nous marchons sur le port pour regarder les bateaux. C'était un séjour inoubliable et nous voulons y retourner l'année prochaine.",
+            'B1': "Le développement durable est devenu une priorité dans notre société actuelle. De nombreux citoyens changent leurs habitudes quotidiennes pour protéger la planète. Ils trient leurs déchets et privilégient les transports en commun au lieu de la voiture individuelle. Les entreprises adoptent également des stratégies plus écologiques. Elles réduisent leur consommation d'énergie et recyclent les matériaux. Cependant, il reste encore beaucoup de chemin à parcourir. Il est nécessaire que tout le monde se sente concerné par le réchauffement climatique afin de garantir un avenir sain.",
+            'B2': "La révolution numérique a profondément transformé le marché du travail mondial. Le télétravail s'est imposé comme une solution flexible pour de nombreux salariés. Ils apprécient l'autonomie et le gain de temps lié à l'absence de trajets. Néanmoins, cette pratique soulève des questions sur le droit à la déconnexion. Les syndicats affirment que la frontière entre vie privée et vie professionnelle devient floue. Les cadres dirigent leurs équipes à distance via des plateformes numériques performantes. Elles permettent une communication instantanée mais limitent parfois les interactions humaines.",
+            'C1': "L'analyse sociologique des comportements urbains révèle une complexité croissante des interactions humaines. Les chercheurs soutiennent que l'anonymat des métropoles favorise paradoxalement l'émergence de nouvelles solidarités locales. Ils observent des réseaux d'entraide qui se structurent autour de thématiques précises. Les politiques publiques tentent d'accompagner ces mutations en favorisant la mixité sociale. Elles considèrent que l'urbanisme doit être repensé pour intégrer les enjeux environnementaux et sociaux. Les experts parviennent à identifier des zones de tension où le dialogue citoyen devient un outil indispensable.",
+            'C2': "L'herméneutique de la traduction ne se limite pas à une simple équivalence lexicale mais constitue une véritable médiation culturelle. Les auteurs traduisent non seulement des mots, mais une vision du monde inhérente à la langue source. Ils appréhendent les non-dits et les subtitilités stylistiques pour les transposer dans un nouveau paradigme. Cette quête de sens exige une érudition profonde et une sensibilité littéraire exacerbée. Les traducteurs parviennent à restituer l'âme d'une œuvre tout en respectant ses structures formelles. C'est dans cette dialectique entre fidélité et créativité que réside la noblesse de cet art."
+        };
+
+        const verbsENT = ["mangent", "habitent", "parlent", "regardent", "préparent", "finissent", "changent", "trient", "adoptent", "réduisent", "apprécient", "dirigent", "permettent", "limitent", "soutiennent", "observent", "considèrent", "parviennent", "traduisent", "appréhendent"];
+
+        let words = [];
+        let currentIdx = 0;
+        let attempts = 0;
+        let isActive = false;
+        let recognition;
+        const synth = window.speechSynthesis;
+
+        if (window.SpeechRecognition || window.webkitSpeechRecognition) {
+            const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new Speech();
+            recognition.lang = 'fr-FR';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.onresult = (e) => {
+                let heard = Array.from(e.results).slice(e.resultIndex).map(res => res[0].transcript).join('').toLowerCase();
+                evaluate(heard);
+            };
+            recognition.onend = () => { if(isActive) recognition.start(); };
+        }
+
+        function loadLevel(lvl) {
+            words = texts[lvl].split(/\s+/);
+            currentIdx = 0; attempts = 0;
+            const zone = document.getElementById('text-zone');
+            zone.innerHTML = '';
+            words.forEach((w, i) => {
+                const s = document.createElement('span');
+                s.id = 'wd-' + i;
+                s.className = 'word';
+                s.innerText = w;
+                zone.appendChild(s);
+            });
+            updateFocus();
+        }
+
+        function updateFocus() {
+            document.querySelectorAll('.word').forEach(s => s.classList.remove('current'));
+            const c = document.getElementById('wd-' + currentIdx);
+            const status = document.getElementById('status-msg');
+            if (c) {
+                c.classList.add('current');
+                c.scrollIntoView({behavior: "smooth", block: "center"});
+                
+                let clean = words[currentIdx].toLowerCase().replace(/[.,!?;:]/g, "");
+                if (verbsENT.includes(clean)) {
+                    status.innerText = "💡 Verbe pluriel : le '-ent' est muet !";
+                } else if (clean.endsWith("ent") || clean.endsWith("ant")) {
+                    status.innerText = "🔔 Sonore : prononcez le son [AN]";
+                } else if (clean === "dix-huit") {
+                    status.innerText = "🔗 Liaison : prononcez 'di-ZUIT'";
+                } else {
+                    status.innerText = "";
+                }
+            }
+            document.getElementById('count-val').innerText = attempts;
+        }
+
+        function evaluate(said) {
+            if (currentIdx >= words.length) return;
+            let target = words[currentIdx].toLowerCase().replace(/[.,!?;:]/g, "");
+            let heardArray = said.toLowerCase().split(/\s+/);
+            let lastWord = heardArray[heardArray.length - 1];
+
+            if (verbsENT.includes(target) && (said.includes(" en") || said.includes(" an"))) return;
+
+            let isMatch = false;
+            if (target === "dix-huit" && (said.includes("18") || said.includes("dizuit"))) isMatch = true;
+            else if (verbsENT.includes(target)) {
+                if (lastWord.startsWith(target.slice(0, -3))) isMatch = true;
+            } else {
+                if (said.includes(target)) isMatch = true;
+            }
+
+            if (isMatch) {
+                document.getElementById('wd-' + currentIdx).classList.add('read');
+                moveToNext();
+            }
+        }
+
+        function handleManualHelp() {
+            if (currentIdx >= words.length) return;
+            const utterance = new SpeechSynthesisUtterance(words[currentIdx]);
+            utterance.lang = 'fr-FR';
+            synth.speak(utterance);
+            attempts++;
+            if (attempts >= 3) {
+                document.getElementById('wd-' + currentIdx).classList.add('skipped');
+                setTimeout(moveToNext, 1000);
+            } else { updateFocus(); }
+        }
+
+        function moveToNext() { attempts = 0; currentIdx++; updateFocus(); }
+
+        function toggleSpeech() {
+            if (!isActive) {
+                recognition.start(); isActive = true;
+                document.getElementById('mic-toggle').classList.replace('bg-blue-600', 'bg-red-500');
+            } else {
+                recognition.stop(); isActive = false;
+                document.getElementById('mic-toggle').classList.replace('bg-red-500', 'bg-blue-600');
+            }
+        }
+        loadLevel('A1');
+    </script>
+</body>
+</html>
