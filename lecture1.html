@@ -3,117 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lecture Niveau 1 | Académie Dragon</title>
+    <title>Lecteur DELF Niveau 1 | Académie Dragon</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap');
-        
-        body { 
-            font-family: 'Quicksand', sans-serif; 
-            background: #f1f5f9; 
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            min-height: 100vh; 
-        }
-
-        @media (min-width: 1024px) {
-            body { flex-direction: row; height: 100vh; overflow: hidden; }
-        }
-
-        /* --- SIDEBAR --- */
-        .sidebar { 
-            width: 100%; height: 85px; background: white; border-bottom: 1px solid #e2e8f0; 
-            display: flex; flex-direction: row; align-items: center; padding: 0 25px; 
-            justify-content: space-between; flex-shrink: 0; z-index: 50; 
-        }
-        @media (min-width: 1024px) { 
-            .sidebar { width: 85px; height: 100%; flex-direction: column; border-right: 1px solid #e2e8f0; border-bottom: none; padding: 25px 0; } 
-        }
-        
-        .nav-icon { 
-            width: 50px; height: 50px; border-radius: 18px; display: flex; 
-            align-items: center; justify-content: center; transition: 0.3s; 
-            cursor: pointer; color: #94a3b8; text-decoration: none;
-        }
-        .nav-icon:hover { transform: scale(1.1); background-color: #f8fafc; color: #3b82f6; }
-
-        /* --- ZONE CONTENU --- */
-        .main-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
-
-        .word { font-size: 1.4rem; margin: 0 4px; color: #94a3b8; transition: all 0.2s; display: inline-block; border-radius: 6px; padding: 0 4px; line-height: 2.8rem; }
+        body { font-family: 'Quicksand', sans-serif; background: #f8fafc; overflow-x: hidden; }
+        .word { font-size: 1.3rem; margin: 0 3px; color: #94a3b8; transition: all 0.2s; display: inline-block; border-radius: 6px; padding: 0 3px; line-height: 2.2rem; }
         .word.current { color: #3b82f6 !important; font-weight: 700; background: #dbeafe; border-bottom: 3px solid #3b82f6; }
         .word.read { color: #10b981 !important; font-weight: 600; }
         .word.skipped { color: #ef4444 !important; text-decoration: line-through; opacity: 0.6; font-weight: 700; }
-        #status-msg { min-height: 1.5rem; }
+        
+        .sidebar { width: 85px; height: 100vh; background: white; border-right: 1px solid #e2e8f0; position: fixed; left: 0; top: 0; display: flex; flex-direction: column; align-items: center; padding: 25px 0; z-index: 100; }
+        .main-container { margin-left: 85px; padding: 1rem; }
+        
+        .themes-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; justify-content: center; }
+        .themes-row::-webkit-scrollbar { height: 4px; }
+        
+        @media (max-width: 1024px) {
+            .sidebar { width: 100%; height: 60px; flex-direction: row; position: relative; padding: 0 20px; justify-content: space-between; border-right: none; border-bottom: 1px solid #e2e8f0; }
+            .main-container { margin-left: 0; padding: 0.5rem; }
+            .themes-row { justify-content: flex-start; }
+        }
     </style>
 </head>
 <body>
 
     <nav class="sidebar">
-        <div class="flex flex-row lg:flex-col items-center gap-6">
-            <a href="index.html" class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform">
-                <i class="fas fa-dragon text-2xl"></i>
-            </a>
-            <a href="lecture.html" class="nav-icon" style="background: #eff6ff; color: #3b82f6;">
-                <i class="fas fa-book-open text-2xl"></i>
-            </a>
-            <a href="index.html" class="nav-icon">
-                <i class="fas fa-home text-xl"></i>
-            </a>
-        </div>
-        <div class="hidden lg:block">
-            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" style="writing-mode: vertical-rl; transform: rotate(180deg);">LECTURE NIVEAU 1</div>
-        </div>
+        <a href="index.html" class="w-12 h-12 bg-red-500 rounded-2xl flex items-center justify-center text-white shadow-lg mb-8 hover:scale-110 transition-transform">
+            <i class="fas fa-dragon text-2xl"></i>
+        </a>
+        <a href="index.html" class="text-slate-400 hover:text-red-500"><i class="fas fa-home text-2xl"></i></a>
     </nav>
 
-    <main class="main-container">
-        <div class="max-w-5xl w-full bg-white rounded-3xl shadow-xl p-6 border border-slate-200">
-            <header class="text-center mb-6">
-                <h1 class="text-3xl font-black text-slate-800 tracking-tight">LECTEUR DELF / DALF</h1>
-                <p id="status-msg" class="text-blue-600 font-bold text-sm mt-2 uppercase tracking-wide"></p>
+    <div class="main-container">
+        <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-5 border border-slate-200">
+            
+            <header class="text-center mb-2">
+                <h1 class="text-xl font-black text-slate-800 tracking-tight uppercase">Lecteur Académie Dragon - Niveau 1</h1>
+                <p id="status-msg" class="text-blue-600 font-bold text-[10px] h-3 uppercase"></p>
             </header>
 
-            <div class="flex flex-wrap justify-center gap-2 mb-6">
-                <button onclick="loadLevel('A1')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">A1</button>
-                <button onclick="loadLevel('A2')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">A2</button>
-                <button onclick="loadLevel('B1')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">B1</button>
-                <button onclick="loadLevel('B2')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">B2</button>
-                <button onclick="loadLevel('C1')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">C1</button>
-                <button onclick="loadLevel('C2')" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">C2</button>
+            <div class="themes-row mb-4">
+                <button onclick="loadLevel('A1_Presentation')" class="whitespace-nowrap px-3 py-1.5 bg-orange-50 text-orange-700 border border-orange-100 rounded-full font-bold text-[11px] hover:bg-orange-500 hover:text-white transition">A1 Moi</button>
+                <button onclick="loadLevel('A1_Famille')" class="whitespace-nowrap px-3 py-1.5 bg-orange-50 text-orange-700 border border-orange-100 rounded-full font-bold text-[11px] hover:bg-orange-500 hover:text-white transition">A1 Famille</button>
+                <button onclick="loadLevel('A1_Journee')" class="whitespace-nowrap px-3 py-1.5 bg-orange-50 text-orange-700 border border-orange-100 rounded-full font-bold text-[11px] hover:bg-orange-500 hover:text-white transition">A1 Journée</button>
+                <div class="w-[1px] bg-slate-200 mx-1"></div>
+                <button onclick="loadLevel('A2_Sante')" class="whitespace-nowrap px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-full font-bold text-[11px] hover:bg-emerald-500 hover:text-white transition">A2 Santé</button>
+                <button onclick="loadLevel('A2_Voyage')" class="whitespace-nowrap px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-full font-bold text-[11px] hover:bg-emerald-500 hover:text-white transition">A2 Voyage</button>
+                <button onclick="loadLevel('A2_Loisirs')" class="whitespace-nowrap px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-full font-bold text-[11px] hover:bg-emerald-500 hover:text-white transition">A2 Loisirs</button>
             </div>
 
-            <div id="text-zone" class="bg-slate-50 rounded-2xl p-8 text-justify min-h-[400px]"></div>
+            <div id="text-zone" class="bg-slate-50 rounded-2xl p-6 text-justify min-h-[320px] max-h-[380px] overflow-y-auto border border-slate-100 shadow-inner"></div>
 
-            <div class="mt-8 flex flex-col items-center gap-4">
-                <div id="attempts-badge" class="bg-orange-100 text-orange-700 px-6 py-2 rounded-full text-lg font-bold shadow-sm">
-                    Essais sur ce mot : <span id="count-val">0</span>/3
+            <div class="mt-4 flex flex-col items-center gap-3">
+                <div id="attempts-badge" class="bg-orange-50 text-orange-600 px-4 py-1 rounded-full text-xs font-bold border border-orange-100">
+                    Essais : <span id="count-val">0</span>/3
                 </div>
                 
-                <div class="flex gap-6">
-                    <button id="mic-toggle" onclick="toggleSpeech()" class="w-16 h-16 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center text-2xl">
+                <div class="flex gap-6 pb-2">
+                    <button id="mic-toggle" onclick="toggleSpeech()" class="w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center text-lg hover:scale-110 transition">
                         <i class="fas fa-microphone" id="mic-icon"></i>
                     </button>
-                    <button onclick="handleManualHelp()" class="w-16 h-16 bg-slate-800 text-white rounded-full shadow-lg flex items-center justify-center text-2xl">
+                    <button onclick="handleManualHelp()" class="w-12 h-12 bg-slate-800 text-white rounded-full shadow-lg flex items-center justify-center text-lg hover:scale-110 transition">
                         <i class="fas fa-volume-up"></i>
                     </button>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 
     <script>
         const texts = {
-            'A1': "Bonjour. Je m'appelle Thomas et j'ai vingt ans. J'habite dans un petit appartement à Lyon. Le matin, je mange des céréales avec du lait. Mes amis habitent dans la même rue que moi. Ils mangent souvent avec moi le soir. Nous parlent de nos études et de nos projets. Le chat attend derrière la porte. Elles regardent la télévision dans le salon. Le samedi, nous allons au parc pour faire du sport. C'est une vie simple mais très agréable pour un étudiant.",
-            'A2': "L'été dernier, je suis parti en vacances en Bretagne avec ma famille. Nous avons loué une maison près de la mer. Chaque matin, mes parents achètent des croissants frais à la boulangerie du village. Les enfants jouent sur la plage pendant que les adultes lisent des livres. Ils préparent des repas délicieux avec des produits locaux. Elles finissent leurs activités à dix-huit heures. Le soir, nous marchons sur le port pour regarder les bateaux. C'était un séjour inoubliable et nous voulons y retourner l'année prochaine.",
-            'B1': "Le développement durable est devenu une priorité dans notre société actuelle. De nombreux citoyens changent leurs habitudes quotidiennes pour protéger la planète. Ils trient leurs déchets et privilégient les transports en commun au lieu de la voiture individuelle. Les entreprises adoptent également des stratégies plus écologiques. Elles réduisent leur consommation d'énergie et recyclent les matériaux. Cependant, il reste encore beaucoup de chemin à parcourir. Il est nécessaire que tout le monde se sente concerné par le réchauffement climatique afin de garantir un avenir sain.",
-            'B2': "La révolution numérique a profondément transformé le marché du travail mondial. Le télétravail s'est imposé comme une solution flexible pour de nombreux salariés. Ils apprécient l'autonomie et le gain de temps lié à l'absence de trajets. Néanmoins, cette pratique soulève des questions sur le droit à la déconnexion. Les syndicats affirment que la frontière entre vie privée et vie professionnelle devient floue. Les cadres dirigent leurs équipes à distance via des plateformes numériques performantes. Elles permettent une communication instantanée mais limitent parfois les interactions humaines.",
-            'C1': "L'analyse sociologique des comportements urbains révèle une complexité croissante des interactions humaines. Les chercheurs soutiennent que l'anonymat des métropoles favorise paradoxalement l'émergence de nouvelles solidarités locales. Ils observent des réseaux d'entraide qui se structurent autour de thématiques précises. Les politiques publiques tentent d'accompagner ces mutations en favorisant la mixité sociale. Elles considèrent que l'urbanisme doit être repensé pour intégrer les enjeux environnementaux et sociaux. Les experts parviennent à identifier des zones de tension où le dialogue citoyen devient un outil indispensable.",
-            'C2': "L'herméneutique de la traduction ne se limite pas à une simple équivalence lexicale mais constitue une véritable médiation culturelle. Les auteurs traduisent non seulement des mots, mais une vision du monde inhérente à la langue source. Ils appréhendent les non-dits et les subtitilités stylistiques pour les transposer dans un nouveau paradigme. Cette quête de sens exige une érudition profonde et une sensibilité littéraire exacerbée. Les traducteurs parviennent à restituer l'âme d'une œuvre tout en respectant ses structures formelles. C'est dans cette dialectique entre fidélité et créativité que réside la noblesse de cet art."
+            'A1_Presentation': "Bonjour à tous. Je m'appelle Thomas et j'ai vingt ans. Je suis étudiant à l'université de Lyon. J'habite dans un petit appartement avec un ami. J'aime beaucoup apprendre les langues étrangères comme le français et l'espagnol. Le matin, je mange des céréales avec du lait. Je parle souvent avec mes voisins dans la rue. Le soir, je regarde la télévision ou je lis un livre. Je suis très heureux de faire votre connaissance aujourd'hui.",
+            'A1_Famille': "Dans ma famille, nous sommes quatre personnes. Mon père s'appelle Marc et ma mère s'appelle Marie. J'ai une petite sœur qui va encore à l'école primaire. Nous habitons dans une grande maison avec un beau jardin vert. Mes grands-parents habitent dans la même ville que nous. Le dimanche, nous mangeons tous ensemble dans la cuisine. Mon chat attend toujours derrière la porte pour entrer. J'aime passer du temps avec mes parents et mes amis.",
+            'A1_Journee': "Ma journée commence normalement à sept heures du matin. Je prends une douche rapide et je prépare mon café. Je pars à l'université en bus à huit heures. Les cours finissent souvent à seize heures de l'après-midi. Après les cours, je vais au parc pour marcher un peu. Je fais mes devoirs sur mon ordinateur dans ma chambre. Je dîne avec mon colocataire à dix-neuf heures. Je me couche tôt pour être en forme le lendemain.",
+            'A2_Sante': "Pour rester en excellente santé, il est indispensable de faire attention à son alimentation quotidienne. Les médecins expliquent qu'il faut manger des fruits et des légumes chaque jour. Cela apporte des vitamines pour donner de l'énergie au corps. Boire beaucoup d'eau est également un geste essentiel pour rester hydraté. L'activité physique joue un rôle majeur dans notre bien-être. Marcher trente minutes chaque matin suffit pour protéger votre cœur. Le sommeil ne doit pas être oublié pour bien récupérer.",
+            'A2_Voyage': "L'été dernier, je suis parti en vacances avec ma famille au bord de la mer. Nous avons loué une petite maison située face à la plage de sable. Chaque matin, nous achetons des croissants chauds à la boulangerie du village. Les enfants jouent dans les vagues pendant que les adultes lisent des livres. À midi, nous préparons des salades avec des produits achetés au marché. L'après-midi, nous faisons des promenades pour admirer les bateaux. C'était un séjour incroyable.",
+            'A2_Loisirs': "Pendant mon temps libre, j'aime consacrer mes heures à des activités variées. Le samedi après-midi, je vais au cinéma de mon quartier avec mon meilleur ami. Nous aimons beaucoup regarder les nouvelles comédies françaises. Quand il fait beau, nous organisons des parties de football dans le grand parc. C'est un excellent moyen de rester en forme en s'amusant. Le dimanche, je préfère rester à la maison pour lire ou écouter de la musique. Ces plaisirs sont importants pour se détendre.",
         };
 
-        const verbsENT = ["mangent", "habitent", "parlent", "regardent", "préparent", "finissent", "changent", "trient", "adoptent", "réduisent", "apprécient", "dirigent", "permettent", "limitent", "soutiennent", "observent", "considèrent", "parviennent", "traduisent", "appréhendent"];
+        const verbsENT = ["mangent", "habitent", "parlent", "regardent", "préparent", "finissent", "attendent", "achètent", "jouent", "lisent", "expliquent", "apportent"];
 
         let words = [];
         let currentIdx = 0;
@@ -157,17 +127,10 @@
             if (c) {
                 c.classList.add('current');
                 c.scrollIntoView({behavior: "smooth", block: "center"});
-                
                 let clean = words[currentIdx].toLowerCase().replace(/[.,!?;:]/g, "");
-                if (verbsENT.includes(clean)) {
-                    status.innerText = "💡 Verbe pluriel : le '-ent' est muet !";
-                } else if (clean.endsWith("ent") || clean.endsWith("ant")) {
-                    status.innerText = "🔔 Sonore : prononcez le son [AN]";
-                } else if (clean === "dix-huit") {
-                    status.innerText = "🔗 Liaison : prononcez 'di-ZUIT'";
-                } else {
-                    status.innerText = "";
-                }
+                if (verbsENT.includes(clean)) status.innerText = "💡 Verbe pluriel : le '-ent' est muet !";
+                else if (clean.endsWith("ent") || clean.endsWith("ant")) status.innerText = "🔔 Sonore : [AN]";
+                else status.innerText = "";
             }
             document.getElementById('count-val').innerText = attempts;
         }
@@ -177,21 +140,11 @@
             let target = words[currentIdx].toLowerCase().replace(/[.,!?;:]/g, "");
             let heardArray = said.toLowerCase().split(/\s+/);
             let lastWord = heardArray[heardArray.length - 1];
-
             if (verbsENT.includes(target) && (said.includes(" en") || said.includes(" an"))) return;
-
             let isMatch = false;
-            if (target === "dix-huit" && (said.includes("18") || said.includes("dizuit"))) isMatch = true;
-            else if (verbsENT.includes(target)) {
-                if (lastWord.startsWith(target.slice(0, -3))) isMatch = true;
-            } else {
-                if (said.includes(target)) isMatch = true;
-            }
-
-            if (isMatch) {
-                document.getElementById('wd-' + currentIdx).classList.add('read');
-                moveToNext();
-            }
+            if (verbsENT.includes(target)) { if (lastWord.startsWith(target.slice(0, -3))) isMatch = true; }
+            else { if (said.includes(target)) isMatch = true; }
+            if (isMatch) { document.getElementById('wd-' + currentIdx).classList.add('read'); moveToNext(); }
         }
 
         function handleManualHelp() {
@@ -200,10 +153,8 @@
             utterance.lang = 'fr-FR';
             synth.speak(utterance);
             attempts++;
-            if (attempts >= 3) {
-                document.getElementById('wd-' + currentIdx).classList.add('skipped');
-                setTimeout(moveToNext, 1000);
-            } else { updateFocus(); }
+            if (attempts >= 3) { document.getElementById('wd-' + currentIdx).classList.add('skipped'); setTimeout(moveToNext, 800); }
+            else { updateFocus(); }
         }
 
         function moveToNext() { attempts = 0; currentIdx++; updateFocus(); }
@@ -217,7 +168,7 @@
                 document.getElementById('mic-toggle').classList.replace('bg-red-500', 'bg-blue-600');
             }
         }
-        loadLevel('A1');
+        loadLevel('A1_Presentation');
     </script>
 </body>
 </html>
