@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Académie | Le Pendu - Le Complot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        body { font-family: 'Quicksand', sans-serif; background-color: #f8fafc; margin: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .game-card { width: 100%; max-width: 500px; background: white; height: 95vh; display: flex; flex-direction: column; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; }
+        .header-nav-btn { cursor: pointer; transition: all 0.2s; padding: 4px 8px; border-radius: 8px; }
+        .header-nav-btn:hover { background-color: #f5f3ff; }
+        #word-display { font-size: 1.8rem; font-weight: 800; letter-spacing: 0.3rem; color: #1e293b; margin: 20px 0; text-transform: uppercase; min-height: 3.5rem; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; }
+        .keyboard { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; padding: 10px; width: 100%; }
+        .key { background: #f8fafc; border: 2px solid #e2e8f0; padding: 12px 0; border-radius: 12px; font-weight: 700; color: #475569; cursor: pointer; transition: 0.2s; font-size: 0.8rem; }
+        .key:hover:not(:disabled) { background: #f5f3ff; border-color: #6366f1; color: #6366f1; transform: translateY(-2px); }
+        .key:disabled { opacity: 0.3; cursor: not-allowed; }
+        #message { font-weight: 800; margin-top: 15px; font-size: 1.1rem; min-height: 1.5rem; }
+        #btn-restart { background: #6366f1; color: white; padding: 16px; border-radius: 18px; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 0 #4338ca; width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="game-card">
+        <header class="p-4 flex justify-between items-center border-b border-slate-100">
+            <div onclick="window.location.href='index.html'" class="header-nav-btn flex items-center gap-2 text-indigo-600 font-black text-sm uppercase">
+                <i class="fas fa-graduation-cap"></i> Mon Académie
+            </div>
+            <span id="lives" class="bg-rose-50 text-rose-600 text-[10px] font-bold px-3 py-1 rounded-full border border-rose-100 uppercase">Vies : 7</span>
+        </header>
+        <div class="p-6 flex-1 flex flex-col items-center text-center">
+            <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 text-sm font-bold text-indigo-700 w-full mb-4 text-left">
+                <i class="fas fa-user-secret mr-2 text-indigo-400"></i> <span id="hint-text">PENDU CHAPITRE 2 : LE COMPLOT</span>
+            </div>
+            <div id="word-display">_ _ _ _ _</div>
+            <div id="keyboard" class="keyboard mt-auto"></div>
+            <div id="message"></div>
+            <div class="mt-6 w-full">
+                <button id="btn-restart" onclick="init()" style="display:none;">Mot Suivant</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const mots = [
+        {w: "TRAHISON", h: "Le thème principal du chapitre 2."},
+        {w: "FIANCAILLES", h: "La promesse de mariage entre Edmond et Mercédès."},
+        {w: "POIGNARDER", h: "Fernand y a pensé pour éliminer son rival."},
+        {w: "PRISON", h: "Danglars veut que ses murs séparent les deux amoureux."},
+        {w: "LUCIDITE", h: "Caderousse en a un sursaut malgré l'alcool."},
+        {w: "INSTRUMENTS", h: "Le papier, l'encre et la plume pour perdre un homme."},
+        {w: "USURPATEUR", h: "Le nom donné à l'Empereur Napoléon dans la lettre."},
+        {w: "INFAMIE", h: "Une action basse et honteuse selon Caderousse."},
+        {w: "COMPTABLE", h: "Le métier de Danglars sur le Pharaon."},
+        {w: "DENONCER", h: "Accuser Edmond d'être un agent bonapartiste."}
+    ];
+
+    let secretWord, hint, displayedWord, lives;
+
+    function init() {
+        const selected = mots[Math.floor(Math.random() * mots.length)];
+        secretWord = selected.w.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+        hint = selected.h;
+        lives = 7;
+        displayedWord = Array(secretWord.length).fill('_');
+
+        document.getElementById('hint-text').innerText = hint;
+        document.getElementById('lives').innerText = `Vies : ${lives}`;
+        document.getElementById('message').innerText = "";
+        document.getElementById('btn-restart').style.display = "none";
+        
+        updateWordDisplay();
+        createKeyboard();
+    }
+
+    function createKeyboard() {
+        const kb = document.getElementById('keyboard');
+        kb.innerHTML = "";
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(l => {
+            const btn = document.createElement('button');
+            btn.className = "key";
+            btn.innerText = l;
+            btn.onclick = () => guess(l, btn);
+            kb.appendChild(btn);
+        });
+    }
+
+    function updateWordDisplay() {
+        document.getElementById('word-display').innerText = displayedWord.join(" ");
+    }
+
+    function guess(letter, button) {
+        button.disabled = true;
+        if (secretWord.includes(letter)) {
+            button.style.background = "#dcfce7";
+            button.style.borderColor = "#22c55e";
+            for (let i = 0; i < secretWord.length; i++) {
+                if (secretWord[i] === letter) displayedWord[i] = letter;
+            }
+        } else {
+            button.style.background = "#fee2e2";
+            button.style.borderColor = "#ef4444";
+            lives--;
+            document.getElementById('lives').innerText = `Vies : ${lives}`;
+        }
+        updateWordDisplay();
+        checkStatus();
+    }
+
+    function checkStatus() {
+        if (!displayedWord.includes('_')) {
+            document.getElementById('message').innerText = "🏆 FÉLICITATIONS !";
+            document.getElementById('message').style.color = "#059669";
+            end();
+        } else if (lives <= 0) {
+            document.getElementById('message').innerText = "❌ PERDU ! C'était : " + secretWord;
+            document.getElementById('message').style.color = "#dc2626";
+            end();
+        }
+    }
+
+    function end() {
+        document.querySelectorAll('.key').forEach(b => b.disabled = true);
+        document.getElementById('btn-restart').style.display = "block";
+    }
+
+    init();
+</script>
+</body>
+</html>
