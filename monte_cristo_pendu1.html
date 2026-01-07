@@ -1,131 +1,131 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Pendu : Monte-Cristo (Corrigé)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Académie | Le Pendu - Edmond et Mercédès</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; background: #f4f4f4; text-align: center; padding: 20px; }
-        .box { background: white; max-width: 600px; margin: auto; padding: 20px; border-radius: 15px; border-top: 8px solid #c0392b; }
-        #word-display { font-size: 2.2em; letter-spacing: 8px; margin: 20px; font-weight: bold; }
-        .keyboard { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; margin-top: 20px; }
-        .key { width: 40px; height: 40px; font-weight: bold; cursor: pointer; background: #fff; border: 1px solid #ccc; }
-        .key:disabled { background: #ddd; cursor: default; }
-        #lives { color: #c0392b; font-size: 1.2em; font-weight: bold; }
-        .hint { color: #666; font-style: italic; margin: 10px; }
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        body { font-family: 'Quicksand', sans-serif; background-color: #ebf2f7; margin: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .game-card { width: 100%; max-width: 500px; background: white; height: 95vh; display: flex; flex-direction: column; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; }
+        .header-nav-btn { cursor: pointer; transition: all 0.2s; padding: 4px 8px; border-radius: 8px; }
+        .header-nav-btn:hover { background-color: #f0f9ff; }
+        #word-display { font-size: 2rem; font-weight: 800; letter-spacing: 0.4rem; color: #1e293b; margin: 20px 0; text-transform: uppercase; min-height: 3.5rem; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; }
+        .keyboard { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; padding: 10px; width: 100%; }
+        .key { background: #f8fafc; border: 2px solid #e2e8f0; padding: 12px 0; border-radius: 12px; font-weight: 700; color: #475569; cursor: pointer; transition: 0.2s; font-size: 0.85rem; }
+        .key:hover:not(:disabled) { background: #f0f9ff; border-color: #0ea5e9; color: #0ea5e9; transform: translateY(-2px); }
+        .key:disabled { opacity: 0.3; cursor: not-allowed; }
+        #message { font-weight: 800; margin-top: 15px; font-size: 1.1rem; min-height: 1.5rem; }
+        #btn-restart { background: #0ea5e9; color: white; padding: 16px; border-radius: 18px; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 0 #0284c7; width: 100%; }
     </style>
 </head>
 <body>
-
-<div class="box">
-    <h1>Le Pendu du Pharaon</h1>
-    <p id="hint-text" class="hint">Indice : </p>
-    <div id="lives">Vies : 7</div>
-    <div id="word-display"></div>
-    <div class="keyboard" id="keyboard"></div>
-    <div id="message" style="margin-top:20px; font-weight:bold; font-size:1.2em;"></div>
-    <button id="btn-restart" style="display:none; margin-top:20px; padding:10px; cursor:pointer;" onclick="init()">Rejouer</button>
-</div>
+    <div class="game-card">
+        <header class="p-4 flex justify-between items-center border-b border-slate-100">
+            <div onclick="window.location.href='index.html'" class="header-nav-btn flex items-center gap-2 text-sky-600 font-black text-sm uppercase">
+                <i class="fas fa-ship"></i> Mon Académie
+            </div>
+            <span id="lives" class="bg-rose-50 text-rose-600 text-[10px] font-bold px-3 py-1 rounded-full border border-rose-100 uppercase">Vies : 7</span>
+        </header>
+        <div class="p-6 flex-1 flex flex-col items-center text-center">
+            <div class="bg-sky-50 p-4 rounded-xl border border-sky-100 text-sm font-bold text-sky-700 w-full mb-4 text-left">
+                <i class="fas fa-anchor mr-2 text-sky-400"></i> <span id="hint-text">PENDU CHAPITRE 1 : EDMOND ET MERCÉDÈS</span>
+            </div>
+            <div id="word-display">_ _ _ _ _</div>
+            <div id="keyboard" class="keyboard mt-auto"></div>
+            <div id="message"></div>
+            <div class="mt-6 w-full">
+                <button id="btn-restart" onclick="init()" style="display:none;">Mot Suivant</button>
+            </div>
+        </div>
+    </div>
 
 <script>
-    // Vos mots du Chapitre 1
     const mots = [
-        {w: "ACCOSTER", h: "Approcher le navire du quai."},
-        {w: "ARMATEUR", h: "Propriétaire du navire (M. Morrel)."},
-        {w: "MARIN", h: "Le métier d'Edmond Dantès."},
-        {w: "SYMPATHIQUE", h: "Se dit de quelqu'un d'agréable."},
-        {w: "EQUIPAGE", h: "L'ensemble des marins du Pharaon."},
-        {w: "VOILIER", h: "Type de bateau qui avance avec le vent."},
-        {w: "MANOEUVRE", h: "Action de diriger le navire."},
-        {w: "HAINE", h: "Sentiment de Danglars pour Edmond."},
-        {w: "COMPTABLE", h: "Le métier de Danglars."},
-        {w: "EMPEREUR", h: "Napoléon, exilé sur l'île d'Elbe."},
-        {w: "ABSOLUMENT", h: "D'une manière totale."},
-        {w: "IMPARTIAL", h: "Qui est juste et neutre."},
-        {w: "NEGLIGEMMENT", h: "Sans prêter attention."},
-        {w: "PRETENDANT", h: "Homme qui veut épouser Mercédès."},
-        {w: "DECEPTION", h: "Tristesse de Fernand."},
-        {w: "IMPATIEMMENT", h: "Attendre avec hâte."}
+        {w: "MARSEILLE", h: "La ville portuaire où l'histoire commence."},
+        {w: "PHARAON", h: "Le navire de commerce de Monsieur Morrel."},
+        {w: "ARMATEUR", h: "Le métier de M. Morrel (propriétaire de bateaux)."},
+        {w: "CATALANS", h: "Le village de pêcheurs où vit Mercédès."},
+        {w: "DANTES", h: "Le nom de famille du jeune héros Edmond."},
+        {w: "CARGAISON", h: "Les marchandises transportées par le bateau."},
+        {w: "MATELOT", h: "Le grade d'Edmond avant d'être nommé capitaine."},
+        {w: "BOUSSOLE", h: "L'instrument indispensable pour naviguer en mer."},
+        {w: "ESCALIER", h: "Edmond le monte pour retrouver son vieux père."},
+        {w: "ANCRE", h: "On la jette au fond de l'eau pour immobiliser le navire."}
     ];
 
-    let secret, devine, vies;
+    let secretWord, hint, displayedWord, lives;
 
     function init() {
-        let choisi = mots[Math.floor(Math.random() * mots.length)];
-        secret = choisi.w;
-        devine = [];
-        vies = 7;
-        
-        document.getElementById('hint-text').innerText = "Indice : " + choisi.h;
-        document.getElementById('lives').innerText = "Vies restantes : " + vies;
+        const selected = mots[Math.floor(Math.random() * mots.length)];
+        secretWord = selected.w.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+        hint = selected.h;
+        lives = 7;
+        displayedWord = Array(secretWord.length).fill('_');
+
+        document.getElementById('hint-text').innerText = hint;
+        document.getElementById('lives').innerText = `Vies : ${lives}`;
         document.getElementById('message').innerText = "";
         document.getElementById('btn-restart').style.display = "none";
         
-        creerClavier();
-        actualiser();
+        updateWordDisplay();
+        createKeyboard();
     }
 
-    function creerClavier() {
+    function createKeyboard() {
         const kb = document.getElementById('keyboard');
         kb.innerHTML = "";
-        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        for (let i = 0; i < alphabet.length; i++) {
-            let lettre = alphabet[i];
-            let btn = document.createElement('button');
-            btn.innerText = lettre;
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(l => {
+            const btn = document.createElement('button');
             btn.className = "key";
-            btn.onclick = function() {
-                this.disabled = true;
-                jouer(lettre);
-            };
+            btn.innerText = l;
+            btn.onclick = () => guess(l, btn);
             kb.appendChild(btn);
-        }
+        });
     }
 
-    function jouer(L) {
-        if (secret.includes(L)) {
-            devine.push(L);
-        } else {
-            vies--;
-            document.getElementById('lives').innerText = "Vies restantes : " + vies;
-        }
-        
-        actualiser();
-        verifier();
+    function updateWordDisplay() {
+        document.getElementById('word-display').innerText = displayedWord.join(" ");
     }
 
-    function actualiser() {
-        let texte = "";
-        for (let i = 0; i < secret.length; i++) {
-            if (devine.includes(secret[i])) {
-                texte += secret[i] + " ";
-            } else {
-                texte += "_ ";
+    function guess(letter, button) {
+        button.disabled = true;
+        if (secretWord.includes(letter)) {
+            button.style.background = "#dcfce7";
+            button.style.borderColor = "#22c55e";
+            for (let i = 0; i < secretWord.length; i++) {
+                if (secretWord[i] === letter) displayedWord[i] = letter;
             }
+        } else {
+            button.style.background = "#fee2e2";
+            button.style.borderColor = "#ef4444";
+            lives--;
+            document.getElementById('lives').innerText = `Vies : ${lives}`;
         }
-        document.getElementById('word-display').innerText = texte;
+        updateWordDisplay();
+        checkStatus();
     }
 
-    function verifier() {
-        let affichage = document.getElementById('word-display').innerText.replace(/ /g, "");
-        if (affichage === secret) {
-            document.getElementById('message').innerText = "GAGNÉ !";
-            document.getElementById('message').style.color = "green";
-            fin();
-        } else if (vies <= 0) {
-            document.getElementById('message').innerText = "PERDU ! Le mot était : " + secret;
-            document.getElementById('message').style.color = "red";
-            fin();
+    function checkStatus() {
+        if (!displayedWord.includes('_')) {
+            document.getElementById('message').innerText = "🏆 BIEN JOUÉ !";
+            document.getElementById('message').style.color = "#059669";
+            end();
+        } else if (lives <= 0) {
+            document.getElementById('message').innerText = "❌ PERDU ! C'était : " + secretWord;
+            document.getElementById('message').style.color = "#dc2626";
+            end();
         }
     }
 
-    function fin() {
-        let touches = document.getElementsByClassName('key');
-        for (let t of touches) t.disabled = true;
-        document.getElementById('btn-restart').style.display = "inline-block";
+    function end() {
+        document.querySelectorAll('.key').forEach(b => b.disabled = true);
+        document.getElementById('btn-restart').style.display = "block";
     }
 
-    window.onload = init;
+    init();
 </script>
-
 </body>
 </html>
