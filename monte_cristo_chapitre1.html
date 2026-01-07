@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Académie | Monte-Cristo</title>
+    <title>Mon Académie | Edmond et Mercédès</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -48,8 +48,8 @@
         
         <div class="img-box">
             <i class="fas fa-anchor"></i>
-            <div class="absolute inset-0 flex items-center justify-center text-white font-black text-xl bg-black/20 uppercase tracking-widest">
-                Le Pharaon
+            <div class="absolute inset-0 flex items-center justify-center text-white font-black text-xl bg-black/20 uppercase tracking-widest text-center px-4">
+                Edmond et Mercédès
             </div>
         </div>
 
@@ -135,10 +135,7 @@
 function showEnd() {
     confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
     
-    // On demande le nom à la fin
     const pseudo = prompt("Bravo ! Ton nom pour le classement :") || "Anonyme";
-    
-    // On lance l'envoi vers Google Sheets
     envoyerResultat(pseudo, score);
 
     document.getElementById('quiz-ui').innerHTML = `
@@ -147,19 +144,18 @@ function showEnd() {
             <h2 class="text-2xl font-black text-slate-700 uppercase">Terminé !</h2>
             <p class="text-lg font-bold text-sky-600 mt-2">Score : ${score} / 10</p>
             <button onclick="window.location.href='index.html'" class="mt-8 bg-sky-500 text-white px-10 py-4 rounded-2xl font-black w-full">
-                VOIR LE CLASSEMENT
+                RETOUR À L'ACCUEIL
             </button>
         </div>`;
 }
-// 1. Cette fonction est le "moteur" qui envoie les données à Google
+
 function envoyerResultat(pseudoJoueur, scoreFinal) {
-    // L'URL unique qui centralise tout
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys_uz58mt03TDr5gthhtJIeZJqqJDTuikaHwUa60o2rp3S4jIOeuABIrjWyfUDuhEdLg/exec";
     
     const data = {
-        nom: pseudoJoueur,   // On utilise "nom" car c'est ce que votre index et script attendent
+        nom: pseudoJoueur,
         score: scoreFinal * 10, 
-        sujet: document.title // Récupère automatiquement le titre de la page (ex: Monte Cristo)
+        sujet: document.title 
     };
 
     fetch(SCRIPT_URL, {
@@ -178,7 +174,3 @@ function envoyerResultat(pseudoJoueur, scoreFinal) {
 </script>
 </body>
 </html>
-
-
-
-
