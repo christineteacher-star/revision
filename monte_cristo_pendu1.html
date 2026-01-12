@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Académie | Le Tour du Monde - Chapitre 1</title>
+    <title>Mon Académie | Le Pendu - Edmond et Mercédès</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -35,18 +35,21 @@
         </header>
 
         <div id="welcome-screen" class="p-8 flex-1 flex flex-col items-center justify-center text-center">
-            <h1 class="text-2xl font-black text-slate-800 mb-4 uppercase">Le Tour du Monde</h1>
-            <p class="text-slate-500 mb-6 font-semibold">Chapitre 1 : Phileas Fogg</p>
-            <input type="text" id="player-name" placeholder="Ton prénom..." class="w-full p-4 border-2 border-slate-100 rounded-xl mb-6 text-center font-bold outline-none focus:border-sky-400">
-            <button onclick="startGame()" class="btn-main">Commencer l'aventure</button>
+            <div class="w-20 h-20 bg-sky-100 rounded-full flex items-center justify-center mb-6">
+                <i class="fas fa-anchor text-3xl text-sky-600"></i>
+            </div>
+            <h1 class="text-2xl font-black text-slate-800 mb-2 uppercase">Edmond et Mercédès</h1>
+            <p class="text-slate-500 mb-8 font-medium">Monte-Cristo - Chapitre 1</p>
+            <input type="text" id="player-name" placeholder="Ton prénom..." class="w-full p-4 border-2 border-slate-100 rounded-xl mb-4 text-center font-bold outline-none focus:border-sky-400">
+            <button onclick="startGame()" class="btn-main">Commencer le jeu</button>
         </div>
 
         <div id="game-screen" class="p-6 flex-1 flex flex-col items-center text-center hidden">
             <div class="flex justify-between w-full mb-2">
-                <span id="progression" class="text-[10px] font-black text-sky-500 uppercase">Question 1 / 10</span>
+                <span id="progression" class="text-[10px] font-black text-sky-600 uppercase">Question 1 / 10</span>
             </div>
             <div class="bg-sky-50 p-4 rounded-xl border border-sky-100 text-sm font-bold text-sky-700 w-full mb-4 text-left">
-                <i class="fas fa-anchor mr-2 text-sky-400"></i> <span id="hint-text">Chargement...</span>
+                <i class="fas fa-map-marker-alt mr-2 text-sky-400"></i> <span id="hint-text">Chargement...</span>
             </div>
             <div id="word-display">_ _ _ _ _</div>
             <div id="keyboard" class="keyboard mt-auto"></div>
@@ -59,16 +62,16 @@
 
 <script>
     const motsBase = [
-        {w: "FOGG", h: "Le nom de famille du héros mystérieux."},
-        {w: "LONDRES", h: "La ville où commence l'histoire."},
-        {w: "REFORM", h: "Le nom du club fréquenté par le héros."},
-        {w: "PASSEPARTOUT", h: "Le nouveau domestique français."},
-        {w: "SAVILLE", h: "Le nom de la rue où habite Phileas Fogg."},
-        {w: "GENTLEMAN", h: "Le titre social donné à Phileas Fogg."},
-        {w: "DOMESTIQUE", h: "Le métier de Jean Passepartout."},
-        {w: "PONCTUEL", h: "La qualité principale de Fogg."},
-        {w: "VALET", h: "Un autre mot pour serviteur."},
-        {w: "CHRONOMETRE", h: "Fogg agit comme s'il en était un."}
+        {w: "MARSEILLE", h: "La ville portuaire où l'histoire commence."},
+        {w: "PHARAON", h: "Le navire de commerce de Monsieur Morrel."},
+        {w: "ARMATEUR", h: "Le métier de M. Morrel (propriétaire de bateaux)."},
+        {w: "CATALANS", h: "Le village de pêcheurs où vit Mercédès."},
+        {w: "DANTES", h: "Le nom de famille du jeune héros Edmond."},
+        {w: "CARGAISON", h: "Les marchandises transportées par le bateau."},
+        {w: "MATELOT", h: "Le grade d'Edmond avant d'être nommé capitaine."},
+        {w: "BOUSSOLE", h: "L'instrument indispensable pour naviguer en mer."},
+        {w: "ESCALIER", h: "Edmond le monte pour retrouver son vieux père."},
+        {w: "ANCRE", h: "On la jette au fond de l'eau pour immobiliser le navire."}
     ];
 
     let secretWord, hint, displayedWord, lives;
@@ -83,7 +86,7 @@
         document.getElementById('welcome-screen').classList.add('hidden');
         document.getElementById('game-screen').classList.remove('hidden');
         
-        // Mélanger les mots pour éviter les répétitions
+        // Mélange aléatoire
         motsRestants = [...motsBase].sort(() => Math.random() - 0.5);
         questionIndex = 0;
         loadWord();
@@ -91,7 +94,7 @@
 
     function loadWord() {
         if (questionIndex >= motsRestants.length) {
-            alert("Félicitations ! Tu as terminé le voyage !");
+            alert("Bravo ! Tu as terminé le chapitre 1 !");
             location.reload();
             return;
         }
