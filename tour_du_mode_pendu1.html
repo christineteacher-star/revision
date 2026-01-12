@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Pendu : Le Tour du Monde - Chapitre 1</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; text-align: center; background-color: #f4f1ea; color: #333; }
+        #game-container { max-width: 600px; margin: 20px auto; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .hidden { display: none; }
+        #word-display { font-size: 2em; letter-spacing: 10px; margin: 20px 0; font-weight: bold; color: #2c3e50; }
+        #keyboard { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; margin-top: 20px; }
+        button { padding: 10px 15px; font-size: 1.1em; cursor: pointer; border: none; border-radius: 5px; background: #3498db; color: white; }
+        button:disabled { background: #bdc3c7; cursor: not-allowed; }
+        #status { margin: 20px; font-weight: bold; font-size: 1.2em; }
+        .info-bar { display: flex; justify-content: space-around; margin-bottom: 20px; background: #ecf0f1; padding: 10px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="welcome-screen">
+        <h1>Le Tour du Monde en 80 Jours</h1>
+        <h3>Chapitre 1 : Phileas Fogg</h3>
+        <p>Entrez votre prénom pour commencer :</p>
+        <input type="text" id="player-name" placeholder="Votre prénom..." style="padding: 10px; font-size: 1em;">
+        <br><br>
+        <button onclick="startGame()">Commencer l'aventure</button>
+    </div>
+
+    <div id="game-screen" class="hidden">
+        <div class="info-bar">
+            <span>Joueur : <strong id="display-name"></strong></span>
+            <span>Question : <strong id="question-count">0</strong> / 10</span>
+            <span>Erreurs : <strong id="wrong-count">0</strong> / 7</span>
+        </div>
+
+        <div id="word-display">_ _ _ _ _</div>
+        <p id="hint" style="font-style: italic; color: #7f8c8d;"></p>
+        
+        <div id="keyboard"></div>
+        <div id="status"></div>
+        
+        <button id="next-btn" class="hidden" onclick="loadNextWord()">Mot suivant</button>
+        <button onclick="resetGame()" style="background:#e74c3c; margin-top: 20px;">Retour à l'accueil</button>
+    </div>
+</div>
+
+<script>
+    const wordList = [
+        { word: "FOGG", hint: "Le nom de famille du héros mystérieux." },
+        { word: "LONDRES", hint: "La ville où commence l'histoire." },
+        { word: "REFORM", hint: "Le nom du club fréquenté par le héros." },
+        { word: "PASSEPARTOUT", hint: "Le nouveau domestique français." },
+        { word: "SAVILLE", hint: "Le nom de la rue où habite Phileas Fogg." },
+        { word: "GENTLEMAN", hint: "Le titre social donné à Phileas Fogg." },
+        { word: "DOMESTIQUE", hint: "Le métier de Jean Passepartout." },
+        { word: "PONCTUEL", hint: "La qualité principale de Fogg." },
+        { word: "VALET", hint: "Un autre mot pour serviteur." },
+        { word: "CHRONOMETRE", hint: "Fogg agit comme si il en était un." }
+    ];
+
+    let currentWordIndex = 0;
+    let selectedWords = [];
+    let displayedWord = "";
+    let mistakes = 0;
+    let maxMistakes = 7;
+    let wordsSolvable = [];
+
+    function startGame() {
+        const name = document.getElementById('player-name').value;
+        if (!name) { alert("Merci d'entrer votre prénom !"); return; }
+        
+        document.getElementById('display-name').innerText = name;
+        document.getElementById('welcome-screen').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
+        
+        // Mélanger les mots pour ne pas avoir toujours le même ordre
+        wordsSolvable = [...wordList].sort(() => Math.random() - 0.5).slice(0, 10);
+        currentWordIndex = 0;
+        loadNextWord();
+    }
+
+    function loadNextWord() {
+        if (currentWordIndex >= wordsSolvable.length) {
+            document.getElementById('status').innerText = "Bravo ! Vous avez terminé toutes les étapes !";
+            document.getElementById('keyboard').innerHTML = "";
+            document.getElementById('next-btn').classList.add('hidden');
+            return;
+        }
+
+        const currentData = wordsSolvable[currentWordIndex];
+        displayedWord = currentData.word.split('').map(() => "_").join("");
+        mistakes = 0;
+        
+        updateDisplay();
+        document.getElementById('hint').innerText = "Indice : " + currentData.hint;
+        document.getElementById('question-count').innerText = currentWordIndex + 1;
+        document.getElementById('status').innerText = "";
+        document.getElementById('next-btn').classList.add('hidden');
+        
+        createKeyboard();
+    }
+
+    function createKeyboard() {
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const kb = document.getElementById('keyboard');
+        kb.innerHTML = "";
+        alphabet.split('').forEach(letter => {
+            const btn = document.createElement('button');
+            btn.innerText = letter;
+            btn.onclick = () => guessLetter(letter, btn);
+            kb.appendChild(btn);
+        });
+    }
+
+    function guessLetter(letter, btn) {
+        btn.disabled = true;
+        const targetWord = wordsSolvable[currentWordIndex].word;
+        
+        if (targetWord.includes(letter)) {
+            let newDisplay = "";
+            for (let i = 0; i < targetWord.length; i++) {
+                newDisplay += (targetWord[i] === letter) ? letter : displayedWord[i];
+            }
+            displayedWord = newDisplay;
+            btn.style.background = "#2ecc71";
+        } else {
+            mistakes++;
+            btn.style.background = "#e74c3c";
+        }
+
+        updateDisplay();
+        checkResult();
+    }
+
+    function updateDisplay() {
+        document.getElementById('word-display').innerText = displayedWord.split('').join(' ');
+        document.getElementById('wrong-count').innerText = mistakes;
+    }
+
+    function checkResult() {
+        const targetWord = wordsSolvable[currentWordIndex].word;
+        if (displayedWord === targetWord) {
+            document.getElementById('status').innerText = "Gagné !";
+            document.getElementById('status').style.color = "green";
+            disableKeyboard();
+            document.getElementById('next-btn').classList.remove('hidden');
+            currentWordIndex++;
+        } else if (mistakes >= maxMistakes) {
+            document.getElementById('status').innerText = "Perdu ! Le mot était : " + targetWord;
+            document.getElementById('status').style.color = "red";
+            disableKeyboard();
+            document.getElementById('next-btn').classList.remove('hidden');
+            currentWordIndex++;
+        }
+    }
+
+    function disableKeyboard() {
+        const buttons = document.querySelectorAll('#keyboard button');
+        buttons.forEach(b => b.disabled = true);
+    }
+
+    function resetGame() {
+        document.getElementById('welcome-screen').classList.remove('hidden');
+        document.getElementById('game-screen').classList.add('hidden');
+        document.getElementById('player-name').value = "";
+    }
+</script>
+
+</body>
+</html>
