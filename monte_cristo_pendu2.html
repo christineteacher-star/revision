@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -18,32 +18,52 @@
         .key:hover:not(:disabled) { background: #f5f3ff; border-color: #6366f1; color: #6366f1; transform: translateY(-2px); }
         .key:disabled { opacity: 0.3; cursor: not-allowed; }
         #message { font-weight: 800; margin-top: 15px; font-size: 1.1rem; min-height: 1.5rem; }
-        #btn-restart { background: #6366f1; color: white; padding: 16px; border-radius: 18px; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 0 #4338ca; width: 100%; }
+        .btn-main { background: #6366f1; color: white; padding: 16px; border-radius: 18px; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 0 #4338ca; width: 100%; transition: 0.2s; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
     <div class="game-card">
         <header class="p-4 flex justify-between items-center border-b border-slate-100">
-            <div onclick="window.location.href='index.html'" class="header-nav-btn flex items-center gap-2 text-indigo-600 font-black text-sm uppercase">
-                <i class="fas fa-graduation-cap"></i> Mon Académie
+            <div onclick="location.reload()" class="header-nav-btn flex items-center gap-2 text-indigo-600 font-black text-sm uppercase">
+                <i class="fas fa-graduation-cap"></i> Accueil
             </div>
-            <span id="lives" class="bg-rose-50 text-rose-600 text-[10px] font-bold px-3 py-1 rounded-full border border-rose-100 uppercase">Vies : 7</span>
+            <div class="text-right">
+                <div id="player-display" class="text-[10px] text-slate-400 font-bold uppercase">Élève</div>
+                <span id="lives" class="bg-rose-50 text-rose-600 text-[10px] font-bold px-3 py-1 rounded-full border border-rose-100 uppercase">Vies : 7</span>
+            </div>
         </header>
-        <div class="p-6 flex-1 flex flex-col items-center text-center">
-            <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 text-sm font-bold text-indigo-700 w-full mb-4 text-left">
-                <i class="fas fa-user-secret mr-2 text-indigo-400"></i> <span id="hint-text">PENDU CHAPITRE 2 : LE COMPLOT</span>
+
+        <div id="welcome-screen" class="p-8 flex-1 flex flex-col items-center justify-center text-center">
+            <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mb-6">
+                <i class="fas fa-user-secret text-3xl text-indigo-600"></i>
             </div>
+            <h1 class="text-2xl font-black text-slate-800 mb-2 uppercase">Le Complot</h1>
+            <p class="text-slate-500 mb-8 font-medium">Monte-Cristo - Chapitre 2</p>
+            <input type="text" id="input-name" placeholder="Ton prénom..." class="w-full p-4 border-2 border-slate-100 rounded-xl mb-4 text-center font-bold outline-none focus:border-indigo-400">
+            <button onclick="startGame()" class="btn-main">Commencer le jeu</button>
+        </div>
+
+        <div id="game-screen" class="p-6 flex-1 flex flex-col items-center text-center hidden">
+            <div class="flex justify-between w-full mb-2">
+                <span id="progression" class="text-[10px] font-black text-indigo-500 uppercase">Question 1 / 10</span>
+            </div>
+            <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 text-sm font-bold text-indigo-700 w-full mb-4 text-left">
+                <i class="fas fa-mask mr-2 text-indigo-400"></i> <span id="hint-text">INDICE</span>
+            </div>
+            
             <div id="word-display">_ _ _ _ _</div>
             <div id="keyboard" class="keyboard mt-auto"></div>
             <div id="message"></div>
+            
             <div class="mt-6 w-full">
-                <button id="btn-restart" onclick="init()" style="display:none;">Mot Suivant</button>
+                <button id="btn-next" class="btn-main hidden" onclick="loadNextWord()">Mot Suivant</button>
             </div>
         </div>
     </div>
 
 <script>
-    const mots = [
+    const motsBase = [
         {w: "TRAHISON", h: "Le thème principal du chapitre 2."},
         {w: "FIANCAILLES", h: "La promesse de mariage entre Edmond et Mercédès."},
         {w: "POIGNARDER", h: "Fernand y a pensé pour éliminer son rival."},
@@ -57,18 +77,39 @@
     ];
 
     let secretWord, hint, displayedWord, lives;
+    let motsRestants = [];
+    let totalMots = 10;
 
-    function init() {
-        const selected = mots[Math.floor(Math.random() * mots.length)];
-        secretWord = selected.w.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+    function startGame() {
+        const name = document.getElementById('input-name').value;
+        if (!name) return alert("Indique ton prénom !");
+        
+        document.getElementById('player-display').innerText = name;
+        document.getElementById('welcome-screen').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
+        
+        motsRestants = [...motsBase].sort(() => Math.random() - 0.5);
+        loadNextWord();
+    }
+
+    function loadNextWord() {
+        if (motsRestants.length === 0) {
+            alert("Bravo ! Tu as déjoué le complot !");
+            location.reload();
+            return;
+        }
+
+        const selected = motsRestants.pop();
+        secretWord = selected.w.toUpperCase();
         hint = selected.h;
         lives = 7;
         displayedWord = Array(secretWord.length).fill('_');
 
+        document.getElementById('progression').innerText = `Question ${totalMots - motsRestants.length} / ${totalMots}`;
         document.getElementById('hint-text').innerText = hint;
         document.getElementById('lives').innerText = `Vies : ${lives}`;
         document.getElementById('message').innerText = "";
-        document.getElementById('btn-restart').style.display = "none";
+        document.getElementById('btn-next').classList.add('hidden');
         
         updateWordDisplay();
         createKeyboard();
@@ -112,20 +153,18 @@
         if (!displayedWord.includes('_')) {
             document.getElementById('message').innerText = "🏆 FÉLICITATIONS !";
             document.getElementById('message').style.color = "#059669";
-            end();
+            finishStep();
         } else if (lives <= 0) {
             document.getElementById('message').innerText = "❌ PERDU ! C'était : " + secretWord;
             document.getElementById('message').style.color = "#dc2626";
-            end();
+            finishStep();
         }
     }
 
-    function end() {
+    function finishStep() {
         document.querySelectorAll('.key').forEach(b => b.disabled = true);
-        document.getElementById('btn-restart').style.display = "block";
+        document.getElementById('btn-next').classList.remove('hidden');
     }
-
-    init();
 </script>
 </body>
 </html>
