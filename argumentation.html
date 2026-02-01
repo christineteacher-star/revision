@@ -1,8 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Jeu : L'Apprenti Argumentateur (A2-B1)</title>
     <style>
         :root { --primary: #0277bd; --secondary: #e1f5fe; --success: #388e3c; --bg: #f0f4f8; }
@@ -12,10 +12,15 @@
         .level-info { text-align: center; font-weight: bold; color: var(--primary); font-size: 1.2em; margin-bottom: 15px; }
         .hint { background: #fff9c4; padding: 12px; border-radius: 8px; border: 1px solid #fbc02d; font-size: 0.95em; margin-bottom: 20px; }
         #puzzle-area { min-height: 250px; margin-bottom: 20px; }
+        
         .draggable { 
             background: var(--secondary); border: 2px solid var(--primary); padding: 15px; margin: 10px 0; 
             border-radius: 10px; cursor: grab; font-size: 1.05em; transition: 0.2s;
+            /* IMPORTANT POUR MOBILE : empêche le défilement pendant le drag */
+            touch-action: none; 
+            user-select: none;
         }
+        
         .draggable:hover { background: #b3e5fc; transform: scale(1.01); }
         .draggable.correct { background: #c8e6c9; border-color: var(--success); }
         .buttons { display: flex; gap: 10px; }
@@ -46,6 +51,29 @@
 </div>
 
 <script>
+    // --- SCRIPT DE COMPATIBILITÉ MOBILE ---
+    function touchHandler(event) {
+        var touches = event.changedTouches, first = touches[0], type = "";
+        switch(event.type) {
+            case "touchstart": type = "mousedown"; break;
+            case "touchmove":  type = "mousemove"; break;        
+            case "touchend":   type = "mouseup";   break;
+            default: return;
+        }
+        var simulatedEvent = document.createEvent("MouseEvent");
+        simulatedEvent.initMouseEvent(type, true, true, window, 1, 
+                                      first.screenX, first.screenY, 
+                                      first.clientX, first.clientY, false, 
+                                      false, false, false, 0, null);
+        first.target.dispatchEvent(simulatedEvent);
+        if (event.type === "touchmove") { event.preventDefault(); }
+    }
+    document.addEventListener("touchstart", touchHandler, true);
+    document.addEventListener("touchmove", touchHandler, true);
+    document.addEventListener("touchend", touchHandler, true);
+    document.addEventListener("touchcancel", touchHandler, true);
+    // ---------------------------------------
+
     const levels = [
         {
             title: "Phileas Fogg (Le Tour du Monde)",
@@ -124,6 +152,7 @@
 
     function handleDragStart(e) { dragSrcEl = this; e.dataTransfer.effectAllowed = 'move'; }
     function handleDragOver(e) { e.preventDefault(); }
+    
     function handleDrop(e) {
         if (dragSrcEl !== this) {
             let all = Array.from(document.querySelectorAll('.draggable'));
