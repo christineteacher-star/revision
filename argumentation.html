@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jeu : L'Apprenti Argumentateur (A2-B1)</title>
+    <title>Jeu : L'Apprenti Argumentateur</title>
     <style>
         :root { --primary: #0277bd; --secondary: #e1f5fe; --success: #388e3c; --bg: #f0f4f8; }
         body { font-family: 'Arial', sans-serif; background-color: var(--bg); padding: 20px; line-height: 1.4; }
@@ -16,12 +16,12 @@
         .draggable { 
             background: var(--secondary); border: 2px solid var(--primary); padding: 15px; margin: 10px 0; 
             border-radius: 10px; cursor: grab; font-size: 1.05em; transition: 0.2s;
-            /* IMPORTANT POUR MOBILE : empêche le défilement pendant le drag */
+            /* CRUCIAL POUR MOBILE */
             touch-action: none; 
             user-select: none;
         }
         
-        .draggable:hover { background: #b3e5fc; transform: scale(1.01); }
+        .draggable:active { cursor: grabbing; opacity: 0.8; }
         .draggable.correct { background: #c8e6c9; border-color: var(--success); }
         .buttons { display: flex; gap: 10px; }
         button { flex: 1; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.1em; }
@@ -34,7 +34,7 @@
 
 <div class="container">
     <h1>L'Apprenti Argumentateur ✍️</h1>
-    <div id="level-title" class="level-info">Niveau 1 / 4</div>
+    <div id="level-title" class="level-info"></div>
     
     <div class="hint">
         <strong>Aide :</strong> Place les blocs dans cet ordre : <br>
@@ -51,7 +51,7 @@
 </div>
 
 <script>
-    // --- SCRIPT DE COMPATIBILITÉ MOBILE ---
+    // --- 1. SCRIPT DE COMPATIBILITÉ MOBILE (Comme le jeu Pour/Contre) ---
     function touchHandler(event) {
         var touches = event.changedTouches, first = touches[0], type = "";
         switch(event.type) {
@@ -66,14 +66,13 @@
                                       first.clientX, first.clientY, false, 
                                       false, false, false, 0, null);
         first.target.dispatchEvent(simulatedEvent);
-        if (event.type === "touchmove") { event.preventDefault(); }
+        if (type === "mousemove") { event.preventDefault(); }
     }
     document.addEventListener("touchstart", touchHandler, true);
     document.addEventListener("touchmove", touchHandler, true);
     document.addEventListener("touchend", touchHandler, true);
-    document.addEventListener("touchcancel", touchHandler, true);
-    // ---------------------------------------
 
+    // --- 2. DONNÉES ET LOGIQUE DU JEU ---
     const levels = [
         {
             title: "Phileas Fogg (Le Tour du Monde)",
@@ -130,7 +129,7 @@
         const nextBtn = document.getElementById('next-btn');
         const levelData = levels[currentLevel];
         
-        title.innerHTML = `Niveau ${currentLevel + 1} : ${levelData.title}`;
+        title.innerHTML = `Niveau ${currentLevel + 1} / ${levels.length} : ${levelData.title}`;
         area.innerHTML = '';
         nextBtn.style.display = 'none';
         document.getElementById('message').innerHTML = '';
@@ -143,22 +142,23 @@
             div.draggable = true;
             div.innerHTML = item.text;
             div.dataset.id = item.id;
-            div.addEventListener('dragstart', handleDragStart);
-            div.addEventListener('dragover', handleDragOver);
-            div.addEventListener('drop', handleDrop);
+
+            // Logique de mouvement identique au jeu Pour/Contre
+            div.ondragstart = function(e) {
+                dragSrcEl = this;
+                e.dataTransfer.effectAllowed = 'move';
+            };
+            div.ondragover = function(e) { e.preventDefault(); };
+            div.ondrop = function(e) {
+                e.preventDefault();
+                if (dragSrcEl !== this) {
+                    let all = Array.from(document.querySelectorAll('.draggable'));
+                    if (all.indexOf(dragSrcEl) < all.indexOf(this)) this.after(dragSrcEl);
+                    else this.before(dragSrcEl);
+                }
+            };
             area.appendChild(div);
         });
-    }
-
-    function handleDragStart(e) { dragSrcEl = this; e.dataTransfer.effectAllowed = 'move'; }
-    function handleDragOver(e) { e.preventDefault(); }
-    
-    function handleDrop(e) {
-        if (dragSrcEl !== this) {
-            let all = Array.from(document.querySelectorAll('.draggable'));
-            if (all.indexOf(dragSrcEl) < all.indexOf(this)) this.after(dragSrcEl);
-            else this.before(dragSrcEl);
-        }
     }
 
     function checkOrder() {
@@ -190,7 +190,7 @@
         currentLevel++;
         if (currentLevel < levels.length) initLevel();
         else {
-            document.querySelector('.container').innerHTML = "<h1>🎓 Champion !</h1><p style='text-align:center'>Tu sais maintenant construire une argumentation parfaite en français.</p><button onclick='location.reload()'>Rejouer</button>";
+            document.querySelector('.container').innerHTML = "<h1>🎓 Champion !</h1><p style='text-align:center'>Tu maîtrises l'argumentation !</p><button onclick='location.reload()'>Rejouer</button>";
         }
     }
 
