@@ -1,0 +1,157 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu : Pour ou Contre ?</title>
+    <style>
+        :root { --pour: #4caf50; --contre: #f44336; --bg: #fdfdfd; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #eceff1; padding: 20px; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c3e50; }
+        .game-header { text-align: center; margin-bottom: 30px; }
+        .subject-box { background: #0277bd; color: white; padding: 15px; border-radius: 10px; font-size: 1.5em; display: inline-block; margin-bottom: 20px; }
+        
+        .game-zone { display: flex; justify-content: space-between; gap: 20px; min-height: 400px; }
+        .drop-zone { flex: 1; border: 3px dashed #ccc; border-radius: 15px; padding: 15px; display: flex; flex-direction: column; align-items: center; transition: 0.3s; }
+        .drop-zone h2 { margin-top: 0; }
+        #zone-pour { border-color: var(--pour); color: var(--pour); }
+        #zone-contre { border-color: var(--contre); color: var(--contre); }
+        .zone-active { background-color: #f1f8e9; border-style: solid; }
+        .zone-active-contre { background-color: #ffebee; border-style: solid; }
+
+        .arguments-pool { margin: 20px 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; min-height: 100px; padding: 10px; background: #fafafa; border-radius: 10px; }
+        .argument { 
+            background: #fff; border: 2px solid #0277bd; padding: 10px 15px; border-radius: 20px; 
+            cursor: grab; font-size: 0.95em; box-shadow: 0 3px 6px rgba(0,0,0,0.1); max-width: 250px; 
+        }
+        .argument:active { cursor: grabbing; }
+
+        .score-board { text-align: center; margin-top: 20px; font-size: 1.2em; font-weight: bold; }
+        button { background: #0277bd; color: white; border: none; padding: 10px 25px; border-radius: 5px; cursor: pointer; font-size: 1em; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Défi : Pour ou Contre ? ⚖️</h1>
+    <div class="game-header">
+        <div class="subject-box" id="current-subject">Sujet : Les Fast-foods</div>
+        <p>Glisse les arguments dans la bonne colonne !</p>
+    </div>
+
+    <div class="arguments-pool" id="pool">
+        </div>
+
+    <div class="game-zone">
+        <div id="zone-pour" class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h2>👍 POUR</h2>
+        </div>
+        <div id="zone-contre" class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h2>👎 CONTRE</h2>
+        </div>
+    </div>
+
+    <div class="score-board" id="score">Score : 0 / 0</div>
+    <div style="text-align: center;"><button onclick="nextSubject()">Sujet Suivant</button></div>
+</div>
+
+<script>
+    const gameData = [
+        {
+            subject: "Les Fast-foods",
+            args: [
+                { text: "C'est pratique pour manger avec des amis.", type: "pour" },
+                { text: "Le service est très rapide.", type: "pour" },
+                { text: "Les prix sont bas pour les étudiants.", type: "pour" },
+                { text: "C'est mauvais pour la santé (gras).", type: "contre" },
+                { text: "Cela crée beaucoup de déchets (emballages).", type: "contre" },
+                { text: "On ne mange pas de produits frais.", type: "contre" }
+            ]
+        },
+        {
+            subject: "Le Télétravail",
+            args: [
+                { text: "On gagne du temps (pas de transport).", type: "pour" },
+                { text: "On est plus reposé et moins stressé.", type: "pour" },
+                { text: "C'est bon pour la planète (moins de pollution).", type: "pour" },
+                { text: "On peut se sentir seul sans les collègues.", type: "contre" },
+                { text: "C'est difficile de séparer travail et vie privée.", type: "contre" },
+                { text: "On bouge moins (manque d'activité physique).", type: "contre" }
+            ]
+        }
+    ];
+
+    let currentIdx = 0;
+    let score = 0;
+    let totalInLevel = 0;
+
+    function initLevel() {
+        const pool = document.getElementById('pool');
+        const subjectEl = document.getElementById('current-subject');
+        const level = gameData[currentIdx];
+        
+        subjectEl.innerText = "Sujet : " + level.subject;
+        pool.innerHTML = "";
+        document.getElementById('zone-pour').innerHTML = "<h2>👍 POUR</h2>";
+        document.getElementById('zone-contre').innerHTML = "<h2>👎 CONTRE</h2>";
+        
+        totalInLevel = level.args.length;
+        let shuffled = [...level.args].sort(() => Math.random() - 0.5);
+
+        shuffled.forEach((arg, index) => {
+            const div = document.createElement('div');
+            div.className = "argument";
+            div.innerText = arg.text;
+            div.id = "arg-" + index;
+            div.draggable = true;
+            div.dataset.type = arg.type;
+            div.ondragstart = drag;
+            pool.appendChild(div);
+        });
+        updateScore();
+    }
+
+    function allowDrop(e) { e.preventDefault(); }
+    function drag(e) { e.dataTransfer.setData("text", e.target.id); }
+
+    function drop(e) {
+        e.preventDefault();
+        const id = e.dataTransfer.getData("text");
+        const arg = document.getElementById(id);
+        const zone = e.target.closest('.drop-zone');
+        
+        const isPourZone = zone.id === "zone-pour";
+        const isCorrect = (isPourZone && arg.dataset.type === "pour") || (!isPourZone && arg.dataset.type === "contre");
+
+        if (isCorrect) {
+            zone.appendChild(arg);
+            arg.style.borderColor = "var(--success)";
+            arg.draggable = false;
+            score++;
+            updateScore();
+        } else {
+            alert("Mauvaise colonne ! Réfléchis bien à l'argument.");
+        }
+    }
+
+    function updateScore() {
+        document.getElementById('score').innerText = `Score : ${score}`;
+    }
+
+    function nextSubject() {
+        currentIdx++;
+        if (currentIdx < gameData.length) {
+            initLevel();
+        } else {
+            alert("Félicitations ! Tu as fini le tri !");
+            currentIdx = 0;
+            score = 0;
+            initLevel();
+        }
+    }
+
+    initLevel();
+</script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu : L'Apprenti Argumentateur (A2-B1)</title>
+    <style>
+        :root { --primary: #0277bd; --secondary: #e1f5fe; --success: #388e3c; --bg: #f0f4f8; }
+        body { font-family: 'Arial', sans-serif; background-color: var(--bg); padding: 20px; line-height: 1.4; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        h1 { color: #1565c0; text-align: center; margin-bottom: 10px; }
+        .level-info { text-align: center; font-weight: bold; color: var(--primary); font-size: 1.2em; margin-bottom: 15px; }
+        .hint { background: #fff9c4; padding: 12px; border-radius: 8px; border: 1px solid #fbc02d; font-size: 0.95em; margin-bottom: 20px; }
+        #puzzle-area { min-height: 250px; margin-bottom: 20px; }
+        .draggable { 
+            background: var(--secondary); border: 2px solid var(--primary); padding: 15px; margin: 10px 0; 
+            border-radius: 10px; cursor: grab; font-size: 1.05em; transition: 0.2s;
+        }
+        .draggable:hover { background: #b3e5fc; transform: scale(1.01); }
+        .draggable.correct { background: #c8e6c9; border-color: var(--success); }
+        .buttons { display: flex; gap: 10px; }
+        button { flex: 1; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.1em; }
+        .btn-check { background: var(--primary); color: white; }
+        .btn-next { background: var(--success); color: white; display: none; }
+        #message { margin-top: 20px; text-align: center; font-weight: bold; font-size: 1.1em; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>L'Apprenti Argumentateur ✍️</h1>
+    <div id="level-title" class="level-info">Niveau 1 / 4</div>
+    
+    <div class="hint">
+        <strong>Aide :</strong> Place les blocs dans cet ordre : <br>
+        Fait ➔ Précision (notamment) ➔ Explication ➔ Exemple ➔ Nuance (Pourtant/Mais) ➔ Conclusion
+    </div>
+
+    <div id="puzzle-area"></div>
+
+    <div class="buttons">
+        <button class="btn-check" onclick="checkOrder()">Vérifier l'ordre</button>
+        <button id="next-btn" class="btn-next" onclick="nextLevel()">Niveau Suivant ➔</button>
+    </div>
+    <div id="message"></div>
+</div>
+
+<script>
+    const levels = [
+        {
+            title: "Phileas Fogg (Le Tour du Monde)",
+            data: [
+                { id: "1", text: "Phileas Fogg est un homme qui adore la routine et l'ordre." },
+                { id: "2", text: "Il fait notamment les mêmes activités chaque jour à la même minute." },
+                { id: "3", text: "Il pense que la vie est plus simple quand on calcule tout avec précision." },
+                { id: "4", text: "Par exemple, il va au club chaque jour exactement à onze heures et demie." },
+                { id: "5", text: "Pourtant, cette vie très calme va bientôt changer à cause d'un pari fou." },
+                { id: "6", text: "C'est pourquoi son nouveau valet va être très surpris par ce voyage." }
+            ]
+        },
+        {
+            title: "Les Fast-foods",
+            data: [
+                { id: "1", text: "De nos jours, beaucoup de jeunes mangent souvent dans les fast-foods." },
+                { id: "2", text: "Ils y vont notamment parce que c'est un endroit pratique pour les amis." },
+                { id: "3", text: "Dans ces restaurants, le service est très rapide et les prix sont bas." },
+                { id: "4", text: "Ainsi, on peut manger un menu complet pour moins de dix euros." },
+                { id: "5", text: "Cependant, cette nourriture est souvent trop grasse pour la santé." },
+                { id: "6", text: "C'est pourquoi il faut aussi essayer de cuisiner des produits frais." }
+            ]
+        },
+        {
+            title: "Le Télétravail",
+            data: [
+                { id: "1", text: "Aujourd'hui, travailler depuis la maison est devenu très populaire." },
+                { id: "2", text: "On utilise notamment des outils vidéo pour faire des réunions à distance." },
+                { id: "3", text: "Cela permet de gagner du temps car on ne voyage plus dans les transports." },
+                { id: "4", text: "Par exemple, un employé peut dormir plus longtemps et être plus reposé." },
+                { id: "5", text: "Néanmoins, on peut se sentir seul si on ne voit jamais ses collègues." },
+                { id: "6", text: "C'est pourquoi beaucoup de gens préfèrent un modèle mélangé (bureau et maison)." }
+            ]
+        },
+        {
+            title: "Le Street-Art",
+            data: [
+                { id: "1", text: "Le street-art n'est plus considéré comme une simple dégradation." },
+                { id: "2", text: "On trouve notamment des fresques magnifiques dans les grandes villes." },
+                { id: "3", text: "Cet art permet de rendre la rue plus belle et d'exprimer des idées." },
+                { id: "4", text: "Ainsi, des artistes célèbres vendent maintenant leurs œuvres très cher." },
+                { id: "5", text: "Malgré cela, dessiner sur les murs sans permission reste interdit." },
+                { id: "6", text: "C'est pourquoi les mairies créent désormais des espaces autorisés." }
+            ]
+        }
+    ];
+
+    let currentLevel = 0;
+    let dragSrcEl = null;
+
+    function initLevel() {
+        const area = document.getElementById('puzzle-area');
+        const title = document.getElementById('level-title');
+        const nextBtn = document.getElementById('next-btn');
+        const levelData = levels[currentLevel];
+        
+        title.innerHTML = `Niveau ${currentLevel + 1} : ${levelData.title}`;
+        area.innerHTML = '';
+        nextBtn.style.display = 'none';
+        document.getElementById('message').innerHTML = '';
+
+        let shuffled = [...levelData.data].sort(() => Math.random() - 0.5);
+
+        shuffled.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'draggable';
+            div.draggable = true;
+            div.innerHTML = item.text;
+            div.dataset.id = item.id;
+            div.addEventListener('dragstart', handleDragStart);
+            div.addEventListener('dragover', handleDragOver);
+            div.addEventListener('drop', handleDrop);
+            area.appendChild(div);
+        });
+    }
+
+    function handleDragStart(e) { dragSrcEl = this; e.dataTransfer.effectAllowed = 'move'; }
+    function handleDragOver(e) { e.preventDefault(); }
+    function handleDrop(e) {
+        if (dragSrcEl !== this) {
+            let all = Array.from(document.querySelectorAll('.draggable'));
+            if (all.indexOf(dragSrcEl) < all.indexOf(this)) this.after(dragSrcEl);
+            else this.before(dragSrcEl);
+        }
+    }
+
+    function checkOrder() {
+        const items = document.querySelectorAll('.draggable');
+        const correctData = levels[currentLevel].data;
+        let correctCount = 0;
+
+        items.forEach((item, i) => {
+            if (item.dataset.id === correctData[i].id) {
+                item.classList.add('correct');
+                correctCount++;
+            } else {
+                item.classList.remove('correct');
+            }
+        });
+
+        const msg = document.getElementById('message');
+        if (correctCount === correctData.length) {
+            msg.innerHTML = "🎉 Bravo ! Tu as trouvé la bonne logique.";
+            msg.style.color = "var(--success)";
+            document.getElementById('next-btn').style.display = 'block';
+        } else {
+            msg.innerHTML = `⚠️ ${correctCount} / ${correctData.length} bien placés. Réessaie !`;
+            msg.style.color = "#d32f2f";
+        }
+    }
+
+    function nextLevel() {
+        currentLevel++;
+        if (currentLevel < levels.length) initLevel();
+        else {
+            document.querySelector('.container').innerHTML = "<h1>🎓 Champion !</h1><p style='text-align:center'>Tu sais maintenant construire une argumentation parfaite en français.</p><button onclick='location.reload()'>Rejouer</button>";
+        }
+    }
+
+    initLevel();
+</script>
+</body>
+</html>
