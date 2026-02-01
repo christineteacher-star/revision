@@ -3,31 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jeu : L'Apprenti Argumentateur</title>
+    <title>L'Apprenti Argumentateur - Tactile</title>
     <style>
-        :root { --primary: #0277bd; --secondary: #e1f5fe; --success: #388e3c; --bg: #f0f4f8; }
-        body { font-family: 'Arial', sans-serif; background-color: var(--bg); padding: 20px; line-height: 1.4; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        h1 { color: #1565c0; text-align: center; margin-bottom: 10px; }
-        .level-info { text-align: center; font-weight: bold; color: var(--primary); font-size: 1.2em; margin-bottom: 15px; }
-        .hint { background: #fff9c4; padding: 12px; border-radius: 8px; border: 1px solid #fbc02d; font-size: 0.95em; margin-bottom: 20px; }
-        #puzzle-area { min-height: 250px; margin-bottom: 20px; }
+        :root { --primary: #0277bd; --secondary: #e1f5fe; --success: #388e3c; --bg: #f0f4f8; --selected: #ffc107; }
+        body { font-family: 'Arial', sans-serif; background-color: var(--bg); padding: 15px; user-select: none; -webkit-user-select: none; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        h1 { color: #1565c0; text-align: center; font-size: 1.5rem; }
+        .level-info { text-align: center; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
+        
+        #puzzle-area { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
         
         .draggable { 
-            background: var(--secondary); border: 2px solid var(--primary); padding: 15px; margin: 10px 0; 
-            border-radius: 10px; cursor: grab; font-size: 1.05em; transition: 0.2s;
-            /* CRUCIAL POUR MOBILE */
-            touch-action: none; 
-            user-select: none;
+            background: var(--secondary); border: 2px solid var(--primary); padding: 12px;
+            border-radius: 10px; cursor: pointer; font-size: 1rem; transition: 0.3s;
+            touch-action: manipulation; /* Optimise le tap sur mobile */
         }
         
-        .draggable:active { cursor: grabbing; opacity: 0.8; }
+        /* Style quand une phrase est sélectionnée */
+        .draggable.active { 
+            background: var(--selected); 
+            border-color: #ffa000;
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
         .draggable.correct { background: #c8e6c9; border-color: var(--success); }
-        .buttons { display: flex; gap: 10px; }
-        button { flex: 1; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.1em; }
-        .btn-check { background: var(--primary); color: white; }
-        .btn-next { background: var(--success); color: white; display: none; }
-        #message { margin-top: 20px; text-align: center; font-weight: bold; font-size: 1.1em; }
+        
+        .buttons { display: flex; flex-direction: column; gap: 10px; }
+        button { padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.1em; color: white; }
+        .btn-check { background: var(--primary); }
+        .btn-reset { background: #78909c; }
+        .btn-next { background: var(--success); display: none; }
+        #message { margin-top: 15px; text-align: center; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -35,47 +42,22 @@
 <div class="container">
     <h1>L'Apprenti Argumentateur ✍️</h1>
     <div id="level-title" class="level-info"></div>
-    
-    <div class="hint">
-        <strong>Aide :</strong> Place les blocs dans cet ordre : <br>
-        Fait ➔ Précision (notamment) ➔ Explication ➔ Exemple ➔ Nuance (Pourtant/Mais) ➔ Conclusion
-    </div>
+    <p style="font-size: 0.9em; text-align: center; color: #666;">Appuyez sur deux phrases pour les échanger.</p>
 
     <div id="puzzle-area"></div>
 
     <div class="buttons">
         <button class="btn-check" onclick="checkOrder()">Vérifier l'ordre</button>
+        <button class="btn-reset" onclick="initLevel()">Réinitialiser 🔄</button>
         <button id="next-btn" class="btn-next" onclick="nextLevel()">Niveau Suivant ➔</button>
     </div>
     <div id="message"></div>
 </div>
 
 <script>
-    // --- 1. SCRIPT DE COMPATIBILITÉ MOBILE (Comme le jeu Pour/Contre) ---
-    function touchHandler(event) {
-        var touches = event.changedTouches, first = touches[0], type = "";
-        switch(event.type) {
-            case "touchstart": type = "mousedown"; break;
-            case "touchmove":  type = "mousemove"; break;        
-            case "touchend":   type = "mouseup";   break;
-            default: return;
-        }
-        var simulatedEvent = document.createEvent("MouseEvent");
-        simulatedEvent.initMouseEvent(type, true, true, window, 1, 
-                                      first.screenX, first.screenY, 
-                                      first.clientX, first.clientY, false, 
-                                      false, false, false, 0, null);
-        first.target.dispatchEvent(simulatedEvent);
-        if (type === "mousemove") { event.preventDefault(); }
-    }
-    document.addEventListener("touchstart", touchHandler, true);
-    document.addEventListener("touchmove", touchHandler, true);
-    document.addEventListener("touchend", touchHandler, true);
-
-    // --- 2. DONNÉES ET LOGIQUE DU JEU ---
     const levels = [
         {
-            title: "Phileas Fogg (Le Tour du Monde)",
+            title: "Phileas Fogg",
             data: [
                 { id: "1", text: "Phileas Fogg est un homme qui adore la routine et l'ordre." },
                 { id: "2", text: "Il fait notamment les mêmes activités chaque jour à la même minute." },
@@ -95,70 +77,63 @@
                 { id: "5", text: "Cependant, cette nourriture est souvent trop grasse pour la santé." },
                 { id: "6", text: "C'est pourquoi il faut aussi essayer de cuisiner des produits frais." }
             ]
-        },
-        {
-            title: "Le Télétravail",
-            data: [
-                { id: "1", text: "Aujourd'hui, travailler depuis la maison est devenu très populaire." },
-                { id: "2", text: "On utilise notamment des outils vidéo pour faire des réunions à distance." },
-                { id: "3", text: "Cela permet de gagner du temps car on ne voyage plus dans les transports." },
-                { id: "4", text: "Par exemple, un employé peut dormir plus longtemps et être plus reposé." },
-                { id: "5", text: "Néanmoins, on peut se sentir seul si on ne voit jamais ses collègues." },
-                { id: "6", text: "C'est pourquoi beaucoup de gens préfèrent un modèle mélangé (bureau et maison)." }
-            ]
-        },
-        {
-            title: "Le Street-Art",
-            data: [
-                { id: "1", text: "Le street-art n'est plus considéré comme une simple dégradation." },
-                { id: "2", text: "On trouve notamment des fresques magnifiques dans les grandes villes." },
-                { id: "3", text: "Cet art permet de rendre la rue plus belle et d'exprimer des idées." },
-                { id: "4", text: "Ainsi, des artistes célèbres vendent maintenant leurs œuvres très cher." },
-                { id: "5", text: "Malgré cela, dessiner sur les murs sans permission reste interdit." },
-                { id: "6", text: "C'est pourquoi les mairies créent désormais des espaces autorisés." }
-            ]
         }
     ];
 
     let currentLevel = 0;
-    let dragSrcEl = null;
+    let selectedElement = null;
 
     function initLevel() {
         const area = document.getElementById('puzzle-area');
-        const title = document.getElementById('level-title');
-        const nextBtn = document.getElementById('next-btn');
         const levelData = levels[currentLevel];
-        
-        title.innerHTML = `Niveau ${currentLevel + 1} / ${levels.length} : ${levelData.title}`;
+        document.getElementById('level-title').innerHTML = `Niveau ${currentLevel + 1} : ${levelData.title}`;
         area.innerHTML = '';
-        nextBtn.style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
         document.getElementById('message').innerHTML = '';
+        selectedElement = null;
 
         let shuffled = [...levelData.data].sort(() => Math.random() - 0.5);
 
         shuffled.forEach(item => {
             const div = document.createElement('div');
             div.className = 'draggable';
-            div.draggable = true;
             div.innerHTML = item.text;
             div.dataset.id = item.id;
-
-            // Logique de mouvement identique au jeu Pour/Contre
-            div.ondragstart = function(e) {
-                dragSrcEl = this;
-                e.dataTransfer.effectAllowed = 'move';
+            
+            // Logique de clic simple pour mobile
+            div.onclick = function() {
+                handleSelect(this);
             };
-            div.ondragover = function(e) { e.preventDefault(); };
-            div.ondrop = function(e) {
-                e.preventDefault();
-                if (dragSrcEl !== this) {
-                    let all = Array.from(document.querySelectorAll('.draggable'));
-                    if (all.indexOf(dragSrcEl) < all.indexOf(this)) this.after(dragSrcEl);
-                    else this.before(dragSrcEl);
-                }
-            };
+            
             area.appendChild(div);
         });
+    }
+
+    function handleSelect(el) {
+        if (!selectedElement) {
+            // Premier clic : on sélectionne
+            selectedElement = el;
+            el.classList.add('active');
+        } else {
+            // Deuxième clic : on échange
+            if (selectedElement !== el) {
+                const tempContent = el.innerHTML;
+                const tempId = el.dataset.id;
+                
+                el.innerHTML = selectedElement.innerHTML;
+                el.dataset.id = selectedElement.dataset.id;
+                
+                selectedElement.innerHTML = tempContent;
+                selectedElement.dataset.id = tempId;
+                
+                // On retire les styles de validation s'ils existent
+                el.classList.remove('correct');
+                selectedElement.classList.remove('correct');
+            }
+            
+            selectedElement.classList.remove('active');
+            selectedElement = null;
+        }
     }
 
     function checkOrder() {
@@ -177,11 +152,11 @@
 
         const msg = document.getElementById('message');
         if (correctCount === correctData.length) {
-            msg.innerHTML = "🎉 Bravo ! Tu as trouvé la bonne logique.";
+            msg.innerHTML = "🎉 Bravo ! C'est la bonne logique.";
             msg.style.color = "var(--success)";
             document.getElementById('next-btn').style.display = 'block';
         } else {
-            msg.innerHTML = `⚠️ ${correctCount} / ${correctData.length} bien placés. Réessaie !`;
+            msg.innerHTML = `⚠️ ${correctCount} / ${correctData.length} bien placés.`;
             msg.style.color = "#d32f2f";
         }
     }
@@ -190,7 +165,7 @@
         currentLevel++;
         if (currentLevel < levels.length) initLevel();
         else {
-            document.querySelector('.container').innerHTML = "<h1>🎓 Champion !</h1><p style='text-align:center'>Tu maîtrises l'argumentation !</p><button onclick='location.reload()'>Rejouer</button>";
+            document.querySelector('.container').innerHTML = "<h1>🎓 Bravo !</h1><p style='text-align:center'>Vous avez terminé tous les niveaux.</p><button class='btn-check' style='width:100%' onclick='location.reload()'>Rejouer</button>";
         }
     }
 
