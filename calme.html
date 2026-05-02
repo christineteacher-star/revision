@@ -1,0 +1,256 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Espace Calme</title>
+    <style>
+        :root {
+            --bg-color: #f0f9ff;
+            --primary: #0ea5e9;
+            --text: #1e293b;
+        }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: var(--bg-color); margin: 0; padding: 15px; display: flex; justify-content: center; color: var(--text); overflow-x: hidden; }
+        .app-container { background: white; width: 100%; max-width: 450px; border-radius: 40px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.05); min-height: 650px; position: relative; overflow: hidden; }
+        
+        .screen { display: none; text-align: center; animation: softFade 1s ease; }
+        .active { display: block; }
+        @keyframes softFade { from { opacity: 0; } to { opacity: 1; } }
+
+        h1 { font-weight: 300; letter-spacing: 1px; color: #0369a1; }
+        .btn { background: #7dd3fc; color: #0369a1; border: none; padding: 20px; width: 100%; border-radius: 20px; margin: 12px 0; font-size: 18px; cursor: pointer; transition: 0.5s; position: relative; }
+
+        /* ACTIVITÉ 1 */
+        #cercle-respi {
+            width: 160px; height: 160px; border-radius: 50%;
+            background: #fed7aa; margin: 60px auto;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 300;
+            transition: all 4.5s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+        }
+        .gonfler { transform: scale(1.6); background: #bae6fd !important; }
+        .paix-active { cursor: pointer; background: #fda4af !important; }
+
+        /* ACTIVITÉ 2 */
+        .scavenger-item {
+            background: #f8fafc; padding: 20px; border-radius: 20px; margin: 15px 0;
+            display: flex; align-items: center; gap: 20px; cursor: pointer; text-align: left;
+            transition: 0.6s;
+        }
+        .scavenger-item.done { background: #f0fdf4; border-color: #86efac; opacity: 0.7; }
+        .checkbox { width: 28px; height: 28px; border: 1px solid #cbd5e1; border-radius: 50%; background: white; position: relative; }
+        .done .checkbox { background: #86efac; border-color: #86efac; }
+        .done .checkbox::after { content: "✓"; color: white; position: absolute; left: 8px; top: 2px; }
+        
+        #focus-icon { display: none; width: 80px; margin: 20px auto; cursor: pointer; fill: #0ea5e9; }
+
+        /* ACTIVITÉ 3 */
+        .cloud-zone { height: 300px; position: relative; background: transparent; margin: 20px 0; display: flex; align-items: center; justify-content: center; }
+        .cloud-wrapper { width: 200px; height: auto; cursor: pointer; transition: transform 3.5s ease-in-out, opacity 3s ease-in-out; transform: scale(1); opacity: 1; }
+        .cloud-shrink { transform: scale(0) !important; opacity: 0 !important; pointer-events: none; }
+        .cloud-fill { fill: #cbd5e1; stroke: #94a3b8; stroke-width: 2; } 
+
+        #conclusion-text { font-size: 18px; font-weight: 400; color: #0369a1; margin-top: 20px; min-height: 80px; opacity: 0; transition: opacity 1.5s ease; padding: 0 10px; line-height: 1.5; }
+        .back-btn { background: none; border: none; color: #94a3b8; text-decoration: underline; margin-top: 20px; cursor: pointer; display: block; width: 100%; }
+        
+        #heart-final { display: none; width: 100px; cursor: pointer; margin: 20px auto; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div id="home" class="screen active">
+        <h1>Mon Espace Calme</h1>
+        <p style="color: #64748b; line-height: 1.4; padding: 0 10px;">Bienvenue dans ton refuge. Choisis l'activité qui te fait envie pour apaiser ton cœur et retrouver ton sourire.</p>
+        <button class="btn" onclick="show('breath')">Respire doucement</button>
+        <button class="btn" onclick="show('focus')">Observe le présent</button>
+        <button class="btn" onclick="show('guilt')">Libère les nuages</button>
+    </div>
+
+    <div id="breath" class="screen">
+        <h1>Respire avec la lumière</h1>
+        <div id="cercle-respi" onclick="returnHomeFromPaix()">Calme</div>
+        <button class="btn" id="start-btn" onclick="startBreath()">Commence le voyage</button>
+        <button class="back-btn" onclick="show('home')">Retour</button>
+    </div>
+
+    <div id="focus" class="screen">
+        <h1>Observe le présent</h1>
+        <div class="scavenger-item" onclick="toggleTask(this, 'Remarque 5 couleurs différentes autour de toi.')">
+            <div class="checkbox"></div>
+            <span>Regarde 5 couleurs</span>
+        </div>
+        <div class="scavenger-item" onclick="toggleTask(this, 'Doucement, touche 4 textures différentes, comme ton bureau ou tes vêtements.')">
+            <div class="checkbox"></div>
+            <span>Sens 4 textures</span>
+        </div>
+        <div class="scavenger-item" onclick="toggleTask(this, 'Ferme les yeux et écoute maintenant 3 bruits lointains.')">
+            <div class="checkbox"></div>
+            <span>Écoute 3 sons</span>
+        </div>
+        
+        <div id="focus-icon" onclick="show('home')">
+            <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8Z"/></svg>
+        </div>
+
+        <button class="back-btn" onclick="show('home')">Retour</button>
+    </div>
+
+    <div id="guilt" class="screen">
+        <h1>Laisse filer les nuages</h1>
+        <div class="cloud-zone">
+            <div id="cloud-wrapper" class="cloud-wrapper" onclick="handleCloudClick()">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <path class="cloud-fill" d="M25,60 C10,60 10,40 25,40 C25,20 45,20 50,35 C55,20 75,20 75,40 C90,40 90,60 75,60 L25,60 Z" />
+                </svg>
+            </div>
+            <div id="heart-final" onclick="show('home')">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#fda4af" d="M50,85 L44,79 C22,59 8,46 8,30 C8,17 17,8 30,8 C37,8 44,11 50,17 C56,11 63,8 70,8 C83,8 92,17 92,30 C92,46 78,59 56,79 L50,85 Z" />
+                </svg>
+            </div>
+        </div>
+        <div id="conclusion-text"></div>
+        <button class="back-btn" onclick="show('home')">Retour</button>
+    </div>
+</div>
+
+<script>
+    const phrases = [
+        "Même fâché, je peux choisir de rester calme.",
+        "Mon esprit s'apaise, je reviens ici et maintenant.",
+        "Ce souci n'est pas grave, il s'éloigne comme ce nuage."
+    ];
+    let phraseIdx = 0;
+
+    function speak(txt, callback) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(txt);
+        msg.lang = 'fr-FR';
+        msg.rate = 0.8; 
+        
+        let oralText = txt.replace(/sens/gi, "san");
+        oralText = oralText.replace(/faites/g, "fai").replace(/fait/g, "fai").replace(/fais/g, "fai");
+        
+        msg.text = oralText;
+        if (callback) msg.onend = callback;
+        window.speechSynthesis.speak(msg);
+    }
+
+    function show(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if(id === 'home') phraseIdx = 0;
+        if(id === 'guilt') resetCloud();
+        if(id === 'breath') resetBreathScreen();
+        if(id === 'focus') resetFocusScreen();
+    }
+
+    function resetBreathScreen() {
+        const c = document.getElementById('cercle-respi');
+        c.classList.remove('paix-active', 'gonfler');
+        c.innerText = "Calme";
+        document.getElementById('start-btn').style.display = "block";
+        speak("Installe-toi confortablement pour respirer avec moi.");
+    }
+
+    function startBreath() {
+        const c = document.getElementById('cercle-respi');
+        document.getElementById('start-btn').style.display = "none";
+        let i = 0;
+        speak("Inspire doucement par le nez quand la lumière grandit... et laisse l'air s'échapper par la bouche quand la lumière rétrécit.");
+        const itv = setInterval(() => {
+            if(i % 2 === 0) { c.classList.add('gonfler'); c.innerText = "Inspire"; }
+            else { c.classList.remove('gonfler'); c.innerText = "Expire"; }
+            i++;
+            if(i > 7) { 
+                clearInterval(itv); 
+                c.innerText = "Paix"; 
+                c.classList.remove('gonfler');
+                c.classList.add('paix-active');
+                speak("Ton corps est maintenant plus léger. Bravo. Clique sur le mot Paix pour retourner au menu principal.");
+            }
+        }, 4500);
+    }
+
+    function returnHomeFromPaix() {
+        if(document.getElementById('cercle-respi').classList.contains('paix-active')) show('home');
+    }
+
+    function resetFocusScreen() {
+        document.getElementById('focus-icon').style.display = "none";
+        document.querySelectorAll('.scavenger-item').forEach(el => el.classList.remove('done'));
+    }
+
+    function toggleTask(el, text) {
+        if(!el.classList.contains('done')) {
+            el.classList.add('done');
+            speak(text);
+            const allDone = Array.from(document.querySelectorAll('.scavenger-item')).every(item => item.classList.contains('done'));
+            if(allDone) {
+                setTimeout(() => {
+                    if(document.getElementById('focus').classList.contains('active')) {
+                        document.getElementById('focus-icon').style.display = "block";
+                        speak("Bravo, tu es bien concentré. Clique sur le dessin au centre pour retourner à la fenêtre principale.");
+                    }
+                }, 15000); 
+            }
+        } else {
+            speak(text);
+        }
+    }
+
+    function resetCloud() {
+        const wrapper = document.getElementById('cloud-wrapper');
+        const heart = document.getElementById('heart-final');
+        const conclusion = document.getElementById('conclusion-text');
+        wrapper.classList.remove('cloud-shrink');
+        wrapper.style.display = "block";
+        heart.style.display = "none";
+        conclusion.style.opacity = "0";
+        phraseIdx = 0;
+        speak("Observe ces nuages... ils emmènent tes soucis très loin. Touche le nuage.");
+    }
+
+    function handleCloudClick() {
+        const wrapper = document.getElementById('cloud-wrapper');
+        const heart = document.getElementById('heart-final');
+        const conclusion = document.getElementById('conclusion-text');
+        wrapper.classList.add('cloud-shrink');
+        
+        setTimeout(() => {
+            const p = phrases[phraseIdx];
+            conclusion.innerText = p;
+            conclusion.style.opacity = "1";
+            
+            speak(p, () => {
+                setTimeout(() => {
+                    conclusion.style.opacity = "0"; 
+                    phraseIdx++;
+                    
+                    setTimeout(() => {
+                        if(phraseIdx < phrases.length) {
+                            wrapper.classList.remove('cloud-shrink');
+                        } else {
+                            wrapper.style.display = "none";
+                            // On affiche la phrase sans la lire oralement
+                            conclusion.innerText = "Tu es prêt pour ta journée.";
+                            conclusion.style.opacity = "1";
+                            
+                            setTimeout(() => {
+                                conclusion.style.opacity = "0";
+                                setTimeout(() => {
+                                    heart.style.display = "block";
+                                    speak("Si tu as envie, clique sur le cœur pour refaire les activités.");
+                                }, 800);
+                            }, 3000); // Temps d'affichage avant le cœur
+                        }
+                    }, 1000);
+                }, 1500);
+            });
+        }, 3000);
+    }
+</script>
+</body>
+</html>
