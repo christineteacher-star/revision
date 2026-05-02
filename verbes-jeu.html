@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon Verbes | Académie</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        
+        body { font-family: 'Quicksand', sans-serif; background-color: #ebf2f7; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        @media (min-width: 1024px) {
+            body { flex-direction: row; height: 100vh; overflow: hidden; }
+        }
+
+        /* Sidebar */
+        .sidebar { width: 100%; height: 85px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; flex-direction: row; align-items: center; padding: 0 25px; justify-content: space-between; flex-shrink: 0; z-index: 50; }
+        @media (min-width: 1024px) { .sidebar { width: 85px; height: 100%; flex-direction: column; border-right: 1px solid #e2e8f0; border-bottom: none; padding: 25px 0; } }
+        
+        .nav-icon { width: 50px; height: 50px; border-radius: 18px; display: flex; align-items: center; justify-content: center; transition: 0.3s; cursor: pointer; color: #94a3b8; border: none; background: transparent; }
+        .nav-icon:hover { transform: scale(1.1); background-color: #f8fafc; color: #3b82f6; }
+
+        /* Main Content - Centré car pas de leaderboard */
+        .main-content { flex: 1; padding: 40px; display: flex; flex-direction: column; gap: 25px; overflow-y: auto; max-width: 1200px; margin: 0 auto; width: 100%; }
+
+        /* Game Cards Design */
+        .game-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        @media (min-width: 640px) { .game-grid { grid-template-columns: repeat(4, 1fr); } }
+
+        .game-card { 
+            background: white; border-radius: 30px; height: 120px; display: flex; align-items: center; justify-content: center; 
+            text-align: center; padding: 20px; font-weight: 700; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 3px solid transparent; box-shadow: 0 10px 20px rgba(0,0,0,0.05); font-size: 1rem; text-transform: uppercase;
+        }
+        .game-card:hover { transform: translateY(-8px); border-color: #3b82f6; box-shadow: 0 15px 30px rgba(59, 130, 246, 0.15); }
+        .game-card.selected { background-color: #3b82f6; color: white; transform: scale(1.05); border-color: #2563eb; }
+        .game-card.matched { visibility: hidden; opacity: 0; pointer-events: none; }
+        .game-card.error { background-color: #ef4444; color: white; animation: shake 0.4s; }
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+
+        .btn-lvl { background: white; border-radius: 20px; padding: 12px 25px; font-weight: 700; transition: 0.3s; border: 2px solid #e2e8f0; color: #64748b; }
+        .btn-lvl.active { background: #3b82f6; color: white; border-color: #3b82f6; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2); }
+        
+        .gemini-tag { font-size: 9px; font-weight: 700; color: #cbd5e1; text-transform: uppercase; writing-mode: vertical-rl; transform: rotate(180deg); margin-top: 10px; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+    <!-- NAV SIDEBAR -->
+    <nav class="sidebar">
+        <div class="flex flex-row lg:flex-col items-center gap-6">
+            <div class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-dragon text-2xl"></i></div>
+            <div class="nav-icon" style="background: #eff6ff; color: #3b82f6;"><i class="fas fa-gamepad text-2xl"></i></div>
+            <a href="index.html" class="nav-icon"><i class="fas fa-home text-xl"></i></a>
+        </div>
+        <div class="flex flex-row lg:flex-col items-center gap-4">
+            <div class="gemini-tag hidden lg:block">Made with Gemini</div>
+        </div>
+    </nav>
+
+    <!-- MAIN GAME AREA -->
+    <main class="main-content">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-black text-slate-800 uppercase tracking-tight">Le Défi des Verbes</h1>
+                <p class="text-slate-400 font-bold text-xs uppercase tracking-widest">Entraîne ta mémoire de dragon</p>
+            </div>
+            <div id="score-display" class="bg-white px-8 py-3 rounded-2xl shadow-sm font-bold text-sky-600 border-2 border-sky-100 text-lg">Pairs : 0 / 8</div>
+        </div>
+
+        <!-- Contrôles de jeu -->
+        <div class="flex flex-wrap gap-4 items-center justify-between bg-white p-5 rounded-[35px] shadow-sm border border-slate-100">
+            <div class="flex gap-3">
+                <button onclick="changeLevel('A1')" id="btn-A1" class="btn-lvl active">Niveau A1</button>
+                <button onclick="changeLevel('A2')" id="btn-A2" class="btn-lvl">Niveau A2</button>
+                <button onclick="changeLevel('B1')" id="btn-B1" class="btn-lvl">Niveau B1</button>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="setMode('TRAD')" id="mode-TRAD" class="btn-lvl active text-sm"><i class="fas fa-language mr-2"></i>TRADUCTION</button>
+                <button onclick="setMode('AUDIO')" id="mode-AUDIO" class="btn-lvl text-sm"><i class="fas fa-volume-up mr-2"></i>AUDIO</button>
+            </div>
+        </div>
+
+        <!-- Grille de jeu 4x4 -->
+        <div id="game-grid" class="game-grid">
+            <!-- Injecté par JavaScript -->
+        </div>
+
+        <!-- Ecran de victoire -->
+        <div id="win-screen" class="hidden bg-white rounded-[45px] p-12 text-center shadow-xl border-4 border-emerald-400 animate-pulse">
+            <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-check text-4xl"></i>
+            </div>
+            <h2 class="text-4xl font-black text-slate-800 mb-2">QUÊTE RÉUSSIE !</h2>
+            <p class="text-slate-500 font-bold mb-8 text-lg">Tu as maîtrisé ces 8 verbes avec brio.</p>
+            <button onclick="initGame()" class="bg-emerald-500 text-white px-10 py-4 rounded-2xl font-black hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-200">NOUVEAU DÉFI</button>
+        </div>
+    </main>
+
+    <script>
+        // DONNÉES DES VERBES (Complétées pour avoir de la variété)
+        const verbs = {
+            "A1": {"Manger":"To eat", "Boire":"To drink", "Dormir":"To sleep", "Marcher":"To walk", "Chanter":"To sing", "Courir":"To run", "Lire":"To read", "Écrire":"To write", "Jouer":"To play", "Aimer":"To love", "Aller":"To go", "Aider":"To help", "Appeler":"To call", "Fermer":"To close", "Ouvrir":"To open", "Prendre":"To take"},
+            "A2": {"Conduire":"To drive", "Nager":"To swim", "Peindre":"To paint", "Vendre":"To sell", "Attendre":"To wait", "Rêver":"To dream", "Suivre":"To follow", "Visiter":"To visit", "Grimper":"To climb", "Finir":"To finish", "Choisir":"To choose", "Rendre":"To return", "Perdre":"To lose", "Mettre":"To put", "Vivre":"To live", "Sentir":"To feel"},
+            "B1": {"Réparer":"To repair", "Sauver":"To save", "Détester":"To hate", "Devenir":"To become", "Naître":"To be born", "Casser":"To break", "Gagner":"To win", "Tenir":"To hold", "Réussir":"To succeed", "Partir":"To leave", "Mourir":"To die", "Cacher":"To hide", "Briller":"To shine", "Chasser":"To hunt", "Couper":"To cut", "Dîner":"To have dinner"}
+        };
+
+        let currentLevel = 'A1';
+        let currentMode = 'TRAD';
+        let firstCard = null;
+        let secondCard = null;
+        let lockBoard = false;
+        let matches = 0;
+
+        function changeLevel(l) {
+            currentLevel = l;
+            document.querySelectorAll('[id^="btn-"]').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-'+l).classList.add('active');
+            initGame();
+        }
+
+        function setMode(m) {
+            currentMode = m;
+            document.querySelectorAll('[id^="mode-"]').forEach(b => b.classList.remove('active'));
+            document.getElementById('mode-'+m).classList.add('active');
+            initGame();
+        }
+
+        function initGame() {
+            const grid = document.getElementById('game-grid');
+            const winScreen = document.getElementById('win-screen');
+            grid.innerHTML = '';
+            grid.style.display = 'grid';
+            winScreen.classList.add('hidden');
+            matches = 0;
+            updateScore();
+            
+            let source = verbs[currentLevel];
+            let allKeys = Object.keys(source);
+            
+            // Sélection aléatoire de 8 verbes différents pour la session
+            let selectedVerbs = allKeys.sort(() => 0.5 - Math.random()).slice(0, 8);
+
+            let deck = [];
+            selectedVerbs.forEach(v => {
+                deck.push({ id: v, text: v, type: 'FR' });
+                deck.push({ id: v, text: (currentMode === 'TRAD' ? source[v] : '🔊'), type: 'TARGET' });
+            });
+
+            // Mélange final des 16 cartes
+            deck.sort(() => 0.5 - Math.random());
+
+            deck.forEach(data => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                if (data.text === '🔊') {
+                    card.innerHTML = '<i class="fas fa-volume-up text-3xl text-sky-400"></i>';
+                } else {
+                    card.innerHTML = `<span>${data.text}</span>`;
+                }
+                card.onclick = () => handleFlip(card, data);
+                grid.appendChild(card);
+            });
+        }
+
+        function handleFlip(card, data) {
+            if (lockBoard || card.classList.contains('matched') || card === firstCard) return;
+
+            // En mode AUDIO, cliquer sur l'icône joue le son
+            if (currentMode === 'AUDIO' && data.text === '🔊') {
+                playWord(data.id);
+            }
+
+            card.classList.add('selected');
+
+            if (!firstCard) {
+                firstCard = { card, data };
+                return;
+            }
+
+            secondCard = { card, data };
+            checkMatch();
+        }
+
+        function checkMatch() {
+            let isMatch = firstCard.data.id === secondCard.data.id && firstCard.data.type !== secondCard.data.type;
+            
+            if (isMatch) {
+                matches++;
+                updateScore();
+                lockBoard = true;
+                setTimeout(() => {
+                    firstCard.card.classList.add('matched');
+                    secondCard.card.classList.add('matched');
+                    resetBoard();
+                    if (matches === 8) {
+                        document.getElementById('game-grid').style.display = 'none';
+                        document.getElementById('win-screen').classList.remove('hidden');
+                    }
+                }, 500);
+            } else {
+                lockBoard = true;
+                firstCard.card.classList.add('error');
+                secondCard.card.classList.add('error');
+                setTimeout(() => {
+                    firstCard.card.classList.remove('selected', 'error');
+                    secondCard.card.classList.remove('selected', 'error');
+                    resetBoard();
+                }, 800);
+            }
+        }
+
+        function resetBoard() { [firstCard, secondCard, lockBoard] = [null, null, false]; }
+        function updateScore() { document.getElementById('score-display').innerText = `Pairs : ${matches} / 8`; }
+        function playWord(word) { 
+            window.speechSynthesis.cancel(); 
+            let u = new SpeechSynthesisUtterance(word); 
+            u.lang = 'fr-FR'; 
+            u.rate = 0.9;
+            window.speechSynthesis.speak(u); 
+        }
+
+        window.onload = initGame;
+    </script>
+</body>
+</html>

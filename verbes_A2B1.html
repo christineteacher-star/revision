@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lexique des Verbes | Académie</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        
+        body { font-family: 'Quicksand', sans-serif; background-color: #ebf2f7; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        @media (min-width: 1024px) { body { flex-direction: row; height: 100vh; overflow: hidden; } }
+
+        /* Sidebar */
+        .sidebar { width: 100%; height: 85px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; flex-direction: row; align-items: center; padding: 0 25px; justify-content: space-between; flex-shrink: 0; z-index: 50; }
+        @media (min-width: 1024px) { .sidebar { width: 85px; height: 100%; flex-direction: column; border-right: 1px solid #e2e8f0; border-bottom: none; padding: 25px 0; } }
+        
+        .nav-icon { width: 50px; height: 50px; border-radius: 18px; display: flex; align-items: center; justify-content: center; transition: 0.3s; cursor: pointer; color: #94a3b8; text-decoration: none; }
+        .nav-icon:hover { background-color: #f8fafc; color: #3b82f6; }
+
+        .main-content { flex: 1; padding: 40px; display: flex; flex-direction: column; gap: 25px; overflow-y: auto; }
+
+        /* Style des Cartes de Verbes */
+        .verb-card {
+            background: white; border-radius: 25px; padding: 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            transition: all 0.3s; border: 2px solid transparent;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .verb-card:hover { transform: translateX(10px); border-color: #3b82f6; }
+
+        .btn-lvl { background: white; border-radius: 20px; padding: 10px 25px; font-weight: 700; transition: 0.3s; border: 2px solid #e2e8f0; color: #64748b; }
+        .btn-lvl.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+
+        .audio-btn { width: 40px; height: 40px; border-radius: 12px; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .audio-btn:hover { background: #3b82f6; color: white; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="flex flex-row lg:flex-col items-center gap-6">
+            <div class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-dragon text-2xl"></i></div>
+            <a href="index.html" class="nav-icon"><i class="fas fa-home text-xl"></i></a>
+            <a href="verbes-jeu.html" class="nav-icon"><i class="fas fa-gamepad text-xl"></i></a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-black text-slate-800 uppercase tracking-tight">Le Grimoire des Verbes</h1>
+                <p class="text-slate-400 font-bold text-xs uppercase tracking-widest">Apprends avant de relever le défi</p>
+            </div>
+            <a href="verbes-jeu.html" class="bg-slate-800 text-white px-8 py-3 rounded-2xl font-black hover:bg-sky-500 transition-all shadow-lg text-sm">ALLER AU JEU <i class="fas fa-arrow-right ml-2"></i></a>
+        </div>
+
+        <!-- Filtres -->
+        <div class="flex gap-3 bg-white p-4 rounded-[30px] shadow-sm w-fit">
+            <button onclick="filterLevel('A1')" id="btn-A1" class="btn-lvl active">Niveau A1</button>
+            <button onclick="filterLevel('A2')" id="btn-A2" class="btn-lvl">Niveau A2</button>
+            <button onclick="filterLevel('B1')" id="btn-B1" class="btn-lvl">Niveau B1</button>
+        </div>
+
+        <!-- Liste des verbes -->
+        <div id="verb-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Injecté par JS -->
+        </div>
+    </main>
+
+    <script>
+        const verbs = {
+            "A1": {"Manger":"To eat", "Boire":"To drink", "Dormir":"To sleep", "Marcher":"To walk", "Chanter":"To sing", "Courir":"To run", "Lire":"To read", "Écrire":"To write", "Jouer":"To play", "Aimer":"To love", "Aller":"To go", "Aider":"To help", "Appeler":"To call", "Fermer":"To close", "Ouvrir":"To open", "Prendre":"To take"},
+            "A2": {"Conduire":"To drive", "Nager":"To swim", "Peindre":"To paint", "Vendre":"To sell", "Attendre":"To wait", "Rêver":"To dream", "Suivre":"To follow", "Visiter":"To visit", "Grimper":"To climb", "Finir":"To finish", "Choisir":"To choose", "Rendre":"To return", "Perdre":"To lose", "Mettre":"To put", "Vivre":"To live", "Sentir":"To feel"},
+            "B1": {"Réparer":"To repair", "Sauver":"To save", "Détester":"To hate", "Devenir":"To become", "Naître":"To be born", "Casser":"To break", "Gagner":"To win", "Tenir":"To hold", "Réussir":"To succeed", "Partir":"To leave", "Mourir":"To die", "Cacher":"To hide", "Briller":"To shine", "Chasser":"To hunt", "Couper":"To cut", "Dîner":"To have dinner"}
+        };
+
+        function filterLevel(lvl) {
+            document.querySelectorAll('.btn-lvl').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-'+lvl).classList.add('active');
+            renderVerbs(lvl);
+        }
+
+        function renderVerbs(lvl) {
+            const container = document.getElementById('verb-list');
+            container.innerHTML = '';
+            
+            Object.entries(verbs[lvl]).forEach(([fr, en]) => {
+                const card = document.createElement('div');
+                card.className = 'verb-card';
+                card.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <div class="audio-btn" onclick="playVoice('${fr}')">
+                            <i class="fas fa-volume-up"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-700 text-lg">${fr}</p>
+                            <p class="text-sky-500 font-semibold text-sm uppercase">${en}</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-dragon opacity-10 text-2xl"></i>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function playVoice(text) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'fr-FR';
+            window.speechSynthesis.speak(utterance);
+        }
+
+        window.onload = () => renderVerbs('A1');
+    </script>
+</body>
+</html>

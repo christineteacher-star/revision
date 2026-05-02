@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace FLE | Académie Dragon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        body { font-family: 'Quicksand', sans-serif; background-color: #f8fafc; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        @media (min-width: 1024px) { body { flex-direction: row; height: 100vh; overflow: hidden; } }
+
+        /* Sidebar */
+        .sidebar { width: 100%; height: 85px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; flex-direction: row; align-items: center; padding: 0 25px; justify-content: space-between; z-index: 50; flex-shrink: 0; }
+        @media (min-width: 1024px) { .sidebar { width: 85px; height: 100%; flex-direction: column; border-right: 1px solid #e2e8f0; border-bottom: none; padding: 25px 0; } }
+
+        /* Contenu */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+
+        /* Cartes */
+        .category-card { background: white; border-radius: 24px; padding: 25px; transition: all 0.3s ease; border: 1px solid #e2e8f0; display: flex; flex-direction: column; align-items: center; text-align: center; text-decoration: none; height: 100%; }
+        .category-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); border-color: #0ea5e9; }
+        .icon-box { width: 60px; height: 60px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="flex flex-row lg:flex-col items-center gap-6">
+            <!-- Logo Dragon -->
+            <a href="index.html" class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform">
+                <i class="fas fa-dragon text-2xl"></i>
+            </a>
+
+            <!-- NOUVELLE ICONE BOUSSOLE (au-dessus de la maison) -->
+            <div class="text-sky-500 bg-sky-50 p-3 rounded-xl shadow-sm">
+                <i class="fas fa-compass text-xl"></i>
+            </div>
+
+            <!-- Retour Accueil -->
+            <a href="index.html" class="text-slate-400 hover:text-sky-500 transition-colors" title="Accueil">
+                <i class="fas fa-home text-xl"></i>
+            </a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="max-w-6xl mx-auto mb-10 text-center lg:text-left">
+            <h1 class="text-4xl font-black text-slate-800 uppercase tracking-tight">Espace FLE</h1>
+            <p class="text-slate-500 font-semibold text-lg">Apprendre le français et préparer tes diplômes.</p>
+        </header>
+
+        <div class="grid-container">
+            <!-- LIEN VERS VERBES_A2B1.HTML -->
+            <a href="verbes_A2B1.html" class="category-card shadow-sm border-2 border-sky-100">
+                <div class="icon-box bg-sky-100 text-sky-600"><i class="fas fa-play-circle"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Le Labo des Verbes</h3>
+                <p class="text-slate-500 text-sm mt-2">Pratique les conjugaisons essentielles (niveaux A2 et B1).</p>
+            </a>
+
+            <a href="#" class="category-card shadow-sm">
+                <div class="icon-box bg-blue-100 text-blue-600"><i class="fas fa-certificate"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Objectif DELF</h3>
+                <p class="text-slate-500 text-sm mt-2">Exercices types pour réussir ton examen.</p>
+            </a>
+
+            <a href="#" class="category-card shadow-sm">
+                <div class="icon-box bg-emerald-100 text-emerald-600"><i class="fas fa-headphones-alt"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Compréhension Orale</h3>
+                <p class="text-slate-500 text-sm mt-2">Écouter et comprendre des dialogues du quotidien.</p>
+            </a>
+
+            <a href="#" class="category-card shadow-sm">
+                <div class="icon-box bg-purple-100 text-purple-600"><i class="fas fa-book-open"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Compréhension Écrite</h3>
+                <p class="text-slate-500 text-sm mt-2">Lire et comprendre des articles et des messages.</p>
+            </a>
+
+            <a href="#" class="category-card shadow-sm">
+                <div class="icon-box bg-red-100 text-red-600"><i class="fas fa-pen-fancy"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Production Écrite</h3>
+                <p class="text-slate-500 text-sm mt-2">Apprendre à écrire des courriels et des textes simples.</p>
+            </a>
+
+            <a href="#" class="category-card shadow-sm">
+                <div class="icon-box bg-amber-100 text-amber-600"><i class="fas fa-comments"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Expression Orale</h3>
+                <p class="text-slate-500 text-sm mt-2">S'entraîner à parler et à se présenter.</p>
+            </a>
+
+            <a href="#" class="category-card shadow-sm">
+                <div class="icon-box bg-indigo-100 text-indigo-600"><i class="fas fa-tasks"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Tests de Niveau</h3>
+                <p class="text-slate-500 text-sm mt-2">Découvrir ton niveau selon le cadre européen.</p>
+            </a>
+
+            <a href="#" class="category-card shadow-sm">
+                <div class="icon-box bg-pink-100 text-pink-600"><i class="fas fa-atlas"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Lexique & Culture</h3>
+                <p class="text-slate-500 text-sm mt-2">Vocabulaire thématique et vie en France.</p>
+            </a>
+
+            <a href="#" class="category-card shadow-sm border-dashed border-2">
+                <div class="icon-box bg-slate-100 text-slate-600"><i class="fas fa-plus"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Nouveautés</h3>
+                <p class="text-slate-500 text-sm mt-2">D'autres activités seront ajoutées bientôt.</p>
+            </a>
+        </div>
+    </main>
+
+</body>
+</html>
