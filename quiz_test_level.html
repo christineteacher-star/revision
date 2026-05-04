@@ -1,0 +1,207 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Niveau Global - Académie Dragon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        body { font-family: 'Quicksand', sans-serif; background-color: white; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        @media (min-width: 1024px) { body { flex-direction: row; } }
+
+        .sidebar { width: 100%; height: 60px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; flex-direction: row; align-items: center; padding: 0 20px; flex-shrink: 0; z-index: 100; }
+        @media (min-width: 1024px) { .sidebar { width: 70px; height: 100%; flex-direction: column; border-right: 1px solid #e2e8f0; border-bottom: none; padding: 20px 0; } }
+        
+        .nav-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #94a3b8; text-decoration: none; margin-bottom: 15px; }
+        .nav-icon.active { background: #eff6ff; color: #3b82f6; }
+
+        .main-content { flex: 1; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; overflow-y: auto; }
+        .quiz-container { width: 100%; max-width: 700px; }
+        
+        .level-bar { background-color: #f8fafc; border-radius: 8px; padding: 10px 15px; font-weight: 700; color: #475569; margin-bottom: 10px; font-size: 0.85rem; border: 1px solid #e2e8f0; }
+        .option-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        
+        .btn-option { border: 2px solid #3b82f6; border-radius: 10px; padding: 12px; color: #3b82f6; background: white; font-weight: 600; cursor: pointer; transition: 0.2s; text-align: center; }
+        .btn-option.correct { background-color: #22c55e !important; border-color: #22c55e !important; color: white !important; }
+        .btn-option.incorrect { background-color: #ef4444 !important; border-color: #ef4444 !important; color: white !important; }
+
+        .feedback-area { margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 0.85rem; background: #f8fafc; border: 1px solid #e2e8f0; min-height: 45px; }
+        .bottom-nav { width: 100%; display: flex; flex-direction: column; align-items: center; padding: 15px 0; }
+        .arrow-btn { background-color: #3b82f6; color: white; width: 60px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: none; }
+        .finish-btn { background-color: #10b981; color: white; padding: 0 30px; border-radius: 12px; font-weight: 700; height: 45px; }
+
+        .hidden { display: none !important; }
+        
+        /* Styles pour le tableau de résultats */
+        .res-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f1f5f9; }
+        .res-label { font-weight: 700; color: #64748b; }
+        .res-score { font-weight: 800; color: #3b82f6; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="flex flex-row lg:flex-col items-center gap-4">
+            <div class="w-10 h-10 bg-sky-500 rounded-xl flex items-center justify-center text-white shadow-md mb-2"><i class="fas fa-dragon text-xl"></i></div>
+            <a href="index academie.html" class="nav-icon active"><i class="fas fa-compass text-xl"></i></a>
+            <a href="index.html" class="nav-icon"><i class="fas fa-home text-lg"></i></a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div id="quiz-box" class="quiz-container">
+            <div class="text-center mb-4">
+                <h1 class="text-xl font-bold text-slate-800 uppercase">Évaluation Globale</h1>
+                <p class="text-slate-400 text-xs font-bold uppercase">Question <span id="q-num">1</span> / 30</p>
+            </div>
+
+            <div class="level-bar" id="lvl-text">Chargement...</div>
+            <div id="q-text" class="text-slate-700 text-lg font-bold py-4 text-center">...</div>
+            <div id="options-container" class="option-grid"></div>
+            <div id="feedback-msg" class="feedback-area text-slate-400 italic">Choisissez une réponse...</div>
+        </div>
+
+        <div id="nav-controls" class="bottom-nav">
+            <div class="text-xs font-bold text-slate-400 mb-4 uppercase">Progression : <span id="score-val" class="text-blue-500">0</span> / 30</div>
+            <div class="flex gap-10">
+                <button id="prev-btn" class="arrow-btn" onclick="prevQ()"><i class="fas fa-arrow-left"></i></button>
+                <div id="next-area"></div>
+            </div>
+        </div>
+
+        <!-- RESULTAT DÉTAILLÉ -->
+        <div id="result-box" class="hidden quiz-container">
+            <div class="bg-white p-6 rounded-3xl border-2 border-slate-100 shadow-xl text-center">
+                <div class="text-4xl mb-2">🏆</div>
+                <h2 class="text-2xl font-black text-slate-800 mb-1">Résultats de l'Évaluation</h2>
+                <div class="text-5xl font-black text-blue-600 my-6"><span id="final-score">0</span> / 30</div>
+                
+                <div class="bg-slate-50 rounded-2xl p-4 mb-6">
+                    <div class="res-row"><span class="res-label">Niveau A1 - A2 (Débutant)</span> <span id="sc-a" class="res-score">0 / 10</span></div>
+                    <div class="res-row"><span class="res-label">Niveau B1 - B2 (Intermédiaire)</span> <span id="sc-b" class="res-score">0 / 10</span></div>
+                    <div class="res-row border-none"><span class="res-label">Niveau C1 - C2 (Avancé)</span> <span id="sc-c" class="res-score">0 / 10</span></div>
+                </div>
+
+                <div class="flex flex-col gap-3">
+                    <button onclick="location.reload()" class="bg-slate-800 text-white w-full py-4 rounded-2xl font-bold">Recommencer le test</button>
+                    <a href="index academie.html" class="text-slate-400 font-bold hover:text-blue-500 transition-colors">Retour à l'Académie</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const questions = [
+            // A1-A2 (10 questions)[cite: 2]
+            { l: "Niveau A1 – A2", cat: "A", p: "Bonjour Madame, je ___ 1 kg de pommes de terre, s'il vous plaît.", o: ["demande", "voudrais", "achète", "vends"], r: "voudrais", e: "Politesse : 'voudrais' est le conditionnel de vouloir." },
+            { l: "Niveau A1 – A2", cat: "A", p: "Je l'ai appelé et j'ai ___ un message sur son répondeur.", o: ["laissé", "fait", "parlé", "entendu"], r: "laissé", e: "Expression : laisser un message." },
+            { l: "Niveau A1 – A2", cat: "A", p: "J'ai besoin d' ___ pour servir le poulet rôti.", o: ["une assiette", "un plat", "un plateau", "un vase"], r: "une assiette", e: "Assiette : ustensile pour manger." },
+            { l: "Niveau A1 – A2", cat: "A", p: "• Vous avez choisi ? • Oui, je vais prendre ___.", o: ["la carte", "le plat du jour", "l'addition", "le pourboire"], r: "le plat du jour", e: "Le plat du jour est une option de repas." },
+            { l: "Niveau A1 – A2", cat: "A", p: "Ma fille a eu son diplôme et elle cherche un ___.", o: ["travailler", "travaille", "travail", "travaye"], r: "travail", e: "Le nom masculin est 'le travail'." },
+            { l: "Niveau A1 – A2", cat: "A", p: "Pour aller à la poste ? ___ la deuxième rue à gauche.", o: ["Changez", "Faites", "Croisez", "Prenez"], r: "Prenez", e: "Prendre une direction." },
+            { l: "Niveau A1 – A2", cat: "A", p: "J'envoie une lettre à Jessica. Quand est-ce que tu ___ envoies ?", o: ["lui", "elle", "la", "leur"], r: "lui", e: "COI : envoyer à quelqu'un." },
+            { l: "Niveau A1 – A2", cat: "A", p: "Ici, en Australie, c'est l'été ! ___ très chaud !", o: ["Est", "C'est", "Il est", "Il fait"], r: "Il fait", e: "Utilisé pour la météo." },
+            { l: "Niveau A1 – A2", cat: "A", p: "J'adore cette activité, ___ je ne peux pas cet après-midi.", o: ["mais", "alors", "et", "ensuite"], r: "mais", e: "Indique l'opposition." },
+            { l: "Niveau A1 – A2", cat: "A", p: "La France a gagné en mille neuf cent...", o: ["...quatre-vingt-dix-huit.", "...quatre-vingts-dix-huit.", "...quatre-vingt-dix huit.", "...quatre vingt dix huit."], r: "...quatre-vingt-dix-huit.", e: "Orthographe des nombres." },
+            
+            // B1-B2 (10 questions)[cite: 2]
+            { l: "Niveau B1 – B2", cat: "B", p: "Elle me demande ___ je veux bien l'accompagner.", o: ["que", "de", "si", "à"], r: "si", e: "Si introduit une interrogation indirecte." },
+            { l: "Niveau B1 – B2", cat: "B", p: "Je ne pense pas que ma femme ___ d'accord.", o: ["est", "sera", "soit", "va être"], r: "soit", e: "Subjonctif obligatoire après la négation d'une pensée." },
+            { l: "Niveau B1 – B2", cat: "B", p: "On rêve souvent ___ devenir riche.", o: ["devenir riche", "à devenir riche", "avec devenir riche", "de devenir riche"], r: "de devenir riche", e: "Rêver de faire quelque chose." },
+            { l: "Niveau B1 – B2", cat: "B", p: "___ elle soit au chômage, elle garde le moral.", o: ["Malgré", "Pourtant", "Même si", "Bien qu'"], r: "Bien qu'", e: "Bien qu' + subjonctif." },
+            { l: "Niveau B1 – B2", cat: "B", p: "Ces pratiques, je les ai toujours ___.", o: ["détesté", "détestée", "détestés", "détestées"], r: "détestées", e: "Accord du participe passé avec le COD 'les' (féminin pluriel)." },
+            { l: "Niveau B1 – B2", cat: "B", p: "Il ___ aimé venir, mais il n'avait pas le temps.", o: ["avait", "eut", "aura aimé", "aurait aimé"], r: "aurait aimé", e: "Conditionnel passé pour un regret." },
+            { l: "Niveau B1 – B2", cat: "B", p: "Il adore ma sœur. Ils ___ parfaitement.", o: ["s'aiment", "s'entendent", "s'écoutent", "s'expriment"], r: "s'entendent", e: "S'entendre : avoir de bons rapports." },
+            { l: "Niveau B1 – B2", cat: "B", p: "L'oxygène est vital. ___, les plantes en produisent.", o: ["En effet", "Or", "Néanmoins", "De plus"], r: "En effet", e: "Connecteur de cause/explication." },
+            { l: "Niveau B1 – B2", cat: "B", p: "Même s'il ___ des efforts, il échouera.", o: ["fait", "fasse", "fera", "faisait"], r: "fait", e: "Même si + indicatif." },
+            { l: "Niveau B1 – B2", cat: "B", p: "Elle m'a dit qu'elle ___ faim.", o: ["aurait", "a", "avait", "aura"], r: "avait", e: "Concordance des temps au passé." },
+            
+            // C1-C2 (10 questions)[cite: 2]
+            { l: "Niveau C1 – C2", cat: "C", p: "Ils sont ___ courageux que les autres.", o: ["plus", "de plus", "davantage", "mieux"], r: "plus", e: "Comparatif devant un adjectif." },
+            { l: "Niveau C1 – C2", cat: "C", p: "Faire l'effet d'une bombe signifie :", o: ["Exploser", "Surprendre", "Détruire", "Briller"], r: "Surprendre", e: "Causer une surprise immense." },
+            { l: "Niveau C1 – C2", cat: "C", p: "Le produit ___ vient de loin n'est pas écolo.", o: ["qui", "que", "dont", "où"], r: "qui", e: "Pronom relatif sujet." },
+            { l: "Niveau C1 – C2", cat: "C", p: "Les énergies fossiles sont ___ à disparaître.", o: ["destinées", "vouées", "promises", "sûres"], r: "vouées", e: "Voué à : destiné inévitablement." },
+            { l: "Niveau C1 – C2", cat: "C", p: "Au moment ___, elle décidera.", o: ["importun", "opportun", "assidu", "bref"], r: "opportun", e: "Opportun : qui arrive à propos." },
+            { l: "Niveau C1 – C2", cat: "C", p: "Il n'a pas encore ___ suite à mon mail.", o: ["fait", "donné", "mis", "eu"], r: "donné", e: "Donner suite : répondre." },
+            { l: "Niveau C1 – C2", cat: "C", p: "Ma voisine gère bien son ___ de déchets.", o: ["recyclage", "tri", "gaspillage", "stockage"], r: "recyclage", e: "Traitement pour réutilisation." },
+            { l: "Niveau C1 – C2", cat: "C", p: "Se tenir à carreau signifie :", o: ["Être sage", "Attendre", "Être puni", "Se cacher"], r: "Être sage", e: "Se comporter correctement." },
+            { l: "Niveau C1 – C2", cat: "C", p: "Ces fautes ___, le texte est correct.", o: ["mis à part", "mises à part", "hormis", "sauf"], r: "mises à part", e: "Accord de 'mis à part' après le nom." },
+            { l: "Niveau C1 – C2", cat: "C", p: "Il a fait faillite, il a mis ___ sous la porte.", o: ["la clef", "le verrou", "le tapis", "le pied"], r: "la clef", e: "Mettre la clef sous la porte : cesser l'activité." }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let scoresParCat = { A: 0, B: 0, C: 0 };
+        let userAnswers = {};
+
+        function render() {
+            const q = questions[currentIdx];
+            document.getElementById('q-num').innerText = currentIdx + 1;
+            document.getElementById('lvl-text').innerText = q.l;
+            document.getElementById('q-text').innerText = q.p;
+            document.getElementById('score-val').innerText = score;
+
+            const container = document.getElementById('options-container');
+            const feedback = document.getElementById('feedback-msg');
+            const nextArea = document.getElementById('next-area');
+            
+            container.innerHTML = "";
+            
+            if(userAnswers.hasOwnProperty(currentIdx)) {
+                feedback.innerHTML = `<strong>${userAnswers[currentIdx] === q.r ? 'Bravo !' : 'Faux'}</strong> : ${q.e}`;
+                feedback.classList.remove('text-slate-400');
+                feedback.classList.add('text-slate-700');
+            } else {
+                feedback.innerHTML = "Choisissez une réponse...";
+                feedback.classList.add('text-slate-400');
+            }
+
+            q.o.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "btn-option";
+                btn.innerText = opt;
+                if(userAnswers.hasOwnProperty(currentIdx)) {
+                    btn.disabled = true;
+                    if(opt === q.r) btn.classList.add('correct');
+                    else if(opt === userAnswers[currentIdx]) btn.classList.add('incorrect');
+                } else {
+                    btn.onclick = () => { 
+                        userAnswers[currentIdx] = opt; 
+                        if(opt === q.r) {
+                            score++;
+                            scoresParCat[q.cat]++;
+                        }
+                        render(); 
+                    };
+                }
+                container.appendChild(btn);
+            });
+
+            document.getElementById('prev-btn').disabled = currentIdx === 0;
+            if(currentIdx === 29 && userAnswers.hasOwnProperty(29)) {
+                nextArea.innerHTML = `<button onclick="finishQuiz()" class="finish-btn">Terminer</button>`;
+            } else {
+                nextArea.innerHTML = `<button class="arrow-btn" ${!userAnswers.hasOwnProperty(currentIdx) ? 'disabled' : ''} onclick="nextQ()"><i class="fas fa-arrow-right"></i></button>`;
+            }
+        }
+
+        function nextQ() { if(currentIdx < 29) { currentIdx++; render(); } }
+        function prevQ() { if(currentIdx > 0) { currentIdx--; render(); } }
+        
+        function finishQuiz() {
+            document.getElementById('quiz-box').classList.add('hidden');
+            document.getElementById('nav-controls').classList.add('hidden');
+            document.getElementById('result-box').classList.remove('hidden');
+            
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('sc-a').innerText = `${scoresParCat.A} / 10`;
+            document.getElementById('sc-b').innerText = `${scoresParCat.B} / 10`;
+            document.getElementById('sc-c').innerText = `${scoresParCat.C} / 10`;
+        }
+
+        window.onload = render;
+    </script>
+</body>
+</html>

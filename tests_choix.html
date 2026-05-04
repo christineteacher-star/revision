@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tests de Niveau | Académie Dragon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        body { font-family: 'Quicksand', sans-serif; background-color: #f8fafc; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        @media (min-width: 1024px) { body { flex-direction: row; height: 100vh; overflow: hidden; } }
+
+        /* Sidebar */
+        .sidebar { width: 100%; height: 85px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; flex-direction: row; align-items: center; padding: 0 25px; justify-content: space-between; z-index: 50; flex-shrink: 0; }
+        @media (min-width: 1024px) { .sidebar { width: 85px; height: 100%; flex-direction: column; border-right: 1px solid #e2e8f0; border-bottom: none; padding: 25px 0; } }
+
+        /* Contenu */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; max-width: 1100px; margin: 0 auto; }
+
+        /* Nouveau design pour le bouton du Test Global */
+        .global-test-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 24px;
+            text-decoration: none;
+            max-width: 800px;
+            margin: 20px auto 40px auto;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.3);
+        }
+        .global-test-banner:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 25px -5px rgba(79, 70, 229, 0.4);
+        }
+
+        /* Cartes de Niveau (restées identiques) */
+        .test-card { background: white; border-radius: 28px; padding: 30px; border: 1px solid #e2e8f0; position: relative; }
+        .level-badge { position: absolute; top: 20px; right: 20px; padding: 4px 12px; border-radius: 99px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+        .btn-start { width: 100%; margin-top: 20px; background: #6366f1; color: white; padding: 12px; border-radius: 16px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="flex flex-row lg:flex-col items-center gap-6">
+            <a href="index.html" class="w-12 h-12 bg-sky-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                <i class="fas fa-dragon text-2xl"></i>
+            </a>
+            <a href="index academie.html" class="text-slate-400 hover:text-indigo-500">
+                <i class="fas fa-compass text-xl"></i>
+            </a>
+            <a href="index.html" class="text-slate-400 hover:text-sky-500">
+                <i class="fas fa-home text-xl"></i>
+            </a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="max-w-4xl mx-auto text-center">
+            <h1 class="text-4xl font-black text-slate-800 uppercase tracking-tight">Tests de Niveau</h1>
+            
+            <!-- BOUTON DU TEST GLOBAL RE-DESIGNÉ -->
+            <a href="quiz_test_level.html" class="global-test-banner">
+                <div class="flex items-center gap-4 text-left">
+                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-2xl">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold text-lg">Test de Niveau Complet</div>
+                        <div class="text-white/80 text-sm">30 questions de A1 à C2</div>
+                    </div>
+                </div>
+                <div class="hidden sm:block bg-white text-indigo-600 px-6 py-2 rounded-xl font-bold">
+                    Lancer <i class="fas fa-play ml-1"></i>
+                </div>
+            </a>
+            
+            <p class="text-slate-400 font-bold text-xs uppercase tracking-widest mb-8">Ou choisis par catégorie</p>
+        </header>
+
+        <div class="grid-container">
+            <!-- Les trois cartes restent à l'identique -->
+            <div class="test-card">
+                <span class="level-badge bg-emerald-100 text-emerald-600">Débutant</span>
+                <div class="w-14 h-14 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center text-2xl mb-6"><i class="fas fa-seedling"></i></div>
+                <h3 class="font-bold text-slate-800 text-xl">Série 1 : Fondations</h3>
+                <p class="text-slate-500 text-sm mt-3">Grammaire de base et vocabulaire quotidien.</p>
+                <a href="#" class="btn-start !bg-slate-100 !text-slate-400 cursor-not-allowed">Bientôt disponible</a>
+            </div>
+
+            <div class="test-card">
+                <span class="level-badge bg-blue-100 text-blue-600">Intermédiaire</span>
+                <div class="w-14 h-14 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center text-2xl mb-6"><i class="fas fa-mountain"></i></div>
+                <h3 class="font-bold text-slate-800 text-xl">Série 2 : Autonomie</h3>
+                <p class="text-slate-500 text-sm mt-3">Passé, subjonctif et expressions courantes.</p>
+                <a href="#" class="btn-start !bg-slate-100 !text-slate-400 cursor-not-allowed">Bientôt disponible</a>
+            </div>
+
+            <div class="test-card">
+                <span class="level-badge bg-purple-100 text-purple-600">Avancé</span>
+                <div class="w-14 h-14 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center text-2xl mb-6"><i class="fas fa-trophy"></i></div>
+                <h3 class="font-bold text-slate-800 text-xl">Série 3 : Expertise</h3>
+                <p class="text-slate-500 text-sm mt-3">Syntaxe complexe et culture approfondie.</p>
+                <a href="#" class="btn-start !bg-slate-100 !text-slate-400 cursor-not-allowed">Bientôt disponible</a>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
